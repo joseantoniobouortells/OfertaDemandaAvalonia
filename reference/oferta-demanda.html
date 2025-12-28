@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroSim Pro - Análisis Económico Integral</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React y ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+
+        // --- MOTOR MATEMÁTICO ---
+
+        const safe = (val) => {
+            if (val === Infinity || val === -Infinity) return 9999;
+            return (typeof val === 'number' && !isNaN(val)) ? val : 0;
+        };
+
+        const evaluateFunction = (expr, q) => {
+            try {
+                if (!expr) return 0;
+                let cleanExpr = expr.toLowerCase().replace(/(\d)q/g, '$1*q'); // Fix implícitos 2q -> 2*q
+                cleanExpr = cleanExpr
+                    .replace(/q/g, `(${q})`)
+                    .replace(/\^/g, '**');
+                
+                const val = new Function(`return ${cleanExpr}`)();
+                return safe(val);
+            } catch (e) { return 0; }
+        };
+
+        const integrate = (f, a, b, steps = 100) => {
+            if (a >= b) return 0;
+            const h = (b - a) / steps;
+            let s = (f(a) + f(b)) / 2;
+            for (let i = 1; i < steps; i++) {
+                s += f(a + i * h);
+            }
+            return safe(s * h);
+        };
+
+        const derive = (f, q, h = 0.001) => {
+            const val = (f(q + h) - f(q - h)) / (2 * h);
+            return safe(val);
+        };
+
+        const findRoot = (f, low = 0, high = 1000) => {
+            let fl = f(low);
+            let fh = f(high);
+            if (fl * fh > 0) {
+                let bestQ = low;
+                let minVal = Math.abs(fl);
+                for(let i=1; i<=50; i++) {
+                    let curr = low + (high - low)*(i/50);
+                    let val = Math.abs(f(curr));
+                    if (val < minVal) { minVal = val; bestQ = curr; }
+                }
+                return bestQ;
+            }
+            for (let i = 0; i < 60; i++) {
+                let mid = (low + high) / 2;
+                let fm = f(mid);
+                if (Math.abs(fm) < 0.0001) return mid;
+                if (fl * fm < 0) high = mid;
+                else { low = mid; fl = fm; }
+            }
+            return (low + high) / 2;
+        };
+
+        // --- COMPONENTES UI ---
+
+        const Card = ({ title, children, className = "" }) => (
+            <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-4 ${className}`}>
+                {title && <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2 flex items-center gap-2">
+                    {title}
+                </h3>}
+                {children}
+            </div>
+        );
+
+        const FormulaBox = ({ title, formula, desc }) => (
+            <div className="bg-indigo-50 p-3 rounded-lg border-l-4 border-indigo-500 mb-3">
+                <p className="text-[10px] font-bold text-indigo-600 uppercase mb-1">{title}</p>
+                <div className="font-mono text-sm text-slate-800 mb-1 italic">{formula}</div>
+                <p className="text-[10px] text-slate-500 leading-tight">{desc}</p>
+            </div>
+        );
+
+        // --- APP PRINCIPAL ---
+
+        function App() {
+            const [mode, setMode] = useState('mercado');
+            const [term, setTerm] = useState('CP'); 
+            
+            // Estados
+            const [demandBase, setDemandBase] = useState("100 - 0.5q");
+            const [supplyBase, setSupplyBase] = useState("20 + 0.5q");
+            const [shockD, setShockD] = useState(0); 
+            const [shockS, setShockS] = useState(0); 
+            const [tax, setTax] = useState(0);
+
+            const [firmCostBase, setFirmCostBase] = useState("200 + 10q + 0.5q^2");
+            const [marketP, setMarketP] = useState(40);
+
+            const [monoDemand, setMonoDemand] = useState("120 - q");
+            const [monoCost, setMonoCost] = useState("100 + 10q + 0.2q^2");
+
+            const [elasPrice, setElasPrice] = useState(50);
+
+            // --- LÓGICA MERCADO ---
+            const marketRes = useMemo(() => {
+                const Pd0 = (q) => evaluateFunction(demandBase, q);
+                const Ps0 = (q) => evaluateFunction(supplyBase, q);
+                const Pd1 = (q) => safe(Pd0(q) + shockD);
+                const Ps1 = (q) => safe(Ps0(q) - shockS);
+
+                // Eq. con impuestos
+                const qStar = findRoot((q) => Pd1(q) - (Ps1(q) + tax));
+                const pdStar = Pd1(qStar);
+                const psStar = pdStar - tax;
+
+                // Eq. sin impuestos (para DWL)
+                const qNoTax = findRoot((q) => Pd1(q) - Ps1(q));
+
+                const cs = integrate((q) => Math.max(0, Pd1(q) - pdStar), 0, qStar);
+                const ps_val = integrate((q) => Math.max(0, psStar - Ps1(q)), 0, qStar);
+                const taxRev = safe(tax * qStar);
+                const dwl = integrate((q) => Math.max(0, Pd1(q) - Ps1(q)), qStar, qNoTax);
+
+                return { 
+                    qStar: safe(qStar), pdStar: safe(pdStar), psStar: safe(psStar), 
+                    cs: safe(cs), ps_val: safe(ps_val), taxRev, dwl: safe(dwl), 
+                    Pd0, Ps0, Pd1, Ps1, qNoTax: safe(qNoTax) 
+                };
+            }, [demandBase, supplyBase, shockD, shockS, tax]);
+
+            const firmRes = useMemo(() => {
+                const CT = (q) => evaluateFunction(firmCostBase, q);
+                const CMg = (q) => derive(CT, q);
+                const CMe = (q) => q > 0.01 ? CT(q) / q : CT(0.01)/0.01;
+                const CMeV = (q) => {
+                    const CF = evaluateFunction(firmCostBase, 0);
+                    return q > 0.01 ? (CT(q) - CF) / q : 0;
+                };
+                
+                const qOpt = findRoot((q) => CMg(q) - marketP, 0, 300);
+                const profit = (marketP * qOpt) - CT(qOpt);
+                const qLP = findRoot((q) => CMg(q) - CMe(q), 0.1, 500);
+                const pLP = CMe(qLP);
+
+                return { qOpt: safe(qOpt), CMg, CMe, CMeV, profit: safe(profit), pLP: safe(pLP) };
+            }, [firmCostBase, marketP]);
+
+            const monoRes = useMemo(() => {
+                const Pd = (q) => evaluateFunction(monoDemand, q);
+                const CT = (q) => evaluateFunction(monoCost, q);
+                const IT = (q) => Pd(q) * q;
+                const IMg = (q) => derive(IT, q);
+                const CMg = (q) => derive(CT, q);
+
+                const qm = findRoot((q) => IMg(q) - CMg(q), 0, 300);
+                const pm = Pd(qm);
+                const profit = IT(qm) - CT(qm);
+                const qCP = findRoot((q) => Pd(q) - CMg(q), 0, 300);
+                const dwl = integrate((q) => Math.max(0, Pd(q) - CMg(q)), qm, qCP);
+
+                return { qm: safe(qm), pm: safe(pm), Pd, IMg, CMg, profit: safe(profit), dwl: safe(dwl) };
+            }, [monoDemand, monoCost]);
+
+            const elasticidad = useMemo(() => {
+                const Pd = (q) => evaluateFunction(demandBase, q) + shockD;
+                const qEnP = findRoot((q) => Pd(q) - elasPrice, 0, 500);
+                const dpdq = derive(Pd, qEnP);
+                let eps = 0;
+                if (qEnP <= 0.01) eps = 9999;
+                else if (Math.abs(dpdq) < 0.0001) eps = 9999;
+                else eps = Math.abs((1 / dpdq) * (elasPrice / qEnP));
+                return { qEnP: safe(qEnP), eps: safe(eps), Pd };
+            }, [demandBase, shockD, elasPrice]);
+
+            useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [mode, term]);
+
+            const PlotlyChart = ({ data, layout }) => {
+                const chartRef = useRef(null);
+                useEffect(() => {
+                    if(!chartRef.current) return;
+                    Plotly.newPlot(chartRef.current, data, { 
+                        ...layout, 
+                        autosize: true, 
+                        margin: {l:40, r:20, t:40, b:40},
+                        font: { family: 'ui-sans-serif, system-ui' }
+                    }, { responsive: true, displayModeBar: false });
+                }, [data, layout]);
+                return <div ref={chartRef} className="w-full h-full" />;
+            };
+
+            return (
+                <div className="min-h-screen pb-10">
+                    <header className="bg-slate-900 text-white shadow-xl px-6 py-4 flex flex-col md:flex-row justify-between items-center sticky top-0 z-50">
+                        <div className="flex items-center gap-3">
+                            <i data-lucide="bar-chart-2" className="text-indigo-400"></i>
+                            <h1 className="text-xl font-black tracking-tighter uppercase italic">Micro<span className="text-indigo-400">Sim</span> Pro</h1>
+                        </div>
+                        <nav className="flex bg-slate-800 p-1 rounded-xl overflow-x-auto no-scrollbar gap-1 my-4 md:my-0">
+                            {['mercado', 'empresa', 'monopolio', 'elasticidad'].map(m => (
+                                <button key={m} onClick={() => setMode(m)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${mode === m ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+                                    {m.toUpperCase()}
+                                </button>
+                            ))}
+                        </nav>
+                        <div className="flex bg-slate-800 p-1 rounded-lg">
+                            <button onClick={() => setTerm('CP')} className={`px-3 py-1.5 rounded-md text-[10px] font-black transition-all ${term === 'CP' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>CORTO PLAZO</button>
+                            <button onClick={() => setTerm('LP')} className={`px-3 py-1.5 rounded-md text-[10px] font-black transition-all ${term === 'LP' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>LARGO PLAZO</button>
+                        </div>
+                    </header>
+
+                    <main className="max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <section className="lg:col-span-8 flex flex-col gap-6">
+                            <Card className="p-0 overflow-hidden shadow-xl min-h-[500px]">
+                                {mode === 'mercado' && (
+                                    <PlotlyChart 
+                                        data={[
+                                            { x: Array.from({length: 40}, (_, i) => i * marketRes.qStar / 40).concat([marketRes.qStar, 0]), y: Array.from({length: 40}, (_, i) => marketRes.Pd1(i * marketRes.qStar / 40)).concat([marketRes.pdStar, marketRes.pdStar]), fill: 'toself', fillcolor: 'rgba(59, 130, 246, 0.2)', line: {width: 0}, name: 'Exc. Consumidor' },
+                                            { x: Array.from({length: 40}, (_, i) => i * marketRes.qStar / 40).concat([marketRes.qStar, 0]), y: Array.from({length: 40}, (_, i) => marketRes.Ps1(i * marketRes.qStar / 40)).concat([marketRes.psStar, marketRes.psStar]), fill: 'toself', fillcolor: 'rgba(239, 68, 68, 0.2)', line: {width: 0}, name: 'Exc. Productor' },
+                                            { x: [marketRes.qStar, marketRes.qNoTax, marketRes.qStar], y: [marketRes.psStar, (marketRes.psStar+marketRes.pdStar)/2, marketRes.pdStar], fill: 'toself', fillcolor: 'rgba(100, 116, 139, 0.4)', line: {width: 0}, name: 'Pérdida (PIE)' },
+                                            { x: Array.from({length: 100}, (_, i) => i * 2), y: Array.from({length: 100}, (_, i) => marketRes.Pd0(i * 2)), name: 'D Inicial', line: {color: 'rgba(0,0,255,0.1)', dash: 'dot'} },
+                                            { x: Array.from({length: 100}, (_, i) => i * 2), y: Array.from({length: 100}, (_, i) => marketRes.Ps0(i * 2)), name: 'S Inicial', line: {color: 'rgba(255,0,0,0.1)', dash: 'dot'} },
+                                            { x: Array.from({length: 100}, (_, i) => i * 2), y: Array.from({length: 100}, (_, i) => marketRes.Pd1(i * 2)), name: 'D Final', line: {color: 'blue', width: 3} },
+                                            { x: Array.from({length: 100}, (_, i) => i * 2), y: Array.from({length: 100}, (_, i) => marketRes.Ps1(i * 2)), name: 'S Final', line: {color: 'red', width: 3} },
+                                            term === 'LP' && { x: [0, 200], y: [marketRes.psStar, marketRes.psStar], name: 'Oferta LP', line: {color: 'green', dash: 'dashdot'} }
+                                        ].filter(Boolean)}
+                                        layout={{ title: 'Equilibrio de Mercado', xaxis: {title: 'Q'}, yaxis: {title: 'P'} }}
+                                    />
+                                )}
+                                {mode === 'empresa' && (
+                                    <PlotlyChart 
+                                        data={[
+                                            { x: Array.from({length: 100}, (_,i)=>i*0.6), y: Array.from({length: 100}, (_,i)=>firmRes.CMg(i*0.6)), name: 'CMg', line: {color: 'red', width: 3} },
+                                            { x: Array.from({length: 100}, (_,i)=>i*0.6), y: Array.from({length: 100}, (_,i)=>firmRes.CMe(i*0.6)), name: 'CMe', line: {color: 'blue', width: 2} },
+                                            { x: Array.from({length: 100}, (_,i)=>i*0.6), y: Array.from({length: 100}, (_,i)=>firmRes.CMeV(i*0.6)), name: 'CMeV', line: {color: 'orange', dash: 'dash'} },
+                                            { x: [0, 60], y: [term === 'CP' ? marketP : firmRes.pLP, term === 'CP' ? marketP : firmRes.pLP], name: 'Precio P', line: {color: 'black', width: 4, dash: 'dot'} }
+                                        ]}
+                                        layout={{ title: `Empresa: ${term}`, xaxis: {title: 'q'}, yaxis: {title: 'Costes / P', range:[0, 120]} }}
+                                    />
+                                )}
+                                {mode === 'monopolio' && (
+                                    <PlotlyChart 
+                                        data={[
+                                            { x: Array.from({length: 100}, (_,i)=>i), y: Array.from({length: 100}, (_,i)=>monoRes.Pd(i)), name: 'Demanda', line: {color: 'blue', width: 3} },
+                                            { x: Array.from({length: 100}, (_,i)=>i), y: Array.from({length: 100}, (_,i)=>monoRes.IMg(i)), name: 'IMg', line: {color: 'cyan', dash: 'dash'} },
+                                            { x: Array.from({length: 100}, (_,i)=>i), y: Array.from({length: 100}, (_,i)=>monoRes.CMg(i)), name: 'CMg', line: {color: 'red', width: 2} },
+                                            { x: [monoRes.qm], y: [monoRes.pm], mode: 'markers+text', text: ' Eq.', marker: {size: 12, color: 'purple'}, name: 'Monopolio' }
+                                        ]}
+                                        layout={{ title: 'Monopolio', xaxis: {title: 'Q', range: [0, 100]}, yaxis: {title: 'P', range: [0, 150]} }}
+                                    />
+                                )}
+                                {mode === 'elasticidad' && (
+                                    <PlotlyChart 
+                                        data={[
+                                            { x: Array.from({length: 150}, (_,i)=>i), y: Array.from({length: 150}, (_,i)=>elasticidad.Pd(i)), name: 'Demanda', line: {color: 'blue', width: 3} },
+                                            { x: [elasticidad.qEnP], y: [elasPrice], mode: 'markers', marker: {size: 15, color: 'red'}, name: 'Punto Análisis' }
+                                        ]}
+                                        layout={{ title: 'Demanda', xaxis: {title: 'Q'}, yaxis: {title: 'P'} }}
+                                    />
+                                )}
+                            </Card>
+
+                            <Card title="Panel de Configuración">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {mode === 'mercado' && (
+                                        <>
+                                            <div><label className="text-[10px] font-bold text-blue-600 block mb-1">Ecuación Demanda Pd(q)</label><input value={demandBase} onChange={(e)=>setDemandBase(e.target.value)} className="w-full p-2 bg-slate-50 border rounded text-xs font-mono" /></div>
+                                            <div><label className="text-[10px] font-bold text-red-600 block mb-1">Ecuación Oferta Ps(q)</label><input value={supplyBase} onChange={(e)=>setSupplyBase(e.target.value)} className="w-full p-2 bg-slate-50 border rounded text-xs font-mono" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-500">Shock Demanda (ΔD): {shockD}</label><input type="range" min="-30" max="30" value={shockD} onChange={(e)=>setShockD(parseFloat(e.target.value))} className="w-full accent-blue-600" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-500">Shock Oferta (ΔS): {shockS}</label><input type="range" min="-30" max="30" value={shockS} onChange={(e)=>setShockS(parseFloat(e.target.value))} className="w-full accent-red-600" /></div>
+                                            <div className="md:col-span-2 border-t pt-4"><label className="text-[10px] font-bold text-emerald-600 uppercase">Impuesto Unitario: {tax}€</label><input type="range" min="0" max="30" value={tax} onChange={(e)=>setTax(parseFloat(e.target.value))} className="w-full accent-emerald-600" /></div>
+                                        </>
+                                    )}
+                                    {mode === 'empresa' && (
+                                        <>
+                                            <div><label className="text-[10px] font-bold text-indigo-600 block mb-1">Coste Total CT(q)</label><input value={firmCostBase} onChange={(e)=>setFirmCostBase(e.target.value)} className="w-full p-2 bg-slate-50 border rounded text-xs font-mono" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-500 block mb-1 uppercase tracking-tighter">Precio de Mercado: {marketP}€</label><input type="range" min="10" max="100" value={marketP} onChange={(e)=>setMarketP(parseFloat(e.target.value))} className="w-full accent-indigo-600" /></div>
+                                        </>
+                                    )}
+                                    {mode === 'monopolio' && (
+                                        <>
+                                            <div><label className="text-[10px] font-bold text-blue-600 block mb-1 uppercase">Demanda Inversa Pd(q)</label><input value={monoDemand} onChange={(e)=>setMonoDemand(e.target.value)} className="w-full p-2 bg-slate-50 border rounded text-xs font-mono" /></div>
+                                            <div><label className="text-[10px] font-bold text-red-600 block mb-1 uppercase">Coste Total CT(q)</label><input value={monoCost} onChange={(e)=>setMonoCost(e.target.value)} className="w-full p-2 bg-slate-50 border rounded text-xs font-mono" /></div>
+                                        </>
+                                    )}
+                                    {mode === 'elasticidad' && (
+                                        <div className="md:col-span-2">
+                                            <label className="text-[10px] font-bold text-indigo-600 block mb-1 uppercase tracking-widest">Precio de Análisis: {elasPrice}€</label>
+                                            <input type="range" min="10" max="110" value={elasPrice} onChange={(e)=>setElasPrice(parseFloat(e.target.value))} className="w-full accent-indigo-600" />
+                                            <div className="text-[10px] text-slate-400 mt-2 italic">Se calcula sobre la demanda base: {demandBase} + shock({shockD})</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </Card>
+                        </section>
+
+                        <section className="lg:col-span-4 flex flex-col gap-6">
+                            <Card title="Estadísticas de Resultados" className="bg-slate-900 text-white border-none shadow-2xl">
+                                {mode === 'mercado' && (
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between border-b border-slate-700 pb-2"><span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">Cantidad Eq. (Q*)</span><span className="font-black text-xl text-white text-right">{(marketRes.qStar || 0).toFixed(2)} u.</span></div>
+                                        <div className="flex justify-between border-b border-slate-700 pb-2"><span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">Precio Eq. (Pd)</span><span className="font-black text-xl text-indigo-400 text-right">{(marketRes.pdStar || 0).toFixed(2)}€</span></div>
+                                        <div className="pt-2 space-y-2 text-xs">
+                                            <div className="flex justify-between font-bold"><span className="text-blue-400 uppercase">Exc. Consumidor</span><span className="text-white text-right">{(marketRes.cs || 0).toFixed(2)}€</span></div>
+                                            <div className="flex justify-between font-bold"><span className="text-red-400 uppercase">Exc. Productor</span><span className="text-white text-right">{(marketRes.ps_val || 0).toFixed(2)}€</span></div>
+                                            {marketRes.taxRev > 0 && <div className="flex justify-between"><span className="text-emerald-400">Recaudación Fiscal</span><span className="text-white text-right">{(marketRes.taxRev || 0).toFixed(2)}€</span></div>}
+                                            {marketRes.dwl > 0.05 && <div className="flex justify-between text-rose-400 font-bold border-t border-slate-700 pt-2 uppercase tracking-tighter"><span>Pérdida Bienestar (PIE)</span><span className="text-right">-{marketRes.dwl.toFixed(2)}€</span></div>}
+                                        </div>
+                                    </div>
+                                )}
+                                {mode === 'empresa' && (
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between border-b border-slate-700 pb-2"><span className="text-slate-400 text-[10px] uppercase font-bold">Producción q*</span><span className="font-black text-xl text-right">{firmRes.qOpt.toFixed(2)} u.</span></div>
+                                        <div className="p-3 bg-indigo-900/50 rounded-lg text-center"><p className="text-[10px] text-indigo-300 font-bold uppercase mb-1">Beneficio Económico</p><p className={`text-3xl font-black ${firmRes.profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>{firmRes.profit.toFixed(2)}€</p></div>
+                                        {term === 'LP' && <div className="text-[10px] text-center text-slate-400 italic">En Largo Plazo, el precio tiende a {(firmRes.pLP).toFixed(2)}€ (Beneficio Normal).</div>}
+                                    </div>
+                                )}
+                                {mode === 'monopolio' && (
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between border-b border-slate-700 pb-2"><span className="text-slate-400 text-[10px] uppercase font-bold">Cantidad Monopolio</span><span className="font-black text-xl text-white text-right">{monoRes.qm.toFixed(2)} u.</span></div>
+                                        <div className="flex justify-between border-b border-slate-700 pb-2"><span className="text-slate-400 text-[10px] uppercase font-bold">Precio Monopolio</span><span className="font-black text-xl text-purple-400 text-right">{monoRes.pm.toFixed(2)}€</span></div>
+                                        <div className="p-3 bg-purple-900/30 rounded-lg text-center border border-purple-800"><p className="text-[10px] text-purple-300 font-bold uppercase">Beneficio</p><p className="text-3xl font-black text-white">{monoRes.profit.toFixed(2)}€</p></div>
+                                        <div className="flex justify-between text-rose-400 text-[10px] font-bold uppercase tracking-tight"><span>Ineficiencia Social (DWL)</span><span className="text-right">{monoRes.dwl.toFixed(2)}€</span></div>
+                                    </div>
+                                )}
+                                {mode === 'elasticidad' && (
+                                    <div className="text-center py-6">
+                                        <p className="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Coeficiente Elasticidad</p>
+                                        <p className="text-6xl font-black text-indigo-400 mb-4">{elasticidad.eps > 900 ? "∞" : elasticidad.eps.toFixed(2)}</p>
+                                        <p className="text-[10px] px-8 italic text-slate-300 leading-relaxed">
+                                            {elasticidad.eps > 1 ? "Demanda ELÁSTICA (|ε| > 1): Alta sensibilidad al precio." : "Demanda INELÁSTICA (|ε| < 1): Baja sensibilidad al precio."}
+                                        </p>
+                                    </div>
+                                )}
+                            </Card>
+
+                            <Card title="Fórmulas Revisadas">
+                                {mode === 'mercado' && (
+                                    <>
+                                        <FormulaBox title="Equilibrio" formula="Pd(Q) = Ps(Q) + Tax" desc="Valoración marginal igual al coste marginal más la tasa fiscal." />
+                                        <FormulaBox title="Excedentes (Integral)" formula="E = ∫ |P_eq - P(q)| dq" desc="Área bajo la curva de valoración o sobre la curva de costes." />
+                                    </>
+                                )}
+                                {mode === 'empresa' && (
+                                    <>
+                                        <FormulaBox title="Óptimo Competitivo" formula="Precio = Coste Marginal" desc="La empresa competitiva iguala el precio del mercado a su CMg." />
+                                        <FormulaBox title="Equilibrio Largo Plazo" formula="P = mín(CMe)" desc="Punto de escala eficiente mínima donde el beneficio es nulo." />
+                                    </>
+                                )}
+                                {mode === 'monopolio' && (
+                                    <>
+                                        <FormulaBox title="Regla de Oro" formula="Ingreso Mg = Coste Mg" desc="El monopolista maximiza donde el ingreso extra iguala al coste extra." />
+                                        <FormulaBox title="Ingreso Marginal" formula="IMg = d(P*Q) / dQ" desc="La derivada del ingreso total respecto a la cantidad producida." />
+                                    </>
+                                )}
+                                {mode === 'elasticidad' && (
+                                    <FormulaBox title="Elasticidad Punto" formula="ε = | (dQ/dP) * (P/Q) |" desc="Sensibilidad porcentual de la cantidad ante el nivel de precios actual." />
+                                )}
+                            </Card>
+                        </section>
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

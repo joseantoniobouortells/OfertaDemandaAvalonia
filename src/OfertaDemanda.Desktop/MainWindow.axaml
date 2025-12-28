@@ -1,0 +1,287 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        mc:Ignorable="d"
+        x:Class="OfertaDemanda.Desktop.MainWindow"
+        Width="1200"
+        Height="800"
+        Title="Oferta vs Demanda"
+        x:CompileBindings="False">
+    <Grid RowDefinitions="Auto,*" Margin="16">
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,12">
+            <TextBlock Text="Oferta, demanda y elasticidades"
+                       FontSize="22"
+                       FontWeight="Bold" />
+            <Button Content="Restablecer valores por defecto"
+                    Command="{Binding ResetDefaultsCommand}"
+                    Margin="16,0,0,0" />
+        </StackPanel>
+
+        <TabControl Grid.Row="1"
+                    TabStripPlacement="Top">
+            <TabItem Header="Mercado">
+                <Grid ColumnDefinitions="340,*"
+                      ColumnSpacing="16"
+                      DataContext="{Binding Market}">
+                    <ScrollViewer Grid.Column="0"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Funciones"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="Demanda inversa Pd(q)" />
+                            <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Oferta inversa Ps(q)"
+                                       Margin="0,8,0,0" />
+                            <TextBox Text="{Binding SupplyExpression, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Shocks e impuesto"
+                                       FontWeight="Bold"
+                                       Margin="0,16,0,0" />
+                            <TextBlock Text="Shock demanda ΔD" />
+                            <Slider Minimum="-30"
+                                    Maximum="30"
+                                    Value="{Binding DemandShock}"
+                                    TickFrequency="5" />
+                            <TextBlock Text="{Binding DemandShock, StringFormat='Valor actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="Shock oferta ΔS"
+                                       Margin="0,8,0,0" />
+                            <Slider Minimum="-30"
+                                    Maximum="30"
+                                    Value="{Binding SupplyShock}"
+                                    TickFrequency="5" />
+                            <TextBlock Text="{Binding SupplyShock, StringFormat='Valor actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="Impuesto unitario t"
+                                       Margin="0,8,0,0" />
+                            <Slider Minimum="0"
+                                    Maximum="30"
+                                    Value="{Binding Tax}"
+                                    TickFrequency="5" />
+                            <TextBlock Text="{Binding Tax, StringFormat='Valor actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="Resultados"
+                                       FontWeight="Bold"
+                                       Margin="0,16,0,0" />
+                            <WrapPanel>
+                                <TextBlock Text="{Binding EquilibriumText}" />
+                                <TextBlock Text="{Binding PriceConsumerText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding PriceProducerText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding ConsumerSurplusText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding ProducerSurplusText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding TaxRevenueText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
+                            </WrapPanel>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="8"
+                                    Background="#3FFFF0F0"
+                                    CornerRadius="4"
+                                    IsVisible="{Binding HasErrors}">
+                                <StackPanel>
+                                    <TextBlock Text="Errores"
+                                               FontWeight="Bold" />
+                                    <ItemsControl ItemsSource="{Binding Errors}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="• {Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <lvc:CartesianChart Grid.Column="1"
+                                        Series="{Binding Series}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}"
+                                        LegendPosition="Right" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Empresa">
+                <Grid ColumnDefinitions="340,*"
+                      ColumnSpacing="16"
+                      DataContext="{Binding Firm}">
+                    <ScrollViewer Grid.Column="0"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Costes y modo"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="CT(q)" />
+                            <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Modo de operación"
+                                       Margin="0,8,0,0" />
+                            <ComboBox ItemsSource="{Binding ModeOptions}"
+                                      SelectedItem="{Binding SelectedMode}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Label}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="Precio del mercado (CP)"
+                                       Margin="0,8,0,0" />
+                            <Slider Minimum="10"
+                                    Maximum="100"
+                                    Value="{Binding Price}"
+                                    IsEnabled="{Binding IsPriceEditable}" />
+                            <TextBlock Text="{Binding Price, StringFormat='Valor actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="Resultados"
+                                       FontWeight="Bold"
+                                       Margin="0,16,0,0" />
+                            <WrapPanel>
+                                <TextBlock Text="{Binding QuantityText}" />
+                                <TextBlock Text="{Binding PriceText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding ProfitText}" Margin="8,0,0,0" />
+                            </WrapPanel>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="8"
+                                    Background="#3FFFF0F0"
+                                    CornerRadius="4"
+                                    IsVisible="{Binding HasErrors}">
+                                <StackPanel>
+                                    <TextBlock Text="Errores"
+                                               FontWeight="Bold" />
+                                    <ItemsControl ItemsSource="{Binding Errors}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="• {Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <lvc:CartesianChart Grid.Column="1"
+                                        Series="{Binding Series}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}"
+                                        LegendPosition="Right" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Monopolio">
+                <Grid ColumnDefinitions="340,*"
+                      ColumnSpacing="16"
+                      DataContext="{Binding Monopoly}">
+                    <ScrollViewer Grid.Column="0"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Demanda inversa Pd(q)"
+                                       FontWeight="Bold" />
+                            <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="Coste total CT(q)"
+                                       Margin="0,8,0,0" />
+                            <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Text="Resultados"
+                                       FontWeight="Bold"
+                                       Margin="0,16,0,0" />
+                            <WrapPanel>
+                                <TextBlock Text="{Binding MonopolyQuantityText}" />
+                                <TextBlock Text="{Binding MonopolyPriceText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding ProfitText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding CompetitiveQuantityText}" Margin="8,0,0,0" />
+                                <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
+                            </WrapPanel>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="8"
+                                    Background="#3FFFF0F0"
+                                    CornerRadius="4"
+                                    IsVisible="{Binding HasErrors}">
+                                <StackPanel>
+                                    <TextBlock Text="Errores"
+                                               FontWeight="Bold" />
+                                    <ItemsControl ItemsSource="{Binding Errors}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="• {Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <lvc:CartesianChart Grid.Column="1"
+                                        Series="{Binding Series}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}"
+                                        LegendPosition="Right" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Elasticidad">
+                <Grid ColumnDefinitions="340,*"
+                      ColumnSpacing="16"
+                      DataContext="{Binding Elasticity}">
+                    <ScrollViewer Grid.Column="0"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Se usa la demanda base del mercado"
+                                       FontWeight="Bold" />
+                            <TextBlock Text="Demanda Pd(q)" />
+                            <TextBox Text="{Binding Market.DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="{Binding Market.DemandShock, StringFormat='Shock ΔD actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="Precio para elasticidad"
+                                       Margin="0,12,0,0" />
+                            <Slider Minimum="10"
+                                    Maximum="110"
+                                    Value="{Binding Price}" />
+                            <TextBlock Text="{Binding Price, StringFormat='Precio actual: {0:F0}'}"
+                                       FontSize="12" />
+
+                            <TextBlock Text="{Binding ElasticityText}"
+                                       Margin="0,12,0,0" />
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="8"
+                                    Background="#3FFFF0F0"
+                                    CornerRadius="4"
+                                    IsVisible="{Binding HasErrors}">
+                                <StackPanel>
+                                    <TextBlock Text="Errores"
+                                               FontWeight="Bold" />
+                                    <ItemsControl ItemsSource="{Binding Errors}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="• {Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <lvc:CartesianChart Grid.Column="1"
+                                        Series="{Binding Series}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}"
+                                        LegendPosition="Right" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
