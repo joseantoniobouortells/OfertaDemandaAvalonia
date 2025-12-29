@@ -10,16 +10,11 @@ Usage (PowerShell):
   powershell -ExecutionPolicy Bypass -File .\scripts\windows_install_app.ps1 -Install
   powershell -ExecutionPolicy Bypass -File .\scripts\windows_install_app.ps1 -Install -AppName "OfertaDemandaAvalonia"
   powershell -ExecutionPolicy Bypass -File .\scripts\windows_install_app.ps1 -Uninstall -AppName "OfertaDemandaAvalonia"
-
-Notes:
-- This is a per-user install (no admin).
-- For redistribution to other PCs, consider MSIX/MSI later.
 #>
 
 [CmdletBinding()]
 param(
   [string]$Project = "",
-
   [string]$AppName = "",
 
   [ValidateSet("win-x64","win-arm64")]
@@ -31,13 +26,10 @@ param(
   [bool]$SelfContained = $true,
 
   [string]$Version = "1.0.0",
-
   [string]$Company = "OfertaDemanda",
 
   [switch]$Install,
-
   [switch]$Uninstall,
-
   [switch]$Clean
 )
 
@@ -47,8 +39,7 @@ $ErrorActionPreference = "Stop"
 function Die($msg) { throw $msg }
 
 function RepoRoot {
-  $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-  return (Resolve-Path (Join-Path $scriptDir "..")).Path
+  return (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 }
 
 function FindProject($root) {
@@ -57,7 +48,6 @@ function FindProject($root) {
   $candidate = Join-Path $root "src\OfertaDemanda.Desktop\OfertaDemanda.Desktop.csproj"
   if (Test-Path $candidate) { return $candidate }
 
-  # fallback: first csproj that looks like desktop/avalonia
   $found = Get-ChildItem -Path (Join-Path $root "src") -Recurse -Filter *.csproj |
     Where-Object { $_.FullName -match '(?i)(desktop|avalonia)' } |
     Select-Object -First 1
@@ -73,11 +63,14 @@ function EnsureDotnet {
 }
 
 function DetectExe($publishDir, $projectBaseName) {
-  # Prefer: an .exe in publish folder
+  if (-not (Test-Path $publishDir)) {
+    Die "No existe el directorio de publish: $publishDir"
+  }
+
   $exe = Join-Path $publishDir "$projectBaseName.exe"
   if (Test-Path $exe) { return $exe }
 
-  $anyExe = Get-ChildItem -Path $publishDir -Filter *.exe -File | Select-Object -First 1
+  $anyExe = Get-ChildItem -Path $publishDir -Filter *.exe -File -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($anyExe) { return $anyExe.FullName }
 
   Die "No encuentro ningún .exe en $publishDir. Revisa el publish."
@@ -117,17 +110,16 @@ if (-not $AppName) { $AppName = $projBase }
 $artifacts = Join-Path $root "artifacts"
 $publishDir = Join-Path $artifacts ("publish\" + $Rid)
 $installDir = Join-Path $env:LOCALAPPDATA ("Programs\" + $AppName)
-$exePathAfterInstall = Join-Path $installDir ([System.IO.Path]::GetFileName((DetectExe $publishDir $projBase))) # placeholder, re-evaluated after publish
 $shortcutPath = StartMenuShortcutPath $AppName
 
-Write-Host "Repo root   : $root"
-Write-Host "Project     : $projPath"
-Write-Host "Config      : $Config"
-Write-Host "RID         : $Rid"
+Write-Host "Repo root    : $root"
+Write-Host "Project      : $projPath"
+Write-Host "Config       : $Config"
+Write-Host "RID          : $Rid"
 Write-Host "SelfContained: $SelfContained"
-Write-Host "Publish dir : $publishDir"
-Write-Host "Install dir : $installDir"
-Write-Host "Shortcut    : $shortcutPath"
+Write-Host "Publish dir  : $publishDir"
+Write-Host "Install dir  : $installDir"
+Write-Host "Shortcut     : $shortcutPath"
 
 if ($Uninstall) {
   Write-Host "`n==> Uninstall (per-user) ..."
@@ -151,7 +143,6 @@ dotnet publish $projPath `
   -o $publishDir | Out-Host
 
 $exeInPublish = DetectExe $publishDir $projBase
-
 Write-Host "`nExecutable (publish): $exeInPublish"
 
 if ($Install) {
