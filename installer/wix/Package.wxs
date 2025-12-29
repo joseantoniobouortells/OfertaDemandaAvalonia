@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="$(var.ProductName)"
+    Manufacturer="$(var.Manufacturer)"
+    Version="$(var.ProductVersion)"
+    UpgradeCode="$(var.UpgradeCode)"
+    InstallerVersion="500"
+    Compressed="yes"
+    Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="Ya hay una version mas reciente de $(var.ProductName) instalada." />
+    <MediaTemplate />
+    <Icon Id="AppIcon" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Feature Id="MainFeature" Title="$(var.ProductName)" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
+      <ComponentRef Id="DesktopShortcutComponent" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)" />
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder" />
+  </Fragment>
+
+  <Fragment>
+    <Component Id="StartMenuShortcutComponent" Guid="4F66B418-9D11-4B2B-9C50-6D3CBB09C2E1" Directory="ApplicationProgramsFolder">
+      <Shortcut
+        Id="StartMenuShortcut"
+        Name="$(var.ProductName)"
+        Target="[INSTALLFOLDER]$(var.ExeName)"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RemoveFolder Id="CleanProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue Root="HKLM" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+    <Component Id="DesktopShortcutComponent" Guid="A2E40C83-0B21-4B1E-9D98-6F4D5ECF29E4" Directory="DesktopFolder">
+      <Shortcut
+        Id="DesktopShortcut"
+        Name="$(var.ProductName)"
+        Target="[INSTALLFOLDER]$(var.ExeName)"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RegistryValue Root="HKLM" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+  </Fragment>
+</Wix>

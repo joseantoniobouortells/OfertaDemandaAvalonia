@@ -21,6 +21,8 @@ Cada pestaña comparte el motor del proyecto `OfertaDemanda.Core`, por lo que lo
 - **`src/OfertaDemanda.Desktop`**: cliente Avalonia (.NET 8) con MVVM Toolkit + LiveCharts2. Los view models contienen el estado observable, parsean las entradas del usuario mediante el motor y transforman los resultados en series de gráficos y métricas de texto.
 - **`test/OfertaDemanda.Core.Tests`**: batería xUnit que valida parser, métodos numéricos y modelos con el conjunto de expresiones del HTML original.
 - **`scripts/publish-macos.sh`**: automatiza `dotnet publish` para generar un bundle `.app` autocontenido y opcionalmente instalarlo en `/Applications`.
+- **`scripts/create-windows-msix.ps1`**: genera un `.msix` firmado para Windows 11 usando el SDK de Windows.
+- **`scripts/create-windows-msi.ps1`**: genera un `.msi` tradicional con WiX Toolset v4.
 
 ### Estructura de carpetas
 
@@ -57,6 +59,43 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 # Generar bundle macOS autocontenido (Release + install opcional)
 ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release --install
 ```
+
+## MSIX en Windows 11
+
+```powershell
+# Crear MSIX (Release, win-x64)
+powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msix.ps1
+
+# Instalar localmente el MSIX generado
+Add-AppxPackage -Path .\artifacts\msix\OfertaDemandaAvalonia_<version>_win-x64.msix
+```
+
+Si no defines `SIGN_CERT_PFX`, el script genera un certificado de desarrollo y lo deja en `artifacts\msix\OfertaDemandaAvalonia.Dev.cer`. Para confiar localmente:
+
+```powershell
+Import-Certificate -FilePath .\artifacts\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\TrustedPeople
+Import-Certificate -FilePath .\artifacts\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\Root
+```
+
+Si tienes un PFX propio, exporta estas variables antes de ejecutar:
+
+```powershell
+$env:SIGN_CERT_PFX="C:\ruta\cert.pfx"
+$env:SIGN_CERT_PASSWORD="tu-password"
+```
+
+## MSI en Windows 11
+
+```powershell
+# Crear MSI (Release, win-x64)
+powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msi.ps1
+```
+
+El script usa WiX Toolset v4 (dotnet tool) y lo instala si no esta disponible.
+
+Salida esperada:
+
+- `artifacts\msi\OfertaDemandaAvalonia_<version>_win-x64.msi`
 
 ## Ajustes de tema y preferencias
 
