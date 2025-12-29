@@ -224,7 +224,7 @@ public partial class MarketViewModel : ViewModelBase
             GeometryFill = null,
             GeometryStroke = null,
             LineSmoothness = 0,
-            Name = "DWL",
+            Name = "PEI",
             IsHoverable = false
         };
 
