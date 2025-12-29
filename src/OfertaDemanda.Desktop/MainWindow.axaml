@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        xmlns:views="using:OfertaDemanda.Desktop.Views"
         mc:Ignorable="d"
         x:Class="OfertaDemanda.Desktop.MainWindow"
         Width="1200"
@@ -281,6 +282,10 @@
                                         YAxes="{Binding YAxes}"
                                         LegendPosition="Right" />
                 </Grid>
+            </TabItem>
+
+            <TabItem Header="Configuración">
+                <views:SettingsView DataContext="{Binding Settings}" />
             </TabItem>
         </TabControl>
     </Grid>

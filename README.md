@@ -57,6 +57,13 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release --install
 ```
 
+## Ajustes de tema y preferencias
+
+- La pestaña **Configuración** expone un selector (Sistema/Claro/Oscuro) que aplica el tema Fluent correspondiente en caliente usando `RequestedThemeVariant`.
+- La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows).
+- Para restablecer la apariencia basta con borrar ese archivo y reiniciar la app; se volverá al modo “Predeterminado del sistema”.
+- El almacenamiento es per‑usuario y no depende de servicios externos.
+
 ## Flujo de trabajo recomendado
 
 1. Modela los cambios matemáticos en `Core` (expresión parser, cálculos, etc.) y cubre el escenario con pruebas en `test/OfertaDemanda.Core.Tests`.

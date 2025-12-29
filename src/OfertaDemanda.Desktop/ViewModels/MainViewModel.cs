@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OfertaDemanda.Desktop.Services;
 
 namespace OfertaDemanda.Desktop.ViewModels;
 
@@ -9,14 +10,16 @@ public sealed partial class MainViewModel : ObservableObject
     public FirmViewModel Firm { get; }
     public MonopolyViewModel Monopoly { get; }
     public ElasticityViewModel Elasticity { get; }
+    public SettingsViewModel Settings { get; }
     public IRelayCommand ResetDefaultsCommand { get; }
 
-    public MainViewModel()
+    public MainViewModel(ThemeService themeService)
     {
         Market = new MarketViewModel();
         Firm = new FirmViewModel();
         Monopoly = new MonopolyViewModel();
         Elasticity = new ElasticityViewModel(Market);
+        Settings = new SettingsViewModel(themeService);
         ResetDefaultsCommand = new RelayCommand(ApplyDefaults);
         ApplyDefaults();
     }

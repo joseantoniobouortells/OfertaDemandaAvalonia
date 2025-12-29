@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.SettingsView">
+  <Border Padding="24"
+          CornerRadius="8"
+          Background="{DynamicResource ThemeBackgroundBrush}"
+          BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+          BorderThickness="1">
+    <StackPanel Spacing="16">
+      <StackPanel>
+        <TextBlock Text="Configuración de apariencia"
+                   FontSize="20"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Selecciona cómo se ve la aplicación en todos los sistemas (macOS, Windows, Linux)."
+                   Opacity="0.8"
+                   Margin="0,4,0,0" />
+      </StackPanel>
+
+      <StackPanel Spacing="8">
+        <TextBlock Text="Tema de la aplicación"
+                   FontWeight="Bold" />
+        <ComboBox ItemsSource="{Binding ThemeOptions}"
+                  SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
+                  MinWidth="260"
+                  HorizontalAlignment="Left">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock Text="Los cambios se aplican inmediatamente y se guardan para próximas sesiones."
+                   FontSize="12"
+                   Opacity="0.9" />
+      </StackPanel>
+
+      <Border Padding="12"
+              Background="{DynamicResource ThemeControlLowBrush}"
+              CornerRadius="6">
+        <StackPanel Spacing="4">
+          <TextBlock Text="Archivo de configuración"
+                     FontWeight="Bold"
+                     FontSize="13" />
+          <TextBlock Text="{Binding SettingsFilePath}"
+                     FontFamily="Consolas,Menlo,monospace"
+                     TextWrapping="Wrap" />
+          <TextBlock Text="Borra este archivo para restablecer las preferencias."
+                     FontSize="12"
+                     Opacity="0.85" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </Border>
+</UserControl>
