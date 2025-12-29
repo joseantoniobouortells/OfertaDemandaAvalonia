@@ -9,6 +9,7 @@
         Width="1200"
         Height="800"
         Title="Oferta vs Demanda"
+        Icon="avares://OfertaDemanda.Desktop/Assets/icon_1024.png"
         x:CompileBindings="False">
     <Grid RowDefinitions="Auto,*" Margin="16">
         <StackPanel Orientation="Horizontal"

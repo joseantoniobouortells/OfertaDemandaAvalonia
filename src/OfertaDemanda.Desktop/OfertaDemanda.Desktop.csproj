@@ -24,4 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OfertaDemanda.Core\OfertaDemanda.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/icon_1024.png" />
+  </ItemGroup>
 </Project>
