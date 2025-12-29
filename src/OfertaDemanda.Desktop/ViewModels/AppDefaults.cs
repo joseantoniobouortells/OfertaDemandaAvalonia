@@ -11,6 +11,11 @@ internal static class AppDefaults
         public const double DemandShock = 0;
         public const double SupplyShock = 0;
         public const double Tax = 0;
+        public const MarketCostFunctionType CostType = MarketCostFunctionType.Quadratic;
+        public const double FixedCost = 50;
+        public const double LinearCost = 8;
+        public const double QuadraticCost = 0.4;
+        public const double CubicCost = 0.01;
     }
 
     internal static class Firm
