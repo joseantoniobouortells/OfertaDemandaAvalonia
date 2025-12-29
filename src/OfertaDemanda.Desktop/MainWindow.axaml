@@ -284,6 +284,10 @@
                 </Grid>
             </TabItem>
 
+            <TabItem Header="Isobeneficio">
+                <views:IsoBenefitView DataContext="{Binding IsoBenefit}" />
+            </TabItem>
+
             <TabItem Header="Configuración">
                 <views:SettingsView DataContext="{Binding Settings}" />
             </TabItem>

@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace OfertaDemanda.Desktop.Services;
 
-public sealed class ThemeSettingsStore
+public sealed class UserSettingsStore
 {
     private readonly string _filePath;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -12,7 +12,7 @@ public sealed class ThemeSettingsStore
         WriteIndented = true
     };
 
-    public ThemeSettingsStore(string? customPath = null)
+    public UserSettingsStore(string? customPath = null)
     {
         _filePath = string.IsNullOrWhiteSpace(customPath) ? ResolveDefaultPath() : customPath!;
         var directory = Path.GetDirectoryName(_filePath);
@@ -24,29 +24,29 @@ public sealed class ThemeSettingsStore
 
     public string SettingsFilePath => _filePath;
 
-    public ThemeMode Load()
+    public UserSettings Load()
     {
         try
         {
             if (!File.Exists(_filePath))
             {
-                return ThemeMode.System;
+                return UserSettings.CreateDefault();
             }
 
             var json = File.ReadAllText(_filePath);
-            var payload = JsonSerializer.Deserialize<ThemeSettingsPayload>(json, JsonOptions);
-            return payload?.Theme ?? ThemeMode.System;
+            var payload = JsonSerializer.Deserialize<UserSettings>(json, JsonOptions);
+            return (payload ?? UserSettings.CreateDefault()).Sanitize();
         }
         catch
         {
-            return ThemeMode.System;
+            return UserSettings.CreateDefault();
         }
     }
 
-    public void Save(ThemeMode mode)
+    public void Save(UserSettings settings)
     {
-        var payload = new ThemeSettingsPayload { Theme = mode };
-        var json = JsonSerializer.Serialize(payload, JsonOptions);
+        var sanitized = (settings ?? UserSettings.CreateDefault()).Sanitize();
+        var json = JsonSerializer.Serialize(sanitized, JsonOptions);
         File.WriteAllText(_filePath, json);
     }
 
@@ -66,10 +66,5 @@ public sealed class ThemeSettingsStore
         var directory = Path.Combine(basePath, "OfertaDemandaAvalonia");
         Directory.CreateDirectory(directory);
         return Path.Combine(directory, "settings.json");
-    }
-
-    private sealed record ThemeSettingsPayload
-    {
-        public ThemeMode Theme { get; init; } = ThemeMode.System;
     }
 }

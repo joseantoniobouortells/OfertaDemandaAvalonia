@@ -1,0 +1,161 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.IsoBenefitView">
+  <Grid ColumnDefinitions="360,*"
+        ColumnSpacing="16">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <TextBlock Text="Parámetros del mercado"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+
+        <StackPanel>
+          <TextBlock Text="Demanda inversa P_d(Q)"
+                     FontWeight="Bold" />
+          <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <StackPanel>
+          <TextBlock Text="Shock de demanda ΔD"
+                     FontWeight="Bold" />
+          <Slider Minimum="-40"
+                  Maximum="40"
+                  Value="{Binding DemandShock}" />
+          <TextBlock Text="{Binding DemandShock, StringFormat='Valor actual: {0:F0}'}"
+                     FontSize="12" />
+        </StackPanel>
+
+        <StackPanel>
+          <TextBlock Text="Empresas y costes"
+                     FontSize="16"
+                     FontWeight="SemiBold" />
+          <StackPanel Orientation="Horizontal"
+                      Spacing="8"
+                      Margin="0,4,0,0">
+            <Button Content="Añadir"
+                    Command="{Binding AddFirmCommand}" />
+            <Button Content="Eliminar"
+                    Command="{Binding RemoveFirmCommand}" />
+          </StackPanel>
+          <ListBox ItemsSource="{Binding Firms}"
+                   SelectedItem="{Binding SelectedFirm}"
+                   MinHeight="180"
+                   Margin="0,4,0,0">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="0,0,0,8">
+                  <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                           Watermark="Nombre de la empresa" />
+                  <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="0,4,0,0"
+                           Watermark="Coste total C(q)" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </StackPanel>
+
+        <StackPanel>
+          <TextBlock Text="Referencias competitivas"
+                     FontSize="16"
+                     FontWeight="SemiBold" />
+          <TextBlock Text="{Binding ReferencePriceText}" />
+          <TextBlock Text="{Binding ReferenceQuantityText}" />
+          <TextBlock Text="{Binding PriceNoteText}"
+                     FontSize="12"
+                     TextWrapping="Wrap"
+                     Margin="0,4,0,0" />
+        </StackPanel>
+
+        <Border Margin="0,4,0,0"
+                Padding="8"
+                Background="#3FFFF0F0"
+                CornerRadius="4"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="Errores"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <StackPanel>
+          <TextBlock Text="Estado de cada empresa"
+                     FontSize="16"
+                     FontWeight="SemiBold" />
+          <ItemsControl ItemsSource="{Binding FirmStatuses}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="0,4,0,0">
+                  <TextBlock Text="{Binding Name}"
+                             FontWeight="Bold" />
+                  <TextBlock Text="{Binding Summary}" />
+                  <TextBlock Text="{Binding Details}"
+                             FontSize="12"
+                             Opacity="0.85" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <Border Padding="12"
+                CornerRadius="6"
+                Background="{DynamicResource ThemeControlLowBrush}">
+          <StackPanel>
+            <TextBlock Text="Fórmulas teóricas"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,4" />
+            <TextBlock Text="{Binding TheoryText}"
+                       TextWrapping="Wrap"
+                       FontFamily="Inter,Segoe UI,Helvetica,sans-serif"
+                       FontSize="12" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <TabControl Grid.Column="1">
+      <TabItem Header="Mercado (Q,P)">
+        <Grid RowDefinitions="Auto,*"
+              RowSpacing="12">
+          <TextBlock Text="Isobeneficios agregados del mercado versus demanda."
+                     FontSize="13"
+                     Opacity="0.85" />
+          <lvc:CartesianChart Grid.Row="1"
+                              Series="{Binding MarketSeries}"
+                              XAxes="{Binding MarketXAxes}"
+                              YAxes="{Binding MarketYAxes}"
+                              LegendPosition="Right" />
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Empresas (q,p)">
+        <Grid RowDefinitions="Auto,*"
+              RowSpacing="12">
+          <TextBlock Text="Curvas de isobeneficio por empresa y línea de precio p=P*."
+                     FontSize="13"
+                     Opacity="0.85" />
+          <lvc:CartesianChart Grid.Row="1"
+                              Series="{Binding FirmSeries}"
+                              XAxes="{Binding FirmXAxes}"
+                              YAxes="{Binding FirmYAxes}"
+                              LegendPosition="Right" />
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</UserControl>

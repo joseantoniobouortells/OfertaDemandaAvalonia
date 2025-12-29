@@ -85,3 +85,31 @@ public class ModelTests
         Assert.True(result.DeadweightLoss.GetValueOrDefault() > 0);
     }
 }
+
+public class IsoBenefitCalculatorTests
+{
+    [Fact]
+    public void ComputesIsobenefitCurves()
+    {
+        var demand = ExpressionParser.Parse("100 - 0.5q");
+        var firms = new[]
+        {
+            new IsoBenefitFirmParameters("A", ExpressionParser.Parse("200 + 10q + 0.5q^2")),
+            new IsoBenefitFirmParameters("B", ExpressionParser.Parse("120 + 12q + 0.3q^2")),
+            new IsoBenefitFirmParameters("C", ExpressionParser.Parse("80 + 8q + 0.8q^2"))
+        };
+
+        var parameters = new IsoBenefitParameters(
+            demand,
+            0,
+            firms,
+            new[] { -200d, 0d, 200d },
+            new[] { -500d, 0d, 500d });
+
+        var result = IsoBenefitCalculator.Calculate(parameters);
+
+        Assert.True(result.ReferencePrice > 0);
+        Assert.Equal(3, result.Firms.Count);
+        Assert.Equal(3, result.Market.Curves.Count);
+    }
+}

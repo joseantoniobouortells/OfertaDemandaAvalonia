@@ -6,22 +6,22 @@ namespace OfertaDemanda.Desktop.Services;
 public sealed class ThemeService
 {
     private readonly Application _application;
-    private readonly ThemeSettingsStore _store;
+    private readonly UserSettingsService _settingsService;
 
-    public ThemeService(Application application, ThemeSettingsStore store)
+    public ThemeService(Application application, UserSettingsService settingsService)
     {
         _application = application;
-        _store = store;
+        _settingsService = settingsService;
+        CurrentMode = settingsService.Settings.Theme;
     }
 
     public ThemeMode CurrentMode { get; private set; } = ThemeMode.System;
 
-    public string SettingsFilePath => _store.SettingsFilePath;
+    public string SettingsFilePath => _settingsService.SettingsFilePath;
 
     public void Initialize()
     {
-        var storedMode = _store.Load();
-        Apply(storedMode, persist: false);
+        Apply(_settingsService.Settings.Theme, persist: false);
     }
 
     public void Apply(ThemeMode mode, bool persist = true)
@@ -34,9 +34,10 @@ public sealed class ThemeService
             _ => ThemeVariant.Default
         };
 
-        if (persist)
+        if (persist && _settingsService.Settings.Theme != mode)
         {
-            _store.Save(mode);
+            var updated = _settingsService.Settings with { Theme = mode };
+            _settingsService.Update(updated);
         }
     }
 }

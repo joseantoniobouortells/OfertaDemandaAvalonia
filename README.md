@@ -8,6 +8,7 @@ OfertaDemanda es un simulador visual de microeconomía que replica y amplía el 
 2. **Empresa (CP/LP)**: recibe la función de coste total y un precio de mercado o modo de largo plazo. Deriva CMg, CMe y CMeV, encuentra la cantidad óptima según el modo y calcula beneficios.
 3. **Monopolio**: evalúa demanda inversa y costes totales para construir ingresos/costes marginales, encontrar el punto donde IMg=CMg, comparar con competencia perfecta y cuantificar la pérdida de eficiencia.
 4. **Elasticidad**: usa la misma demanda del Mercado y un precio objetivo para estimar elasticidad-precio puntual mediante derivada numérica y marca el punto en la curva.
+5. **Isobeneficio**: muestra curvas de isobeneficio del mercado (Π̄ negativos/cero/positivos) frente a la demanda y, en una pestaña separada, las curvas de cada empresa con su intersección p=P*, el valor óptimo q_i* (CMg=P*) y el diagnóstico “Gana/Pierde/Cero”. Incluye editor CRUD de empresas, persistencia y panel de fórmulas en texto plano que explica las ecuaciones usadas.
 
 Cada pestaña comparte el motor del proyecto `OfertaDemanda.Core`, por lo que los cambios en las expresiones o parámetros se traducen en nuevas evaluaciones sin reescribir lógica en la UI.
 
@@ -60,7 +61,7 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 ## Ajustes de tema y preferencias
 
 - La pestaña **Configuración** expone un selector (Sistema/Claro/Oscuro) que aplica el tema Fluent correspondiente en caliente usando `RequestedThemeVariant`.
-- La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows).
+- La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows) y el mismo archivo guarda la lista de empresas y parámetros del tab Isobeneficio.
 - Para restablecer la apariencia basta con borrar ese archivo y reiniciar la app; se volverá al modo “Predeterminado del sistema”.
 - El almacenamiento es per‑usuario y no depende de servicios externos.
 

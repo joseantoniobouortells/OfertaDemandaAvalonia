@@ -9,6 +9,7 @@ namespace OfertaDemanda.Desktop;
 public partial class App : Application
 {
     private ThemeService? _themeService;
+    private UserSettingsService? _userSettingsService;
 
     public override void Initialize()
     {
@@ -17,15 +18,16 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var settingsStore = new ThemeSettingsStore();
-        _themeService = new ThemeService(this, settingsStore);
+        var settingsStore = new UserSettingsStore();
+        _userSettingsService = new UserSettingsService(settingsStore);
+        _themeService = new ThemeService(this, _userSettingsService);
         _themeService.Initialize();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(_themeService)
+                DataContext = new MainViewModel(_themeService, _userSettingsService)
             };
         }
 
