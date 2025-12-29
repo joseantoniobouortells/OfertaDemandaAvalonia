@@ -96,15 +96,42 @@
                                 <TextBox Text="{Binding CubicCost, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
 
-                            <TextBlock Text="Curvas de costes"
+                            <TextBlock Text="Curvas y elementos"
                                        FontWeight="Bold"
                                        Margin="0,12,0,0" />
-                            <CheckBox Content="Mostrar CMg"
-                                      IsChecked="{Binding ShowMarginalCost}" />
-                            <CheckBox Content="Mostrar CMeV"
-                                      IsChecked="{Binding ShowAverageVariableCost}" />
-                            <CheckBox Content="Mostrar CMe"
-                                      IsChecked="{Binding ShowAverageCost}" />
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="8">
+                                <Button Content="Mostrar todo"
+                                        Command="{Binding ShowAllTogglesCommand}" />
+                                <Button Content="Ocultar todo"
+                                        Command="{Binding HideAllTogglesCommand}" />
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{Binding ToggleGroups}"
+                                          Margin="0,6,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,8,0,0">
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <TextBlock Text="{Binding Label}"
+                                                           FontWeight="SemiBold" />
+                                                <Button Content="Mostrar grupo"
+                                                        Command="{Binding DataContext.ShowGroupCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                                                        CommandParameter="{Binding}" />
+                                            </StackPanel>
+                                            <ItemsControl ItemsSource="{Binding Items}"
+                                                          Margin="0,4,0,0">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox Content="{Binding Label}"
+                                                                  IsChecked="{Binding IsVisible}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
                             <TextBlock Text="Resultados"
                                        FontWeight="Bold"

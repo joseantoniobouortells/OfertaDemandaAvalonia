@@ -37,6 +37,17 @@ internal static class ChartSeriesBuilder
         return Line(name, points, color, dashed);
     }
 
+    public static ISeries VerticalLine(string name, double yStart, double yEnd, double value, SKColor color, bool dashed = false)
+    {
+        var points = new[]
+        {
+            new ChartPoint(value, yStart),
+            new ChartPoint(value, yEnd)
+        };
+
+        return Line(name, points, color, dashed);
+    }
+
     public static ISeries Scatter(string name, ChartPoint point, SKColor color, double size = 14)
     {
         return new ScatterSeries<ObservablePoint>

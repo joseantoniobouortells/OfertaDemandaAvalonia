@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -14,12 +16,44 @@ namespace OfertaDemanda.Desktop.ViewModels;
 public partial class MarketViewModel : ViewModelBase
 {
     private const double MarketMaxQuantity = 100d;
+    private const string GroupMarket = "Mercado";
+    private const string GroupTax = "Impuesto";
+    private const string GroupSurplus = "Excedentes";
+    private const string GroupFirm = "Empresa competitiva";
+    private const string GroupCosts = "Costes";
+
+    private const string ToggleDemandBase = "demand_base";
+    private const string ToggleDemandShifted = "demand_shifted";
+    private const string ToggleSupplyBase = "supply_base";
+    private const string ToggleSupplyShifted = "supply_shifted";
+    private const string ToggleMarketEquilibrium = "market_equilibrium";
+    private const string ToggleTaxPriceConsumer = "tax_price_consumer";
+    private const string ToggleTaxPriceProducer = "tax_price_producer";
+    private const string ToggleTaxQuantity = "tax_quantity";
+    private const string ToggleTaxWedge = "tax_wedge";
+    private const string ToggleNoTaxEquilibrium = "no_tax_equilibrium";
+    private const string ToggleConsumerSurplus = "consumer_surplus";
+    private const string ToggleProducerSurplus = "producer_surplus";
+    private const string ToggleDeadweight = "deadweight";
+    private const string ToggleFirmPriceLine = "firm_price_line";
+    private const string ToggleFirmOptimal = "firm_optimal";
+    private const string ToggleFirmShutdown = "firm_shutdown";
+    private const string ToggleFirmBreakEven = "firm_break_even";
+    private const string ToggleFirmProfitLoss = "firm_profit_loss";
+    private const string ToggleCostMarginal = "cost_marginal";
+    private const string ToggleCostAverageVariable = "cost_average_variable";
+    private const string ToggleCostAverage = "cost_average";
+
     private bool _suppressUpdates;
+    private bool _suppressToggleUpdates;
     private readonly SelectionOption<MarketCostFunctionType>[] _costOptions =
     {
         new("Cuadrático", MarketCostFunctionType.Quadratic),
         new("Cúbico", MarketCostFunctionType.Cubic)
     };
+    private readonly Dictionary<string, ChartSeriesToggle> _toggleLookup = new();
+    private MarketResult? _lastMarketResult;
+    private MarketFirmResult? _lastFirmResult;
 
     [ObservableProperty]
     private string demandExpression = "100 - 0.5q";
@@ -50,15 +84,6 @@ public partial class MarketViewModel : ViewModelBase
 
     [ObservableProperty]
     private double cubicCost;
-
-    [ObservableProperty]
-    private bool showMarginalCost = true;
-
-    [ObservableProperty]
-    private bool showAverageCost = true;
-
-    [ObservableProperty]
-    private bool showAverageVariableCost = true;
 
     [ObservableProperty]
     private string equilibriumText = "Q*: —";
@@ -104,6 +129,14 @@ public partial class MarketViewModel : ViewModelBase
 
     public bool HasErrors => Errors.Count > 0;
 
+    public ObservableCollection<ChartSeriesToggleGroup> ToggleGroups { get; } = new();
+
+    public IRelayCommand ShowAllTogglesCommand { get; }
+
+    public IRelayCommand HideAllTogglesCommand { get; }
+
+    public IRelayCommand<ChartSeriesToggleGroup> ShowGroupCommand { get; }
+
     [ObservableProperty]
     private IEnumerable<ISeries> series = Array.Empty<ISeries>();
 
@@ -117,7 +150,14 @@ public partial class MarketViewModel : ViewModelBase
         new Axis { Name = "P", MinLimit = 0, MaxLimit = 150 }
     };
 
-    public MarketViewModel() => ApplyDefaults();
+    public MarketViewModel()
+    {
+        InitializeToggles();
+        ShowAllTogglesCommand = new RelayCommand(() => SetAllToggles(true));
+        HideAllTogglesCommand = new RelayCommand(() => SetAllToggles(false));
+        ShowGroupCommand = new RelayCommand<ChartSeriesToggleGroup>(group => SetGroupToggles(group, true));
+        ApplyDefaults();
+    }
 
     public void ApplyDefaults()
     {
@@ -132,6 +172,7 @@ public partial class MarketViewModel : ViewModelBase
         LinearCost = AppDefaults.Market.LinearCost;
         QuadraticCost = AppDefaults.Market.QuadraticCost;
         CubicCost = AppDefaults.Market.CubicCost;
+        ResetToggleDefaults();
         _suppressUpdates = false;
         Recalculate();
     }
@@ -187,21 +228,6 @@ public partial class MarketViewModel : ViewModelBase
         if (!_suppressUpdates) Recalculate();
     }
 
-    partial void OnShowMarginalCostChanged(bool value)
-    {
-        if (!_suppressUpdates) Recalculate();
-    }
-
-    partial void OnShowAverageCostChanged(bool value)
-    {
-        if (!_suppressUpdates) Recalculate();
-    }
-
-    partial void OnShowAverageVariableCostChanged(bool value)
-    {
-        if (!_suppressUpdates) Recalculate();
-    }
-
     public IReadOnlyList<SelectionOption<MarketCostFunctionType>> CostTypeOptions => _costOptions;
 
     public bool IsCubicCostVisible => SelectedCostType != null && SelectedCostType.Value == MarketCostFunctionType.Cubic;
@@ -245,6 +271,8 @@ public partial class MarketViewModel : ViewModelBase
     {
         if (result == null)
         {
+            _lastMarketResult = null;
+            _lastFirmResult = null;
             Series = Array.Empty<ISeries>();
             EquilibriumText = "Q*: —";
             PriceConsumerText = "P_c: —";
@@ -262,6 +290,8 @@ public partial class MarketViewModel : ViewModelBase
         }
         else
         {
+            _lastMarketResult = result;
+            _lastFirmResult = firmResult;
             Series = BuildSeries(result, firmResult);
             EquilibriumText = FormatMetric("Q*", result.Equilibrium?.X);
             PriceConsumerText = FormatMetric("P_c", result.Equilibrium?.Y);
@@ -298,10 +328,10 @@ public partial class MarketViewModel : ViewModelBase
 
     private IEnumerable<ISeries> BuildSeries(MarketResult result, MarketFirmResult? firmResult)
     {
-        var seriesList = new List<ISeries>();
+        var seriesList = new List<(string Key, ISeries Series)>();
         if (result.Equilibrium.HasValue && firmResult != null)
         {
-            seriesList.AddRange(BuildFirmOverlaySeries(result.Equilibrium.Value.Y, firmResult));
+            AddSeries(seriesList, BuildFirmOverlaySeries(result.Equilibrium.Value.Y, firmResult));
         }
 
         if (result.ConsumerArea.Count > 0 && result.Equilibrium.HasValue)
@@ -309,7 +339,7 @@ public partial class MarketViewModel : ViewModelBase
             var csValues = result.ConsumerArea
                 .Select(p => new ObservablePoint(p.X, p.BaseValue + p.OffsetValue))
                 .ToArray();
-            seriesList.Add(CreateFillSeries("CS", csValues, result.Equilibrium.Value.Y, SKColors.LightSkyBlue.WithAlpha(90)));
+            AddSeries(seriesList, ToggleConsumerSurplus, CreateFillSeries("CS", csValues, result.Equilibrium.Value.Y, SKColors.LightSkyBlue.WithAlpha(90)));
         }
 
         if (result.ProducerArea.Count > 0 && result.ProducerPrice.HasValue)
@@ -317,70 +347,59 @@ public partial class MarketViewModel : ViewModelBase
             var psValues = result.ProducerArea
                 .Select(p => new ObservablePoint(p.X, p.BaseValue))
                 .ToArray();
-            seriesList.Add(CreateFillSeries("PS", psValues, result.ProducerPrice.Value, SKColors.LightGreen.WithAlpha(90)));
+            AddSeries(seriesList, ToggleProducerSurplus, CreateFillSeries("PS", psValues, result.ProducerPrice.Value, SKColors.LightGreen.WithAlpha(90)));
         }
 
-        seriesList.AddRange(BuildDeadweightSeries(result.DeadweightArea, SKColors.LightCoral.WithAlpha(110)));
+        AddSeries(seriesList, ToggleDeadweight, BuildDeadweightSeries(result.DeadweightArea, SKColors.LightCoral.WithAlpha(110)));
 
-        seriesList.Add(ChartSeriesBuilder.Line("Pd₀", result.DemandBase, SKColors.SlateGray, true));
-        seriesList.Add(ChartSeriesBuilder.Line("Ps₀", result.SupplyBase, SKColors.DarkGray, true));
-        seriesList.Add(ChartSeriesBuilder.Line("Pd₁", result.DemandShifted, SKColors.SteelBlue));
-        seriesList.Add(ChartSeriesBuilder.Line("Ps₁", result.SupplyShifted, SKColors.OliveDrab));
+        AddSeries(seriesList, ToggleDemandBase, ChartSeriesBuilder.Line("Pd₀", result.DemandBase, SKColors.SlateGray, true));
+        AddSeries(seriesList, ToggleSupplyBase, ChartSeriesBuilder.Line("Ps₀", result.SupplyBase, SKColors.DarkGray, true));
+        AddSeries(seriesList, ToggleDemandShifted, ChartSeriesBuilder.Line("Pd₁", result.DemandShifted, SKColors.SteelBlue));
+        AddSeries(seriesList, ToggleSupplyShifted, ChartSeriesBuilder.Line("Ps₁", result.SupplyShifted, SKColors.OliveDrab));
 
         if (result.Equilibrium.HasValue)
         {
-            seriesList.Add(ChartSeriesBuilder.Scatter("Q*", result.Equilibrium.Value, SKColors.Firebrick));
+            AddSeries(seriesList, ToggleMarketEquilibrium, ChartSeriesBuilder.Scatter("Q*", result.Equilibrium.Value, SKColors.Firebrick));
+            AddSeries(seriesList, BuildTaxSeries(result));
         }
 
         if (result.NoTaxEquilibrium.HasValue)
         {
-            seriesList.Add(ChartSeriesBuilder.Scatter("Q sin impuesto", result.NoTaxEquilibrium.Value, SKColors.DarkGreen, 12));
+            AddSeries(seriesList, ToggleNoTaxEquilibrium, ChartSeriesBuilder.Scatter("Q sin impuesto", result.NoTaxEquilibrium.Value, SKColors.DarkGreen, 12));
         }
 
-        return seriesList;
+        return FilterSeries(seriesList);
     }
 
-    private IEnumerable<ISeries> BuildFirmOverlaySeries(double price, MarketFirmResult firmResult)
+    private IEnumerable<(string Key, ISeries Series)> BuildFirmOverlaySeries(double price, MarketFirmResult firmResult)
     {
-        var seriesList = new List<ISeries>();
+        var seriesList = new List<(string Key, ISeries Series)>();
 
         if (firmResult.OptimalQuantity.HasValue &&
             firmResult.OptimalQuantity.Value > 0 &&
             firmResult.AverageCostAtOptimal.HasValue)
         {
             var isProfit = price >= firmResult.AverageCostAtOptimal.Value;
-            seriesList.AddRange(BuildProfitLossSeries(
+            AddSeries(seriesList, ToggleFirmProfitLoss, BuildProfitLossSeries(
                 firmResult.OptimalQuantity.Value,
                 price,
                 firmResult.AverageCostAtOptimal.Value,
                 isProfit));
         }
 
-        if (ShowMarginalCost)
-        {
-            seriesList.Add(ChartSeriesBuilder.Line("CMg", firmResult.MarginalCost, SKColors.SteelBlue));
-        }
-
-        if (ShowAverageVariableCost)
-        {
-            seriesList.Add(ChartSeriesBuilder.Line("CMeV", firmResult.AverageVariableCost, SKColors.MediumPurple));
-        }
-
-        if (ShowAverageCost)
-        {
-            seriesList.Add(ChartSeriesBuilder.Line("CMe", firmResult.AverageCost, SKColors.DarkOrange));
-        }
-
-        seriesList.Add(ChartSeriesBuilder.HorizontalLine("P*", 0, MarketMaxQuantity, price, SKColors.Firebrick));
+        AddSeries(seriesList, ToggleCostMarginal, ChartSeriesBuilder.Line("CMg", firmResult.MarginalCost, SKColors.SteelBlue));
+        AddSeries(seriesList, ToggleCostAverageVariable, ChartSeriesBuilder.Line("CMeV", firmResult.AverageVariableCost, SKColors.MediumPurple));
+        AddSeries(seriesList, ToggleCostAverage, ChartSeriesBuilder.Line("CMe", firmResult.AverageCost, SKColors.DarkOrange));
+        AddSeries(seriesList, ToggleFirmPriceLine, ChartSeriesBuilder.HorizontalLine("P*", 0, MarketMaxQuantity, price, SKColors.Firebrick));
 
         if (firmResult.OptimalQuantity.HasValue && firmResult.OptimalQuantity.Value > 0)
         {
-            seriesList.Add(ChartSeriesBuilder.Scatter("q_f*", new ChartPoint(firmResult.OptimalQuantity.Value, price), SKColors.Black, 12));
+            AddSeries(seriesList, ToggleFirmOptimal, ChartSeriesBuilder.Scatter("q_f*", new ChartPoint(firmResult.OptimalQuantity.Value, price), SKColors.Black, 12));
         }
 
         if (firmResult.ShutdownQuantity.HasValue && firmResult.ShutdownPrice.HasValue)
         {
-            seriesList.Add(ChartSeriesBuilder.Scatter("P cierre", new ChartPoint(firmResult.ShutdownQuantity.Value, firmResult.ShutdownPrice.Value), SKColors.DarkRed, 10));
+            AddSeries(seriesList, ToggleFirmShutdown, ChartSeriesBuilder.Scatter("P cierre", new ChartPoint(firmResult.ShutdownQuantity.Value, firmResult.ShutdownPrice.Value), SKColors.DarkRed, 10));
         }
 
         if (firmResult.BreakEvenQuantities.Count > 0)
@@ -389,7 +408,7 @@ public partial class MarketViewModel : ViewModelBase
             foreach (var q in firmResult.BreakEvenQuantities)
             {
                 var label = firmResult.BreakEvenQuantities.Count == 1 ? "P = CMe" : $"P = CMe {index}";
-                seriesList.Add(ChartSeriesBuilder.Scatter(label, new ChartPoint(q, price), SKColors.DarkSlateGray, 10));
+                AddSeries(seriesList, ToggleFirmBreakEven, ChartSeriesBuilder.Scatter(label, new ChartPoint(q, price), SKColors.DarkSlateGray, 10));
                 index++;
             }
         }
@@ -511,5 +530,187 @@ public partial class MarketViewModel : ViewModelBase
         return firmResult.ProfitAtOptimal.Value >= 0
             ? "Estado: Beneficio"
             : "Estado: Pérdida";
+    }
+
+    private IEnumerable<(string Key, ISeries Series)> BuildTaxSeries(MarketResult result)
+    {
+        if (!result.Equilibrium.HasValue || !result.ProducerPrice.HasValue)
+        {
+            return Array.Empty<(string Key, ISeries Series)>();
+        }
+
+        var eq = result.Equilibrium.Value;
+        var priceConsumer = eq.Y;
+        var priceProducer = result.ProducerPrice.Value;
+        var q = eq.X;
+
+        return new (string Key, ISeries Series)[]
+        {
+            (ToggleTaxPriceConsumer, ChartSeriesBuilder.HorizontalLine("P_c", 0, q, priceConsumer, SKColors.IndianRed, true)),
+            (ToggleTaxPriceProducer, ChartSeriesBuilder.HorizontalLine("P_p", 0, q, priceProducer, SKColors.SeaGreen, true)),
+            (ToggleTaxWedge, ChartSeriesBuilder.VerticalLine("Cuña", priceProducer, priceConsumer, q, SKColors.DimGray, true)),
+            (ToggleTaxQuantity, ChartSeriesBuilder.Scatter("Q con impuesto", new ChartPoint(q, 0), SKColors.SaddleBrown, 8))
+        };
+    }
+
+    private IEnumerable<ISeries> FilterSeries(IEnumerable<(string Key, ISeries Series)> seriesList)
+    {
+        var visibleKeys = _toggleLookup
+            .Where(kvp => kvp.Value.IsVisible)
+            .Select(kvp => kvp.Key)
+            .ToHashSet(StringComparer.Ordinal);
+
+        return seriesList
+            .Where(entry => visibleKeys.Contains(entry.Key))
+            .Select(entry => entry.Series)
+            .ToArray();
+    }
+
+    private void AddSeries(List<(string Key, ISeries Series)> list, string key, ISeries series)
+    {
+        list.Add((key, series));
+    }
+
+    private void AddSeries(List<(string Key, ISeries Series)> list, IEnumerable<(string Key, ISeries Series)> series)
+    {
+        list.AddRange(series);
+    }
+
+    private void AddSeries(List<(string Key, ISeries Series)> list, string key, IEnumerable<ISeries> series)
+    {
+        foreach (var item in series)
+        {
+            list.Add((key, item));
+        }
+    }
+
+    private void InitializeToggles()
+    {
+        AddToggleGroup(new ChartSeriesToggleGroup(
+            GroupMarket,
+            new[]
+            {
+                CreateToggle(ToggleDemandBase, "Demanda Pd₀", GroupMarket, true),
+                CreateToggle(ToggleDemandShifted, "Demanda Pd₁", GroupMarket, true),
+                CreateToggle(ToggleSupplyBase, "Oferta Ps₀", GroupMarket, true),
+                CreateToggle(ToggleSupplyShifted, "Oferta Ps₁", GroupMarket, true),
+                CreateToggle(ToggleMarketEquilibrium, "Equilibrio (Q*, P*)", GroupMarket, true)
+            }));
+
+        AddToggleGroup(new ChartSeriesToggleGroup(
+            GroupTax,
+            new[]
+            {
+                CreateToggle(ToggleTaxPriceConsumer, "Precio consumidor P_c", GroupTax, true),
+                CreateToggle(ToggleTaxPriceProducer, "Precio productor P_p", GroupTax, true),
+                CreateToggle(ToggleTaxQuantity, "Q con impuesto", GroupTax, true),
+                CreateToggle(ToggleTaxWedge, "Cuña fiscal", GroupTax, true),
+                CreateToggle(ToggleNoTaxEquilibrium, "Q sin impuesto", GroupTax, true)
+            }));
+
+        AddToggleGroup(new ChartSeriesToggleGroup(
+            GroupSurplus,
+            new[]
+            {
+                CreateToggle(ToggleConsumerSurplus, "Excedente consumidor (CS)", GroupSurplus, true),
+                CreateToggle(ToggleProducerSurplus, "Excedente productor (PS)", GroupSurplus, true),
+                CreateToggle(ToggleDeadweight, "Pérdida irrecuperable", GroupSurplus, true)
+            }));
+
+        AddToggleGroup(new ChartSeriesToggleGroup(
+            GroupFirm,
+            new[]
+            {
+                CreateToggle(ToggleFirmPriceLine, "Línea de precio P*", GroupFirm, true),
+                CreateToggle(ToggleFirmOptimal, "q_f*", GroupFirm, true),
+                CreateToggle(ToggleFirmShutdown, "Punto de cierre (min CMeV)", GroupFirm, true),
+                CreateToggle(ToggleFirmBreakEven, "P = CMe", GroupFirm, true),
+                CreateToggle(ToggleFirmProfitLoss, "Área beneficio/pérdida", GroupFirm, true)
+            }));
+
+        AddToggleGroup(new ChartSeriesToggleGroup(
+            GroupCosts,
+            new[]
+            {
+                CreateToggle(ToggleCostMarginal, "CMg", GroupCosts, true),
+                CreateToggle(ToggleCostAverageVariable, "CMeV", GroupCosts, true),
+                CreateToggle(ToggleCostAverage, "CMe", GroupCosts, true)
+            }));
+    }
+
+    private void AddToggleGroup(ChartSeriesToggleGroup group)
+    {
+        ToggleGroups.Add(group);
+        foreach (var toggle in group.Items)
+        {
+            _toggleLookup[toggle.Key] = toggle;
+            toggle.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ChartSeriesToggle.IsVisible))
+                {
+                    if (!_suppressToggleUpdates)
+                    {
+                        RefreshSeries();
+                    }
+                }
+            };
+        }
+    }
+
+    private ChartSeriesToggle CreateToggle(string key, string label, string group, bool isVisible)
+    {
+        return new ChartSeriesToggle(key, label, group, isVisible);
+    }
+
+    private void ResetToggleDefaults()
+    {
+        _suppressToggleUpdates = true;
+        foreach (var toggle in _toggleLookup.Values)
+        {
+            toggle.IsVisible = true;
+        }
+
+        _suppressToggleUpdates = false;
+        RefreshSeries();
+    }
+
+    private void SetAllToggles(bool isVisible)
+    {
+        _suppressToggleUpdates = true;
+        foreach (var toggle in _toggleLookup.Values)
+        {
+            toggle.IsVisible = isVisible;
+        }
+
+        _suppressToggleUpdates = false;
+        RefreshSeries();
+    }
+
+    private void SetGroupToggles(ChartSeriesToggleGroup? group, bool isVisible)
+    {
+        if (group == null)
+        {
+            return;
+        }
+
+        _suppressToggleUpdates = true;
+        foreach (var toggle in group.Items)
+        {
+            toggle.IsVisible = isVisible;
+        }
+
+        _suppressToggleUpdates = false;
+        RefreshSeries();
+    }
+
+    private void RefreshSeries()
+    {
+        if (_lastMarketResult == null)
+        {
+            Series = Array.Empty<ISeries>();
+            return;
+        }
+
+        Series = BuildSeries(_lastMarketResult, _lastFirmResult);
     }
 }
