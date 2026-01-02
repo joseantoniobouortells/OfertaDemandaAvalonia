@@ -18,29 +18,33 @@ jobs:
     name: Crear release
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.resolve-tag.outputs.tag }}
+      tag: ${{ steps.resolve-tag.outputs.tag || steps.resolve-tag-push.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Resolver tag
         id: resolve-tag
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          if [ -n "${{ inputs.tag }}" ]; then
-            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Resolver tag (push)
+        id: resolve-tag-push
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        run: |
+          echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Crear release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "${{ steps.resolve-tag.outputs.tag }}" > /dev/null 2>&1; then
+          TAG="${{ steps.resolve-tag.outputs.tag || steps.resolve-tag-push.outputs.tag }}"
+          if gh release view "$TAG" > /dev/null 2>&1; then
             echo "Release ya existe, se reutiliza."
           else
-            gh release create "${{ steps.resolve-tag.outputs.tag }}" \
-              --title "${{ steps.resolve-tag.outputs.tag }}" \
+            gh release create "$TAG" \
+              --title "$TAG" \
               --generate-notes
           fi
 
