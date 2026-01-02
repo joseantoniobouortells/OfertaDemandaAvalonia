@@ -319,6 +319,31 @@
                                 <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
                             </WrapPanel>
 
+                            <TextBlock Text="Visualización"
+                                       FontWeight="Bold"
+                                       Margin="0,16,0,0" />
+                            <StackPanel Spacing="6">
+                                <CheckBox Content="Isobeneficio (π=π*)"
+                                          IsChecked="{Binding ShowIsoprofitCurve}" />
+                                <CheckBox Content="Líneas guía (qₘ, pₘ)"
+                                          IsChecked="{Binding ShowGuideLines}" />
+                                <CheckBox Content="Pérdida irrecuperable (área)"
+                                          IsChecked="{Binding ShowDeadweightArea}" />
+                            </StackPanel>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="8"
+                                    Background="#1A1E88E5"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Explicación"
+                                               FontWeight="Bold" />
+                                    <TextBlock Text="{Binding IsoprofitExplanation}"
+                                               FontSize="12"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
                             <Border Margin="0,12,0,0"
                                     Padding="8"
                                     Background="#3FFFF0F0"
