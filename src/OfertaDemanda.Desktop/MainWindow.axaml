@@ -325,6 +325,8 @@
                             <StackPanel Spacing="6">
                                 <CheckBox Content="Isobeneficio (π=π*)"
                                           IsChecked="{Binding ShowIsoprofitCurve}" />
+                                <CheckBox Content="Coste medio (CMe)"
+                                          IsChecked="{Binding ShowAverageCost}" />
                                 <CheckBox Content="Líneas guía (qₘ, pₘ)"
                                           IsChecked="{Binding ShowGuideLines}" />
                                 <CheckBox Content="Pérdida irrecuperable (área)"

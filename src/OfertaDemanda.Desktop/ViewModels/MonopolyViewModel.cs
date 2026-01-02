@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Avalonia;
+using Avalonia.Styling;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -17,6 +19,7 @@ public partial class MonopolyViewModel : ViewModelBase
 {
     private const int IsoprofitSamples = 140;
     private const double IsoprofitEpsilon = 0.1;
+    private const int AverageCostSamples = 120;
 
     private bool _suppressUpdates;
 
@@ -61,6 +64,9 @@ public partial class MonopolyViewModel : ViewModelBase
     [ObservableProperty]
     private bool showDeadweightArea = true;
 
+    [ObservableProperty]
+    private bool showAverageCost = true;
+
     public Axis[] XAxes { get; } =
     {
         new Axis { Name = "q", MinLimit = 0, MaxLimit = 100 }
@@ -81,6 +87,7 @@ public partial class MonopolyViewModel : ViewModelBase
         ShowIsoprofitCurve = true;
         ShowGuideLines = true;
         ShowDeadweightArea = true;
+        ShowAverageCost = true;
         _suppressUpdates = false;
         Recalculate();
     }
@@ -106,6 +113,11 @@ public partial class MonopolyViewModel : ViewModelBase
     }
 
     partial void OnShowDeadweightAreaChanged(bool value)
+    {
+        if (!_suppressUpdates) Recalculate();
+    }
+
+    partial void OnShowAverageCostChanged(bool value)
     {
         if (!_suppressUpdates) Recalculate();
     }
@@ -173,6 +185,16 @@ public partial class MonopolyViewModel : ViewModelBase
             if (isoprofit.Count > 1)
             {
                 list.Add(ChartSeriesBuilder.Line("Isobeneficio (π=π*)", isoprofit, SKColors.MediumPurple));
+            }
+        }
+
+        if (ShowAverageCost && cost != null)
+        {
+            var (qMin, qMax) = GetChartQRange();
+            var averageCost = BuildAverageCostPoints(cost, qMin, qMax);
+            if (averageCost.Count > 1)
+            {
+                list.Add(ChartSeriesBuilder.Line("CMe", averageCost, SKColors.CadetBlue));
             }
         }
 
@@ -354,7 +376,7 @@ public partial class MonopolyViewModel : ViewModelBase
         var maskSeries = new LineSeries<ObservablePoint>
         {
             Values = baseValues,
-            Fill = new SolidColorPaint(SKColors.White),
+            Fill = new SolidColorPaint(GetMaskFillColor()),
             Stroke = null,
             GeometryFill = null,
             GeometryStroke = null,
@@ -367,6 +389,39 @@ public partial class MonopolyViewModel : ViewModelBase
         };
 
         return new ISeries[] { fillSeries, maskSeries };
+    }
+
+    private static IReadOnlyList<ChartPoint> BuildAverageCostPoints(OfertaDemanda.Core.Expressions.ParsedExpression cost, double qMin, double qMax)
+    {
+        var points = new List<ChartPoint>(AverageCostSamples);
+        var step = (qMax - qMin) / Math.Max(1, AverageCostSamples - 1);
+
+        for (var i = 0; i < AverageCostSamples; i++)
+        {
+            var q = qMin + step * i;
+            if (q <= IsoprofitEpsilon)
+            {
+                continue;
+            }
+
+            var costValue = NumericMethods.Safe(cost.Evaluate(q));
+            var averageCost = costValue / q;
+            if (double.IsNaN(averageCost) || double.IsInfinity(averageCost))
+            {
+                continue;
+            }
+
+            points.Add(new ChartPoint(q, averageCost));
+        }
+
+        return points;
+    }
+
+    private static SKColor GetMaskFillColor()
+    {
+        var variant = Application.Current?.ActualThemeVariant ?? Application.Current?.RequestedThemeVariant;
+        var isDark = variant == ThemeVariant.Dark;
+        return isDark ? new SKColor(255, 255, 255, 60) : new SKColor(0, 0, 0, 40);
     }
 
     private static string BuildIsoprofitExplanation(double? profit)
