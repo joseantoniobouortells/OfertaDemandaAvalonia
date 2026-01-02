@@ -1,0 +1,10 @@
+ARG DOTNET_VERSION=8.0
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}
+
+ARG PROJECT_PATH=src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
+WORKDIR /repo
+
+COPY . /repo
+
+RUN dotnet restore "$PROJECT_PATH" \
+    && dotnet publish "$PROJECT_PATH" -c Release -r win-x64 --self-contained true -p:UseAppHost=true -o /out/publish/win-x64

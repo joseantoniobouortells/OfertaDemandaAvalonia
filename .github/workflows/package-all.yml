@@ -1,0 +1,76 @@
+name: Empaquetado multiplataforma
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows MSI/MSIX
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Crear MSIX
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msix.ps1
+
+      - name: Crear MSI
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msi.ps1
+
+      - name: Publicar artefactos Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installers
+          path: |
+            artifacts/msix/*.msix
+            artifacts/msix/*.cer
+            artifacts/msi/*.msi
+
+  macos:
+    name: macOS DMG
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publicar DMG
+        run: ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release
+
+      - name: Publicar artefactos macOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: artifacts/*.dmg
+
+  linux:
+    name: Linux publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publicar Linux
+        run: dotnet publish src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj -c Release -r linux-x64 --self-contained true -p:UseAppHost=true -o artifacts/publish/linux-x64
+
+      - name: Publicar artefactos Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-publish
+          path: artifacts/publish/linux-x64

@@ -60,6 +60,22 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release --install
 ```
 
+## Publicar Windows desde macOS (Docker)
+
+Requisitos:
+- Docker Desktop con contenedores Linux.
+
+Ejecutar:
+
+```bash
+./scripts/docker-publish-windows.sh
+```
+
+Salida:
+- `artifacts/publish/win-x64` (contiene el `.exe` autocontenido).
+
+Nota: este paso solo genera el publish win-x64; el empaquetado MSI/MSIX sigue requiriendo tooling de Windows.
+
 ## MSIX en Windows 11
 
 ```powershell
