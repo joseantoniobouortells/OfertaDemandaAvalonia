@@ -76,6 +76,26 @@ Salida:
 
 Nota: este paso solo genera el publish win-x64; el empaquetado MSI/MSIX sigue requiriendo tooling de Windows.
 
+## Releases automáticas (GitHub Actions)
+
+El repositorio incluye un flujo que crea una release y adjunta artefactos para Windows (MSI/MSIX), macOS (DMG) y Linux (publish empaquetado).
+
+Opciones para lanzarlo:
+
+```bash
+# Opción 1: tag (se dispara automáticamente)
+git tag v1.1.2
+git push origin v1.1.2
+
+# Opción 2: manual (workflow_dispatch)
+GH_CONFIG_DIR=~/.config/gh-personal gh workflow run release.yml -f tag=v1.1.2
+```
+
+Salida esperada:
+- Windows: `.msi` y `.msix` en Assets de la release.
+- macOS: `.dmg` en Assets.
+- Linux: `OfertaDemanda.Desktop-linux-x64.tar.gz` en Assets.
+
 ## MSIX en Windows 11
 
 ```powershell
