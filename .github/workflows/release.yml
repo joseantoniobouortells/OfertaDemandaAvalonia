@@ -62,13 +62,19 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Preparar MSIX firmado (opcional)
-        if: ${{ secrets.WIN_MSIX_PFX_BASE64 != '' }}
         shell: pwsh
+        env:
+          WIN_MSIX_PFX_BASE64: ${{ secrets.WIN_MSIX_PFX_BASE64 }}
+          WIN_MSIX_PFX_PASSWORD: ${{ secrets.WIN_MSIX_PFX_PASSWORD }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:WIN_MSIX_PFX_BASE64)) {
+            Write-Host "Sin WIN_MSIX_PFX_BASE64, se omite firma MSIX."
+            exit 0
+          }
           $pfxPath = Join-Path $env:RUNNER_TEMP "msix_signing.pfx"
-          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WIN_MSIX_PFX_BASE64 }}"))
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:WIN_MSIX_PFX_BASE64))
           "SIGN_CERT_PFX=$pfxPath" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "SIGN_CERT_PASSWORD=${{ secrets.WIN_MSIX_PFX_PASSWORD }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "SIGN_CERT_PASSWORD=$env:WIN_MSIX_PFX_PASSWORD" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Crear MSIX
         shell: pwsh
