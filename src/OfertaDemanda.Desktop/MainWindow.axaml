@@ -432,6 +432,10 @@
             <TabItem Header="Configuración">
                 <views:SettingsView DataContext="{Binding Settings}" />
             </TabItem>
+
+            <TabItem Header="Acerca de">
+                <views:AboutView DataContext="{Binding About}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

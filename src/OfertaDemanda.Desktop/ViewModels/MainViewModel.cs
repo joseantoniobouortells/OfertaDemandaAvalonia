@@ -12,6 +12,7 @@ public sealed partial class MainViewModel : ObservableObject
     public ElasticityViewModel Elasticity { get; }
     public SettingsViewModel Settings { get; }
     public IsoBenefitViewModel IsoBenefit { get; }
+    public AboutViewModel About { get; }
     public IRelayCommand ResetDefaultsCommand { get; }
 
     public MainViewModel(ThemeService themeService, UserSettingsService userSettingsService)
@@ -22,6 +23,7 @@ public sealed partial class MainViewModel : ObservableObject
         Elasticity = new ElasticityViewModel(Market);
         IsoBenefit = new IsoBenefitViewModel(userSettingsService);
         Settings = new SettingsViewModel(themeService);
+        About = new AboutViewModel();
         ResetDefaultsCommand = new RelayCommand(ApplyDefaults);
         ApplyDefaults();
     }

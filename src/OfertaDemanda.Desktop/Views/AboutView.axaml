@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.AboutView">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Spacing="16">
+      <TextBlock Text="Acerca del autor"
+                 FontSize="20"
+                 FontWeight="SemiBold" />
+
+      <Border Padding="16"
+              CornerRadius="8"
+              Background="{DynamicResource ThemeBackgroundBrush}"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              BorderThickness="1">
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding AuthorName}"
+                     FontSize="18"
+                     FontWeight="SemiBold" />
+          <TextBlock Text="{Binding AuthorRole}"
+                     Opacity="0.85" />
+          <TextBlock Text="{Binding PurposeText}"
+                     TextWrapping="Wrap"
+                     Opacity="0.9" />
+          <Button Content="Repositorio en GitHub"
+                  Command="{Binding OpenRepositoryCommand}"
+                  IsVisible="{Binding HasRepositoryUrl}"
+                  HorizontalAlignment="Left" />
+          <TextBlock Text="Repositorio en GitHub: (no configurado)"
+                     IsVisible="{Binding HasNoRepositoryUrl}"
+                     FontSize="12"
+                     Opacity="0.7" />
+        </StackPanel>
+      </Border>
+
+      <Border Padding="16"
+              CornerRadius="8"
+              Background="{DynamicResource ThemeBackgroundBrush}"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              BorderThickness="1">
+        <StackPanel Spacing="12">
+          <Grid ColumnDefinitions="*,Auto"
+                RowDefinitions="Auto">
+            <TextBlock Text="{Binding AppName}"
+                       FontSize="18"
+                       FontWeight="SemiBold" />
+            <Border Grid.Column="1"
+                    Background="{DynamicResource ThemeControlLowBrush}"
+                    CornerRadius="12"
+                    Padding="8,2"
+                    VerticalAlignment="Center">
+              <TextBlock Text="{Binding AppVersion}"
+                         FontWeight="Bold" />
+            </Border>
+          </Grid>
+
+          <Grid ColumnDefinitions="170,*"
+                RowDefinitions="Auto,Auto,Auto,Auto">
+            <TextBlock Text="Sistema operativo" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding OsDescription}"
+                       TextWrapping="Wrap" />
+
+            <TextBlock Grid.Row="1"
+                       Text=".NET runtime" />
+            <TextBlock Grid.Row="1"
+                       Grid.Column="1"
+                       Text="{Binding DotnetVersion}" />
+
+            <TextBlock Grid.Row="2"
+                       Text="Avalonia" />
+            <TextBlock Grid.Row="2"
+                       Grid.Column="1"
+                       Text="{Binding AvaloniaVersion}" />
+
+            <TextBlock Grid.Row="3"
+                       Text="Arquitectura" />
+            <TextBlock Grid.Row="3"
+                       Grid.Column="1"
+                       Text="{Binding Architecture}" />
+          </Grid>
+
+          <Border Padding="12"
+                  Background="{DynamicResource ThemeControlLowBrush}"
+                  CornerRadius="6">
+            <Grid ColumnDefinitions="170,*"
+                  RowDefinitions="Auto,Auto">
+              <TextBlock Text="Fecha de compilación" />
+              <TextBlock Grid.Column="1"
+                         Text="{Binding BuildDate}" />
+              <TextBlock Grid.Row="1"
+                         Text="Commit" />
+              <TextBlock Grid.Row="1"
+                         Grid.Column="1"
+                         Text="{Binding CommitHash}" />
+            </Grid>
+          </Border>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
