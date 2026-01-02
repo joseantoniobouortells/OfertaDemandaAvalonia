@@ -106,10 +106,10 @@ function EnsureWixCli($toolsDir) {
   $localExe = Join-Path $toolsDir "wix.exe"
   if (Test-Path $localExe) { return $localExe }
 
-  Write-Host "WiX Toolset v4 no encontrado. Instalando WixToolset.Cli..."
-  dotnet tool install WixToolset.Cli --tool-path $toolsDir | Out-Host
+  Write-Host "WiX Toolset v4 no encontrado. Instalando wix..."
+  dotnet tool install wix --tool-path $toolsDir | Out-Host
   if (-not (Test-Path $localExe)) {
-    Die "No se pudo instalar WixToolset.Cli. Instala WiX v4 (dotnet tool install WixToolset.Cli) y reintenta."
+    Die "No se pudo instalar wix. Instala WiX v4 (dotnet tool install wix) y reintenta."
   }
 
   return $localExe
