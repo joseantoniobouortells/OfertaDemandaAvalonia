@@ -42,6 +42,7 @@ jobs:
           TAG="${{ steps.resolve-tag.outputs.tag || steps.resolve-tag-push.outputs.tag }}"
           if gh release view "$TAG" > /dev/null 2>&1; then
             echo "Release ya existe, se reutiliza."
+            gh release edit "$TAG" --draft=false
           else
             gh release create "$TAG" \
               --title "$TAG" \
