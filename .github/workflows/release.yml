@@ -36,9 +36,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.resolve-tag.outputs.tag }}" \
-            --title "${{ steps.resolve-tag.outputs.tag }}" \
-            --generate-notes
+          if gh release view "${{ steps.resolve-tag.outputs.tag }}" > /dev/null 2>&1; then
+            echo "Release ya existe, se reutiliza."
+          else
+            gh release create "${{ steps.resolve-tag.outputs.tag }}" \
+              --title "${{ steps.resolve-tag.outputs.tag }}" \
+              --generate-notes
+          fi
 
   windows:
     name: Windows MSI/MSIX
