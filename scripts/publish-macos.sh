@@ -160,12 +160,25 @@ cp -R "$APP_DIR" "$STAGING_DIR/"
 ln -s /Applications "$STAGING_DIR/Applications"
 
 rm -f "$DMG_PATH" 2>/dev/null || true
-hdiutil create \
-  -volname "$APP_NAME" \
-  -srcfolder "$STAGING_DIR" \
-  -ov \
-  -format UDZO \
-  "$DMG_PATH" >/dev/null
+create_dmg() {
+  hdiutil create \
+    -volname "$APP_NAME" \
+    -srcfolder "$STAGING_DIR" \
+    -ov \
+    -format UDZO \
+    "$DMG_PATH" >/dev/null
+}
+
+for attempt in 1 2 3; do
+  rm -f "$DMG_PATH" 2>/dev/null || true
+  if create_dmg; then
+    break
+  fi
+  if [[ "$attempt" -eq 3 ]]; then
+    die "No se pudo crear el DMG (hdiutil: resource busy)."
+  fi
+  sleep 2
+done
 
 echo
 echo "==> OK"
