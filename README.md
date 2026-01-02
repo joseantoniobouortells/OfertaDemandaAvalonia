@@ -96,6 +96,27 @@ Salida esperada:
 - macOS: `.dmg` en Assets.
 - Linux: `OfertaDemanda.Desktop-linux-x64.tar.gz` en Assets.
 
+## Cómo instalar
+
+### macOS (DMG)
+- Descarga el `.dmg`, ábrelo y arrastra la app a `Applications`.
+- Si Gatekeeper bloquea la primera ejecución, usa clic derecho → “Abrir” o elimina la cuarentena:
+  ```bash
+  xattr -dr com.apple.quarantine /Applications/OfertaDemanda.app
+  ```
+
+### Windows (MSIX)
+- **Firmado**: doble clic e instala.
+- **Sin firmar / auto-firmado**: instala el certificado y luego el MSIX:
+  ```powershell
+  Import-Certificate -FilePath ".\OfertaDemandaAvalonia.cer" -CertStoreLocation "Cert:\CurrentUser\TrustedPeople"
+  Add-AppxPackage -Path ".\OfertaDemandaAvalonia.msix"
+  ```
+
+### Windows (MSI)
+- Si el MSI incluye `cab1.cab`, asegúrate de tener **ambos** en la misma carpeta.
+- Alternativa recomendada: usa el ZIP `*_msi.zip` de la release, que ya contiene todo.
+
 ## MSIX en Windows 11
 
 ```powershell

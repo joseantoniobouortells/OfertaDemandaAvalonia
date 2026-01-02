@@ -9,7 +9,7 @@
     Compressed="yes"
     Scope="perMachine">
     <MajorUpgrade DowngradeErrorMessage="Ya hay una version mas reciente de $(var.ProductName) instalada." />
-    <MediaTemplate />
+    <MediaTemplate EmbedCab="yes" />
     <Icon Id="AppIcon" SourceFile="$(var.IconPath)" />
     <Property Id="ARPPRODUCTICON" Value="AppIcon" />
     <Feature Id="MainFeature" Title="$(var.ProductName)" Level="1">

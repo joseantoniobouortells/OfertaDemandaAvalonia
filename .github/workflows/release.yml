@@ -57,6 +57,15 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Preparar MSIX firmado (opcional)
+        if: ${{ secrets.WIN_MSIX_PFX_BASE64 != '' }}
+        shell: pwsh
+        run: |
+          $pfxPath = Join-Path $env:RUNNER_TEMP "msix_signing.pfx"
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WIN_MSIX_PFX_BASE64 }}"))
+          "SIGN_CERT_PFX=$pfxPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "SIGN_CERT_PASSWORD=${{ secrets.WIN_MSIX_PFX_PASSWORD }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Crear MSIX
         shell: pwsh
         run: powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msix.ps1
@@ -65,12 +74,43 @@ jobs:
         shell: pwsh
         run: powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msi.ps1
 
+      - name: Validar y empaquetar artefactos Windows
+        shell: pwsh
+        run: |
+          $msi = Get-ChildItem artifacts\msi\*.msi -ErrorAction SilentlyContinue
+          if (-not $msi) { Write-Error "No se encontraron .msi en artifacts\\msi"; exit 1 }
+          $cab = Get-ChildItem artifacts\msi\*.cab -ErrorAction SilentlyContinue
+
+          $msix = Get-ChildItem artifacts\msix\*.msix -ErrorAction SilentlyContinue
+          if (-not $msix) { Write-Error "No se encontraron .msix en artifacts\\msix"; exit 1 }
+          $cer = Get-ChildItem artifacts\msix\*.cer -ErrorAction SilentlyContinue
+
+          $msiZipPath = Join-Path "artifacts\\msi" ($msi[0].BaseName + "_msi.zip")
+          $msiFiles = @($msi.FullName)
+          if ($cab) { $msiFiles += $cab.FullName }
+          Compress-Archive -Path $msiFiles -DestinationPath $msiZipPath -Force
+
+          $msixZipPath = Join-Path "artifacts\\msix" ($msix[0].BaseName + "_msix.zip")
+          $msixFiles = @($msix.FullName)
+          if ($cer) { $msixFiles += $cer.FullName }
+          Compress-Archive -Path $msixFiles -DestinationPath $msixZipPath -Force
+
       - name: Subir artefactos Windows
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
-          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts\msix\*.msix artifacts\msi\*.msi --clobber
+          $upload = @()
+          $upload += Get-ChildItem artifacts\msi\*.msi | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\msix\*.msix | ForEach-Object { $_.FullName }
+          $cab = Get-ChildItem artifacts\msi\*.cab -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+          if ($cab) { $upload += $cab }
+          $cer = Get-ChildItem artifacts\msix\*.cer -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+          if ($cer) { $upload += $cer }
+          $upload += Get-ChildItem artifacts\msi\*_msi.zip | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\msix\*_msix.zip | ForEach-Object { $_.FullName }
+          if ($upload.Count -eq 0) { Write-Error "No hay artefactos Windows para subir."; exit 1 }
+          gh release upload "${{ needs.create-release.outputs.tag }}" $upload --clobber
 
   macos:
     name: macOS DMG
