@@ -26,10 +26,10 @@ jobs:
       - name: Resolver tag
         id: resolve-tag
         run: |
-          if [ -n "${GITHUB_REF_NAME:-}" ]; then
-            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          else
+          if [ -n "${{ inputs.tag }}" ]; then
             echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Crear release
