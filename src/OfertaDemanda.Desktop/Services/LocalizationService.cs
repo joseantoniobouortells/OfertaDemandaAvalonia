@@ -15,7 +15,8 @@ public sealed class LocalizationService : INotifyPropertyChanged
         new CultureInfo("es-ES"),
         new CultureInfo("en-US"),
         new CultureInfo("fr-FR"),
-        new CultureInfo("it-IT")
+        new CultureInfo("it-IT"),
+        new CultureInfo("de-DE")
     ];
 
     private readonly UserSettingsService _settingsService;

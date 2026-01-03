@@ -72,7 +72,8 @@ public partial class SettingsViewModel : ObservableObject
             new("es-ES", _localization["Language_Spanish"]),
             new("en-US", _localization["Language_English"]),
             new("fr-FR", _localization["Language_French"]),
-            new("it-IT", _localization["Language_Italian"])
+            new("it-IT", _localization["Language_Italian"]),
+            new("de-DE", "Deutsch")
         };
     }
 
@@ -94,6 +95,7 @@ public partial class SettingsViewModel : ObservableObject
                 "en-US" => _localization["Language_English"],
                 "fr-FR" => _localization["Language_French"],
                 "it-IT" => _localization["Language_Italian"],
+                "de-DE" => "Deutsch",
                 _ => option.Label
             };
         }
