@@ -198,7 +198,7 @@ function Escape-Xml($value) {
   return [System.Security.SecurityElement]::Escape($value)
 }
 
-function Write-HarvestDirectory($dirPath, $relativeDir, $sb, [ref]$componentIds) {
+function Write-HarvestDirectory($dirPath, $relativeDir, $sb, $componentIds) {
   $subdirs = Get-ChildItem -Path $dirPath -Directory | Sort-Object Name
   $files = Get-ChildItem -Path $dirPath -File | Sort-Object Name
 
@@ -207,7 +207,7 @@ function Write-HarvestDirectory($dirPath, $relativeDir, $sb, [ref]$componentIds)
     $componentId = New-DeterministicId "cmp" $relativePath
     $fileId = New-DeterministicId "fil" $relativePath
     $componentGuid = New-DeterministicGuid $relativePath
-    $componentIds.Value += $componentId
+    $componentIds.Add($componentId) | Out-Null
 
     $null = $sb.AppendLine("    <Component Id=""$componentId"" Guid=""$componentGuid"">")
     $null = $sb.AppendLine("      <File Id=""$fileId"" Source=""`$(var.SourceDir)\$relativePath"" KeyPath=""yes"" />")
@@ -219,19 +219,19 @@ function Write-HarvestDirectory($dirPath, $relativeDir, $sb, [ref]$componentIds)
     $dirId = New-DeterministicId "dir" $childRelative
     $dirName = Escape-Xml $subdir.Name
     $null = $sb.AppendLine("    <Directory Id=""$dirId"" Name=""$dirName"">")
-    Write-HarvestDirectory -dirPath $subdir.FullName -relativeDir $childRelative -sb $sb -componentIds ([ref]$componentIds.Value)
+    Write-HarvestDirectory -dirPath $subdir.FullName -relativeDir $childRelative -sb $sb -componentIds $componentIds
     $null = $sb.AppendLine("    </Directory>")
   }
 }
 
 function Write-HarvestWxs($publishDir, $harvestWxs) {
-  $componentIds = @()
+  $componentIds = New-Object System.Collections.Generic.List[string]
   $sb = New-Object System.Text.StringBuilder
   $null = $sb.AppendLine("<?xml version=""1.0"" encoding=""utf-8""?>")
   $null = $sb.AppendLine("<Wix xmlns=""http://wixtoolset.org/schemas/v4/wxs"">")
   $null = $sb.AppendLine("  <Fragment>")
   $null = $sb.AppendLine("    <DirectoryRef Id=""INSTALLFOLDER"">")
-  Write-HarvestDirectory -dirPath $publishDir -relativeDir "" -sb $sb -componentIds ([ref]$componentIds)
+  Write-HarvestDirectory -dirPath $publishDir -relativeDir "" -sb $sb -componentIds $componentIds
   $null = $sb.AppendLine("    </DirectoryRef>")
   $null = $sb.AppendLine("  </Fragment>")
   $null = $sb.AppendLine("  <Fragment>")
