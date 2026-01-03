@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -12,7 +12,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="App_Title" xml:space="preserve">
     <value>Supply vs Demand</value>
   </data>
@@ -43,7 +42,6 @@
   <data name="Tab_About" xml:space="preserve">
     <value>About</value>
   </data>
-
   <data name="Common_EmptyValue" xml:space="preserve">
     <value>—</value>
   </data>
@@ -62,7 +60,6 @@
   <data name="Format_CurrentValue" xml:space="preserve">
     <value>Current value: {0:F0}</value>
   </data>
-
   <data name="Axis_Quantity" xml:space="preserve">
     <value>Q</value>
   </data>
@@ -75,7 +72,6 @@
   <data name="Axis_PriceLower" xml:space="preserve">
     <value>p</value>
   </data>
-
   <data name="Settings_Title" xml:space="preserve">
     <value>Appearance settings</value>
   </data>
@@ -109,7 +105,6 @@
   <data name="Settings_Config_Hint" xml:space="preserve">
     <value>Delete this file to reset preferences.</value>
   </data>
-
   <data name="Language_Spanish" xml:space="preserve">
     <value>Español (es-ES)</value>
   </data>
@@ -122,7 +117,6 @@
   <data name="Language_Italian" xml:space="preserve">
     <value>Italiano (it-IT)</value>
   </data>
-
   <data name="About_Title" xml:space="preserve">
     <value>About the author</value>
   </data>
@@ -156,7 +150,6 @@
   <data name="About_Label_Commit" xml:space="preserve">
     <value>Commit</value>
   </data>
-
   <data name="Market_Functions" xml:space="preserve">
     <value>Functions</value>
   </data>
@@ -241,7 +234,6 @@
   <data name="Market_Explanation_Profit_Body" xml:space="preserve">
     <value>Shaded area shows profit or loss at q_f*.</value>
   </data>
-
   <data name="Market_Parse_DemandInverse" xml:space="preserve">
     <value>Inverse demand</value>
   </data>
@@ -254,7 +246,6 @@
   <data name="Market_CostType_Cubic" xml:space="preserve">
     <value>Cubic</value>
   </data>
-
   <data name="Market_Label_EquilibriumQuantity" xml:space="preserve">
     <value>Q*</value>
   </data>
@@ -303,7 +294,6 @@
   <data name="Market_State_Loss" xml:space="preserve">
     <value>Loss</value>
   </data>
-
   <data name="Market_Series_ConsumerSurplus" xml:space="preserve">
     <value>CS</value>
   </data>
@@ -373,7 +363,6 @@
   <data name="Market_Series_TaxQuantity" xml:space="preserve">
     <value>Q with tax</value>
   </data>
-
   <data name="Market_ToggleGroup_Market" xml:space="preserve">
     <value>Market</value>
   </data>
@@ -389,7 +378,6 @@
   <data name="Market_ToggleGroup_Costs" xml:space="preserve">
     <value>Costs</value>
   </data>
-
   <data name="Market_Toggle_DemandBase" xml:space="preserve">
     <value>Demand Pd₀</value>
   </data>
@@ -453,7 +441,6 @@
   <data name="Market_Toggle_CostAverage" xml:space="preserve">
     <value>AC</value>
   </data>
-
   <data name="Firm_CostMode_Title" xml:space="preserve">
     <value>Costs and mode</value>
   </data>
@@ -502,7 +489,6 @@
   <data name="Firm_Axis_CostsPrice" xml:space="preserve">
     <value>Costs / P</value>
   </data>
-
   <data name="Elasticity_UsesMarketDemand" xml:space="preserve">
     <value>Uses the market base demand</value>
   </data>
@@ -530,7 +516,6 @@
   <data name="Elasticity_Series_Price" xml:space="preserve">
     <value>Price</value>
   </data>
-
   <data name="Monopoly_DemandInverse_Label" xml:space="preserve">
     <value>Inverse demand Pd(q)</value>
   </data>
@@ -552,7 +537,6 @@
   <data name="Monopoly_Toggle_Deadweight" xml:space="preserve">
     <value>Deadweight loss (area)</value>
   </data>
-
   <data name="Monopoly_Parse_Demand" xml:space="preserve">
     <value>Pd(q)</value>
   </data>
@@ -574,7 +558,6 @@
   <data name="Monopoly_Label_DeadweightLoss" xml:space="preserve">
     <value>Deadweight loss</value>
   </data>
-
   <data name="Monopoly_Series_Demand" xml:space="preserve">
     <value>Pd</value>
   </data>
@@ -611,7 +594,6 @@
   <data name="Monopoly_Isoprofit_Explanation" xml:space="preserve">
     <value>The isoprofit curve shows (q, p) combinations with constant π. At the monopoly optimum, the curve with π=π_m is tangent to Pd(q) because MR(q_m)=MC(q_m). π_m = {0}.</value>
   </data>
-
   <data name="IsoBenefit_MarketParams_Title" xml:space="preserve">
     <value>Market parameters</value>
   </data>
@@ -657,7 +639,6 @@
   <data name="IsoBenefit_FirmChart_Description" xml:space="preserve">
     <value>Firm isoprofit curves and price line p=P*.</value>
   </data>
-
   <data name="IsoBenefit_Label_ReferencePrice" xml:space="preserve">
     <value>P*</value>
   </data>
@@ -738,5 +719,23 @@ The Earn/Lose/Zero label is evaluated with π_i*=P*·q_i*−C_i(q_i*).
 For the market we aggregate costs assuming equal split q_i=Q/N, so C_M(Q)=Σ C_i(Q/N) and Π(Q,P)=P·Q−C_M(Q).
 The market Π̄ curves are computed as P(Q;Π̄)=(C_M(Q)+Π̄)/Q avoiding Q=0 and intersect with demand P_d(Q).
 We determine P* by numerically solving P_d(Q_s(P))=P where Q_s(P)=Σ q_i(P); if there is no stable solution, we use P*=40 as reference.</value>
+  </data>
+  <data name="Tab_PerfectCompetition" xml:space="preserve">
+    <value>Perfect competition</value>
+  </data>
+  <data name="Tab_Model" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="Tab_Welfare" xml:space="preserve">
+    <value>Welfare</value>
+  </data>
+  <data name="Firm_Visualization_Title" xml:space="preserve">
+    <value>Visualization</value>
+  </data>
+  <data name="Firm_Toggle_IsoBenefit" xml:space="preserve">
+    <value>Show isoprofit</value>
+  </data>
+  <data name="Language_German" xml:space="preserve">
+    <value>German (de-DE)</value>
   </data>
 </root>

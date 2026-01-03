@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.MonopolyWelfareView">
+  <Grid ColumnDefinitions="340,*"
+        ColumnSpacing="16">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <TextBlock Text="{Binding Localization[Common_Results]}"
+                   FontWeight="Bold" />
+        <WrapPanel>
+          <TextBlock Text="{Binding MonopolyQuantityText}" />
+          <TextBlock Text="{Binding CompetitiveQuantityText}" Margin="8,0,0,0" />
+          <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
+        </WrapPanel>
+
+        <TextBlock Text="{Binding Localization[Monopoly_Visualization_Title]}"
+                   FontWeight="Bold"
+                   Margin="0,16,0,0" />
+        <StackPanel Spacing="6">
+          <CheckBox Content="{Binding Localization[Monopoly_Toggle_Deadweight]}"
+                    IsChecked="{Binding ShowDeadweightArea}" />
+        </StackPanel>
+
+        <Border Margin="0,12,0,0"
+                Padding="8"
+                Background="#3FFFF0F0"
+                CornerRadius="4"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <lvc:CartesianChart Grid.Column="1"
+                        Series="{Binding Series}"
+                        XAxes="{Binding XAxes}"
+                        YAxes="{Binding YAxes}"
+                        LegendPosition="Right" />
+  </Grid>
+</UserControl>

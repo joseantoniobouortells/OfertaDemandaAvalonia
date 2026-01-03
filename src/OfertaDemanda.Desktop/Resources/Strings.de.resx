@@ -720,4 +720,22 @@ Für den Markt aggregieren wir die Kosten unter der Annahme einer gleichmäßige
 Die Π̄-Kurven des Marktes werden als P(Q;Π̄)=(C_M(Q)+Π̄)/Q berechnet, wobei Q=0 vermieden wird, und sie schneiden die Nachfrage P_d(Q).
 Wir bestimmen P* numerisch durch Lösen von P_d(Q_s(P))=P, wobei Q_s(P)=Σ q_i(P); falls es keine stabile Lösung gibt, verwenden wir P*=40 als Referenz.</value>
   </data>
+  <data name="Tab_PerfectCompetition" xml:space="preserve">
+    <value>Vollkommener Wettbewerb</value>
+  </data>
+  <data name="Tab_Model" xml:space="preserve">
+    <value>Modell</value>
+  </data>
+  <data name="Tab_Welfare" xml:space="preserve">
+    <value>Wohlfahrt</value>
+  </data>
+  <data name="Firm_Visualization_Title" xml:space="preserve">
+    <value>Visualisierung</value>
+  </data>
+  <data name="Firm_Toggle_IsoBenefit" xml:space="preserve">
+    <value>Isogewinn anzeigen</value>
+  </data>
+  <data name="Language_German" xml:space="preserve">
+    <value>Deutsch (de-DE)</value>
+  </data>
 </root>

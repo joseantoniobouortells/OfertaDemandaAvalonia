@@ -4,13 +4,14 @@ OfertaDemanda es un simulador visual de microeconomía que replica y amplía el 
 
 ## Propósito y funcionamiento
 
-1. **Mercado**: acepta expresiones de demanda y oferta inversa (por ejemplo `100 - 0.5q`) y parámetros de shocks/impuestos. Calcula el equilibrio con y sin impuesto, excedentes, recaudación y pérdida irrecuperable; dibuja las curvas base y desplazadas con sus áreas.
-2. **Empresa (CP/LP)**: recibe la función de coste total y un precio de mercado o modo de largo plazo. Deriva CMg, CMe y CMeV, encuentra la cantidad óptima según el modo y calcula beneficios.
-3. **Monopolio**: evalúa demanda inversa y costes totales para construir ingresos/costes marginales, encontrar el punto donde IMg=CMg, comparar con competencia perfecta y cuantificar la pérdida de eficiencia.
-4. **Elasticidad**: usa la misma demanda del Mercado y un precio objetivo para estimar elasticidad-precio puntual mediante derivada numérica y marca el punto en la curva.
-5. **Isobeneficio**: muestra curvas de isobeneficio del mercado (Π̄ negativos/cero/positivos) frente a la demanda y, en una pestaña separada, las curvas de cada empresa con su intersección p=P*, el valor óptimo q_i* (CMg=P*) y el diagnóstico “Gana/Pierde/Cero”. Incluye editor CRUD de empresas, persistencia y panel de fórmulas en texto plano que explica las ecuaciones usadas.
+1. **Competencia perfecta / Mercado**: acepta expresiones de demanda y oferta inversa (por ejemplo `100 - 0.5q`) y parámetros de shocks/impuestos. Calcula el equilibrio con y sin impuesto, excedentes, recaudación y pérdida irrecuperable; dibuja las curvas base y desplazadas con sus áreas.
+2. **Competencia perfecta / Empresa (CP/LP)**: recibe la función de coste total y un precio de mercado o modo de largo plazo. Deriva CMg, CMe y CMeV, encuentra la cantidad óptima según el modo y calcula beneficios.
+3. **Competencia perfecta / Elasticidad**: usa la misma demanda del Mercado y un precio objetivo para estimar elasticidad-precio puntual mediante derivada numérica y marca el punto en la curva.
+4. **Monopolio / Modelo**: evalúa demanda inversa y costes totales para construir ingresos/costes marginales, encontrar el punto donde IMg=CMg y cuantificar el beneficio.
+5. **Monopolio / Bienestar**: compara con competencia perfecta y cuantifica la pérdida de eficiencia, mostrando la pérdida irrecuperable.
+6. **Isobeneficio (opcional en Empresa)**: muestra curvas de isobeneficio del mercado (Π̄ negativos/cero/positivos) frente a la demanda y, en una sección adicional, las curvas de cada empresa con su intersección p=P*, el valor óptimo q_i* (CMg=P*) y el diagnóstico “Gana/Pierde/Cero”. Incluye editor CRUD de empresas, persistencia y panel de fórmulas en texto plano que explica las ecuaciones usadas.
 
-Cada pestaña comparte el motor del proyecto `OfertaDemanda.Core`, por lo que los cambios en las expresiones o parámetros se traducen en nuevas evaluaciones sin reescribir lógica en la UI.
+Cada sección comparte el motor del proyecto `OfertaDemanda.Core`, por lo que los cambios en las expresiones o parámetros se traducen en nuevas evaluaciones sin reescribir lógica en la UI.
 
 ## Arquitectura y módulos
 
@@ -181,7 +182,7 @@ Salida esperada:
 
 ## Ajustes de tema y preferencias
 
-- La pestaña **Configuración** expone selectores de **tema** (Sistema/Claro/Oscuro) y **idioma** (ES/EN/FR/IT) que aplican cambios en caliente.
+- La pestaña **Configuración** expone selectores de **tema** (Sistema/Claro/Oscuro) y **idioma** (ES/EN/FR/IT/DE) que aplican cambios en caliente.
 - La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows) y el mismo archivo guarda la lista de empresas, parámetros del tab Isobeneficio y el idioma seleccionado.
 - Para restablecer la apariencia basta con borrar ese archivo y reiniciar la app; se volverá al modo “Predeterminado del sistema”.
 - El almacenamiento es per‑usuario y no depende de servicios externos.

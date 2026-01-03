@@ -6,6 +6,9 @@ namespace OfertaDemanda.Desktop.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private bool showIsoBenefitPanel;
+
     public LocalizationService Localization { get; }
     public MarketViewModel Market { get; }
     public FirmViewModel Firm { get; }
@@ -19,6 +22,7 @@ public sealed partial class MainViewModel : ObservableObject
     public MainViewModel(ThemeService themeService, UserSettingsService userSettingsService, LocalizationService localizationService)
     {
         Localization = localizationService;
+        ShowIsoBenefitPanel = false;
         Market = new MarketViewModel(localizationService);
         Firm = new FirmViewModel(localizationService);
         Monopoly = new MonopolyViewModel(localizationService);
@@ -28,6 +32,13 @@ public sealed partial class MainViewModel : ObservableObject
         About = new AboutViewModel(localizationService);
         ResetDefaultsCommand = new RelayCommand(ApplyDefaults);
         ApplyDefaults();
+    }
+
+    public bool ShowFirmChart => !ShowIsoBenefitPanel;
+
+    partial void OnShowIsoBenefitPanelChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowFirmChart));
     }
 
     private void ApplyDefaults()

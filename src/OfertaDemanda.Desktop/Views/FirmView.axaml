@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:views="using:OfertaDemanda.Desktop.Views"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.FirmView">
+  <Grid ColumnDefinitions="340,*"
+        ColumnSpacing="16">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <TextBlock Text="{Binding Localization[Firm_CostMode_Title]}"
+                   FontWeight="Bold" />
+        <TextBlock Text="{Binding Localization[Firm_TotalCost_Label]}" />
+        <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Text="{Binding Localization[Firm_Mode_Label]}"
+                   Margin="0,8,0,0" />
+        <ComboBox ItemsSource="{Binding ModeOptions}"
+                  SelectedItem="{Binding SelectedMode}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock Text="{Binding Localization[Firm_MarketPrice_Label]}"
+                   Margin="0,8,0,0" />
+        <Slider Minimum="10"
+                Maximum="100"
+                Value="{Binding Price}"
+                IsEnabled="{Binding IsPriceEditable}" />
+        <TextBlock Text="{Binding CurrentPriceText}"
+                   FontSize="12" />
+
+        <TextBlock Text="{Binding Localization[Common_Results]}"
+                   FontWeight="Bold"
+                   Margin="0,16,0,0" />
+        <WrapPanel>
+          <TextBlock Text="{Binding QuantityText}" />
+          <TextBlock Text="{Binding PriceText}" Margin="8,0,0,0" />
+          <TextBlock Text="{Binding ProfitText}" Margin="8,0,0,0" />
+        </WrapPanel>
+
+        <TextBlock Text="{Binding Localization[Firm_Visualization_Title]}"
+                   FontWeight="Bold"
+                   Margin="0,16,0,0" />
+        <CheckBox Content="{Binding Localization[Firm_Toggle_IsoBenefit]}"
+                  IsChecked="{Binding DataContext.ShowIsoBenefitPanel, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+        <Border Margin="0,12,0,0"
+                Padding="8"
+                Background="#3FFFF0F0"
+                CornerRadius="4"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <Grid Grid.Column="1">
+      <lvc:CartesianChart Series="{Binding Series}"
+                          XAxes="{Binding XAxes}"
+                          YAxes="{Binding YAxes}"
+                          LegendPosition="Right"
+                          IsVisible="{Binding DataContext.ShowFirmChart, RelativeSource={RelativeSource AncestorType=Window}}" />
+      <views:IsoBenefitView DataContext="{Binding DataContext.IsoBenefit, RelativeSource={RelativeSource AncestorType=Window}}"
+                            IsVisible="{Binding DataContext.ShowIsoBenefitPanel, RelativeSource={RelativeSource AncestorType=Window}}" />
+    </Grid>
+  </Grid>
+</UserControl>

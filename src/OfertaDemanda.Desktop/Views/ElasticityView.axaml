@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.ElasticityView">
+  <Grid ColumnDefinitions="340,*"
+        ColumnSpacing="16">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <TextBlock Text="{Binding Localization[Elasticity_UsesMarketDemand]}"
+                   FontWeight="Bold" />
+        <TextBlock Text="{Binding Localization[Elasticity_Demand_Label]}" />
+        <TextBox Text="{Binding Market.DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="{Binding MarketShockText}"
+                   FontSize="12" />
+
+        <TextBlock Text="{Binding Localization[Elasticity_Price_Label]}"
+                   Margin="0,12,0,0" />
+        <Slider Minimum="10"
+                Maximum="110"
+                Value="{Binding Price}" />
+        <TextBlock Text="{Binding PriceText}"
+                   FontSize="12" />
+
+        <TextBlock Text="{Binding ElasticityText}"
+                   Margin="0,12,0,0" />
+
+        <Border Margin="0,12,0,0"
+                Padding="8"
+                Background="#3FFFF0F0"
+                CornerRadius="4"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <lvc:CartesianChart Grid.Column="1"
+                        Series="{Binding Series}"
+                        XAxes="{Binding XAxes}"
+                        YAxes="{Binding YAxes}"
+                        LegendPosition="Right" />
+  </Grid>
+</UserControl>
