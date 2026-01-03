@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.Services;
 
-public sealed class UserSettingsStore
+public sealed class UserSettingsStore : IAppConfigStore
 {
     private readonly string _filePath;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
@@ -23,6 +24,7 @@ public sealed class UserSettingsStore
     }
 
     public string SettingsFilePath => _filePath;
+    public event EventHandler<UserSettings>? SettingsChanged;
 
     public UserSettings Load()
     {
@@ -48,6 +50,7 @@ public sealed class UserSettingsStore
         var sanitized = (settings ?? UserSettings.CreateDefault()).Sanitize();
         var json = JsonSerializer.Serialize(sanitized, JsonOptions);
         File.WriteAllText(_filePath, json);
+        SettingsChanged?.Invoke(this, sanitized);
     }
 
     private static string ResolveDefaultPath()

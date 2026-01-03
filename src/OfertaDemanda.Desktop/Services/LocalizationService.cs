@@ -4,20 +4,15 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.Services;
 
 public sealed class LocalizationService : INotifyPropertyChanged
 {
-    public const string DefaultCultureCode = "es-ES";
+    public const string DefaultCultureCode = AppLocalization.DefaultCultureCode;
     private static readonly IReadOnlyList<CultureInfo> SupportedCultures =
-    [
-        new CultureInfo("es-ES"),
-        new CultureInfo("en-US"),
-        new CultureInfo("fr-FR"),
-        new CultureInfo("it-IT"),
-        new CultureInfo("de-DE")
-    ];
+        AppLocalization.SupportedCultureCodes.Select(code => new CultureInfo(code)).ToArray();
 
     private readonly UserSettingsService _settingsService;
     private readonly ResourceManager _resourceManager =

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OfertaDemanda.Mobile.Views.AboutPage">
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="10">
+      <Label Text="{Binding Localization[About_Title]}" FontSize="22" FontAttributes="Bold" />
+      <Label Text="{Binding Localization[About_PurposeText]}" FontSize="13" />
+
+      <Label Text="{Binding Localization[Common_Results]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding AppName}" />
+      <Label Text="{Binding Version}" />
+
+      <Label Text="{Binding Localization[About_Label_OS]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding Platform}" />
+
+      <Label Text="{Binding Localization[About_Label_Architecture]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding Architecture}" />
+
+      <Label Text="{Binding Localization[About_Label_Dotnet]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding Dotnet}" />
+
+      <Label Text="{Binding Localization[About_Label_Avalonia]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding Avalonia}" />
+
+      <Label Text="{Binding Localization[About_Label_BuildDate]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding BuildDate}" />
+
+      <Label Text="{Binding Localization[About_Label_Commit]}" FontAttributes="Bold" Margin="0,10,0,0" />
+      <Label Text="{Binding Commit}" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

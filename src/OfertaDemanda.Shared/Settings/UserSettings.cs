@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using OfertaDemanda.Desktop.ViewModels;
 
-namespace OfertaDemanda.Desktop.Services;
+namespace OfertaDemanda.Shared.Settings;
 
 public sealed record IsoBenefitFirmSetting(string Name, string CostExpression)
 {
@@ -25,12 +23,11 @@ public sealed record IsoBenefitSettings
     };
 
     private static IReadOnlyList<IsoBenefitFirmSetting> DefaultFirms() =>
-        new[]
-        {
+        [
             new IsoBenefitFirmSetting("Empresa A", "200 + 10q + 0.5q^2"),
             new IsoBenefitFirmSetting("Empresa B", "120 + 12q + 0.3q^2"),
             new IsoBenefitFirmSetting("Empresa C", "80 + 8q + 0.8q^2")
-        };
+        ];
 
     public IsoBenefitSettings Sanitize()
     {
@@ -56,13 +53,13 @@ public sealed record IsoBenefitSettings
 public sealed record UserSettings
 {
     public ThemeMode Theme { get; init; } = ThemeMode.System;
-    public string Language { get; init; } = LocalizationService.DefaultCultureCode;
+    public string Language { get; init; } = AppLocalization.DefaultCultureCode;
     public IsoBenefitSettings IsoBenefit { get; init; } = IsoBenefitSettings.CreateDefault();
 
     public static UserSettings CreateDefault() => new()
     {
         Theme = ThemeMode.System,
-        Language = LocalizationService.DefaultCultureCode,
+        Language = AppLocalization.DefaultCultureCode,
         IsoBenefit = IsoBenefitSettings.CreateDefault()
     };
 
@@ -71,7 +68,7 @@ public sealed record UserSettings
         var iso = IsoBenefit ?? IsoBenefitSettings.CreateDefault();
         return this with
         {
-            Language = LocalizationService.NormalizeCultureCode(Language),
+            Language = AppLocalization.NormalizeCultureCode(Language),
             IsoBenefit = iso.Sanitize()
         };
     }

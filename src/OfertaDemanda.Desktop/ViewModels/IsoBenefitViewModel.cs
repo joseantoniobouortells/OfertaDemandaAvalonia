@@ -9,6 +9,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using OfertaDemanda.Core.Models;
 using OfertaDemanda.Desktop.Services;
+using OfertaDemanda.Shared.Settings;
 using SkiaSharp;
 
 namespace OfertaDemanda.Desktop.ViewModels;

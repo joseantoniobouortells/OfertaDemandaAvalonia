@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OfertaDemanda.Desktop.Services;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.ViewModels;
 

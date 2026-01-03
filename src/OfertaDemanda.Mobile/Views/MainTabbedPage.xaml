@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:views="clr-namespace:OfertaDemanda.Mobile.Views"
+            x:Class="OfertaDemanda.Mobile.Views.MainTabbedPage"
+            x:Name="Root">
+    <views:PerfectCompetitionPage Title="{Binding Localization[Nav_PerfectCompetition], Source={x:Reference Root}}" />
+    <views:MonopolyPage Title="{Binding Localization[Nav_Monopoly], Source={x:Reference Root}}" />
+    <views:SettingsPage Title="{Binding Localization[Nav_Settings], Source={x:Reference Root}}" />
+    <views:AboutPage Title="{Binding Localization[Nav_About], Source={x:Reference Root}}" />
+</TabbedPage>

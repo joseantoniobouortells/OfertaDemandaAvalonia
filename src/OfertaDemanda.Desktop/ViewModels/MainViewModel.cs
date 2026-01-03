@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OfertaDemanda.Desktop.Services;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.ViewModels;
 

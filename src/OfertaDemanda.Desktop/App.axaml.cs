@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using OfertaDemanda.Desktop.Services;
+using OfertaDemanda.Shared.Settings;
 using OfertaDemanda.Desktop.ViewModels;
 
 namespace OfertaDemanda.Desktop;

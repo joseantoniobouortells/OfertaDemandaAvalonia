@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using OfertaDemanda.Desktop.Services;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.Tests;
 

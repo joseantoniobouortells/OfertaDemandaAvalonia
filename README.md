@@ -61,6 +61,28 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release --install
 ```
 
+## Mobile (MAUI)
+
+Requisitos:
+- Xcode instalado (iOS Simulator).
+- Workloads MAUI: `dotnet workload install maui`.
+
+Ejecutar en iOS Simulator:
+
+```bash
+dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -f net8.0-ios
+dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -t:Run -f net8.0-ios -p:_DeviceName="iPhone 15"
+```
+
+Ejecutar en Android:
+
+```bash
+dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -f net8.0-android
+dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -t:Run -f net8.0-android
+```
+
+Nota: la app móvil usa .NET MAUI y comparte `OfertaDemanda.Core` y los mismos recursos RESX de localización que la app de escritorio (Avalonia).
+
 ## Publicar Windows desde macOS (Docker)
 
 Requisitos:

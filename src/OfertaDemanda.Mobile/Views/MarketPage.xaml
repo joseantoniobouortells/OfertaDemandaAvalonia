@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:Class="OfertaDemanda.Mobile.Views.MarketPage"
+             x:Name="Root">
+  <Grid RowDefinitions="Auto,*" RowSpacing="12" Padding="12">
+    <ScrollView Grid.Row="0">
+      <VerticalStackLayout Spacing="10">
+        <Label Text="{Binding Localization[Market_Functions]}" FontAttributes="Bold" />
+        <Label Text="{Binding Localization[Market_DemandInverse]}" />
+        <Entry Text="{Binding DemandExpression}" />
+        <Label Text="{Binding Localization[Market_SupplyInverse]}" />
+        <Entry Text="{Binding SupplyExpression}" />
+
+        <Label Text="{Binding Localization[Market_ShocksTax]}" FontAttributes="Bold" Margin="0,10,0,0" />
+        <Label Text="{Binding Localization[Market_DemandShock]}" />
+        <Slider Minimum="-30" Maximum="30" Value="{Binding DemandShock}" />
+        <Label Text="{Binding DemandShockText}" FontSize="12" />
+
+        <Label Text="{Binding Localization[Market_SupplyShock]}" />
+        <Slider Minimum="-30" Maximum="30" Value="{Binding SupplyShock}" />
+        <Label Text="{Binding SupplyShockText}" FontSize="12" />
+
+        <Label Text="{Binding Localization[Market_Tax]}" />
+        <Slider Minimum="0" Maximum="30" Value="{Binding Tax}" />
+        <Label Text="{Binding TaxText}" FontSize="12" />
+
+        <Label Text="{Binding Localization[Market_Costs]}" FontAttributes="Bold" Margin="0,10,0,0" />
+        <Label Text="{Binding Localization[Market_CostType]}" />
+        <Picker ItemsSource="{Binding CostTypeOptions}"
+                SelectedItem="{Binding SelectedCostType}"
+                ItemDisplayBinding="{Binding Label}" />
+        <Label Text="{Binding Localization[Market_CostFixed]}" />
+        <Entry Text="{Binding FixedCost}" Keyboard="Numeric" />
+        <Label Text="{Binding Localization[Market_CostLinear]}" />
+        <Entry Text="{Binding LinearCost}" Keyboard="Numeric" />
+        <Label Text="{Binding Localization[Market_CostQuadratic]}" />
+        <Entry Text="{Binding QuadraticCost}" Keyboard="Numeric" />
+        <VerticalStackLayout IsVisible="{Binding IsCubicCostVisible}">
+          <Label Text="{Binding Localization[Market_CostCubic]}" />
+          <Entry Text="{Binding CubicCost}" Keyboard="Numeric" />
+        </VerticalStackLayout>
+
+        <Label Text="{Binding Localization[Market_CurvesElements]}" FontAttributes="Bold" Margin="0,10,0,0" />
+        <HorizontalStackLayout Spacing="8">
+          <Button Text="{Binding Localization[Market_ShowAll]}" Command="{Binding ShowAllTogglesCommand}" />
+          <Button Text="{Binding Localization[Market_HideAll]}" Command="{Binding HideAllTogglesCommand}" />
+        </HorizontalStackLayout>
+
+        <CollectionView ItemsSource="{Binding ToggleGroups}" Margin="0,6,0,0">
+          <CollectionView.ItemTemplate>
+            <DataTemplate>
+              <VerticalStackLayout Spacing="6" Margin="0,6,0,0">
+                <HorizontalStackLayout Spacing="8">
+                  <Label Text="{Binding Label}" FontAttributes="Bold" />
+                  <Button Text="{Binding Source={x:Reference Root}, Path=BindingContext.Localization[Market_ShowGroup]}"
+                          Command="{Binding Source={x:Reference Root}, Path=BindingContext.ShowGroupCommand}"
+                          CommandParameter="{Binding .}" />
+                </HorizontalStackLayout>
+                <CollectionView ItemsSource="{Binding Items}">
+                  <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                      <HorizontalStackLayout Spacing="8">
+                        <CheckBox IsChecked="{Binding IsVisible}" />
+                        <Label Text="{Binding Label}" />
+                      </HorizontalStackLayout>
+                    </DataTemplate>
+                  </CollectionView.ItemTemplate>
+                </CollectionView>
+              </VerticalStackLayout>
+            </DataTemplate>
+          </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Text="{Binding Localization[Market_Results]}" FontAttributes="Bold" Margin="0,10,0,0" />
+        <FlexLayout Wrap="Wrap">
+          <Label Text="{Binding EquilibriumText}" Margin="0,0,8,0" />
+          <Label Text="{Binding PriceConsumerText}" Margin="0,0,8,0" />
+          <Label Text="{Binding PriceProducerText}" Margin="0,0,8,0" />
+          <Label Text="{Binding ConsumerSurplusText}" Margin="0,0,8,0" />
+          <Label Text="{Binding ProducerSurplusText}" Margin="0,0,8,0" />
+          <Label Text="{Binding TaxRevenueText}" Margin="0,0,8,0" />
+          <Label Text="{Binding DeadweightLossText}" Margin="0,0,8,0" />
+        </FlexLayout>
+
+        <Label Text="{Binding Localization[Market_FirmCompetitive]}" FontAttributes="Bold" Margin="0,10,0,0" />
+        <FlexLayout Wrap="Wrap">
+          <Label Text="{Binding FirmQuantityText}" Margin="0,0,8,0" />
+          <Label Text="{Binding FirmMarginalCostText}" Margin="0,0,8,0" />
+          <Label Text="{Binding FirmAverageVariableCostText}" Margin="0,0,8,0" />
+          <Label Text="{Binding FirmAverageCostText}" Margin="0,0,8,0" />
+          <Label Text="{Binding FirmProfitText}" Margin="0,0,8,0" />
+          <Label Text="{Binding FirmStateText}" Margin="0,0,8,0" />
+        </FlexLayout>
+
+        <Frame CornerRadius="6" BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#1E1E1E}" Padding="10">
+          <VerticalStackLayout Spacing="6">
+            <Label Text="{Binding Localization[Market_Explanation_Title]}" FontAttributes="Bold" />
+            <Label Text="{Binding Localization[Market_Explanation_MC_Title]}" FontAttributes="Bold" />
+            <Label Text="{Binding Localization[Market_Explanation_MC_Body]}" FontSize="12" Opacity="0.75" />
+            <Label Text="{Binding Localization[Market_Explanation_AVC_Title]}" FontAttributes="Bold" />
+            <Label Text="{Binding Localization[Market_Explanation_AVC_Body]}" FontSize="12" Opacity="0.75" />
+            <Label Text="{Binding Localization[Market_Explanation_AC_Title]}" FontAttributes="Bold" />
+            <Label Text="{Binding Localization[Market_Explanation_AC_Body]}" FontSize="12" Opacity="0.75" />
+            <Label Text="{Binding Localization[Market_Explanation_Profit_Title]}" FontAttributes="Bold" />
+            <Label Text="{Binding Localization[Market_Explanation_Profit_Body]}" FontSize="12" Opacity="0.75" />
+          </VerticalStackLayout>
+        </Frame>
+
+        <Frame IsVisible="{Binding HasErrors}" BackgroundColor="#FFF0F0" Padding="8" CornerRadius="6">
+          <VerticalStackLayout>
+            <Label Text="{Binding Localization[Common_Errors]}" FontAttributes="Bold" />
+            <CollectionView ItemsSource="{Binding Errors}">
+              <CollectionView.ItemTemplate>
+                <DataTemplate>
+                  <Label Text="• {Binding .}" />
+                </DataTemplate>
+              </CollectionView.ItemTemplate>
+            </CollectionView>
+          </VerticalStackLayout>
+        </Frame>
+      </VerticalStackLayout>
+    </ScrollView>
+
+    <lvc:CartesianChart Grid.Row="1"
+                        Series="{Binding Series}"
+                        XAxes="{Binding XAxes}"
+                        YAxes="{Binding YAxes}"
+                        LegendPosition="Right" />
+  </Grid>
+</ContentPage>

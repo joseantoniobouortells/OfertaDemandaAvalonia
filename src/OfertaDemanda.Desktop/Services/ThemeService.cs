@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Styling;
+using OfertaDemanda.Shared.Settings;
 
 namespace OfertaDemanda.Desktop.Services;
 

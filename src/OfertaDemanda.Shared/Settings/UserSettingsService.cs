@@ -1,10 +1,10 @@
-namespace OfertaDemanda.Desktop.Services;
+namespace OfertaDemanda.Shared.Settings;
 
 public sealed class UserSettingsService
 {
-    private readonly UserSettingsStore _store;
+    private readonly IAppConfigStore _store;
 
-    public UserSettingsService(UserSettingsStore store)
+    public UserSettingsService(IAppConfigStore store)
     {
         _store = store;
         Settings = _store.Load();

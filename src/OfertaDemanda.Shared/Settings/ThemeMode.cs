@@ -1,4 +1,4 @@
-namespace OfertaDemanda.Desktop.Services;
+namespace OfertaDemanda.Shared.Settings;
 
 public enum ThemeMode
 {
