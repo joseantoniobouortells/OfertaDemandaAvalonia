@@ -135,7 +135,8 @@ EOF
   elif command -v convert >/dev/null 2>&1; then
     convert "$ICON_SRC" -resize 256x256 "$ICON_OUT"
   else
-    die "No encuentro ImageMagick (magick/convert) para redimensionar el icono."
+    echo "WARN: No encuentro ImageMagick, se copia el icono sin redimensionar." >&2
+    cp "$ICON_SRC" "$ICON_OUT"
   fi
   chmod 644 "$ICON_OUT"
 
