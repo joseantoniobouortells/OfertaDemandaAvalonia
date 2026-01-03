@@ -11,6 +11,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using OfertaDemanda.Core.Models;
 using OfertaDemanda.Core.Numerics;
+using OfertaDemanda.Desktop.Services;
 using SkiaSharp;
 
 namespace OfertaDemanda.Desktop.ViewModels;
@@ -38,22 +39,22 @@ public partial class MonopolyViewModel : ViewModelBase
     public bool HasErrors => Errors.Count > 0;
 
     [ObservableProperty]
-    private string monopolyQuantityText = "q_m: —";
+    private string monopolyQuantityText = string.Empty;
 
     [ObservableProperty]
-    private string monopolyPriceText = "p_m: —";
+    private string monopolyPriceText = string.Empty;
 
     [ObservableProperty]
-    private string profitText = "Beneficio: —";
+    private string profitText = string.Empty;
 
     [ObservableProperty]
-    private string competitiveQuantityText = "q_CP: —";
+    private string competitiveQuantityText = string.Empty;
 
     [ObservableProperty]
-    private string deadweightLossText = "Pérdida irrecup.: —";
+    private string deadweightLossText = string.Empty;
 
     [ObservableProperty]
-    private string isoprofitExplanation = "La isobeneficio muestra combinaciones (q, p) con π constante. πₘ: —.";
+    private string isoprofitExplanation = string.Empty;
 
     [ObservableProperty]
     private bool showIsoprofitCurve = true;
@@ -77,7 +78,13 @@ public partial class MonopolyViewModel : ViewModelBase
         new Axis { Name = "P", MinLimit = 0, MaxLimit = 150 }
     };
 
-    public MonopolyViewModel() => ApplyDefaults();
+    public MonopolyViewModel(LocalizationService localization)
+        : base(localization)
+    {
+        Localization.CultureChanged += (_, _) => OnLocalizationChanged();
+        UpdateAxisLabels();
+        ApplyDefaults();
+    }
 
     public void ApplyDefaults()
     {
@@ -125,8 +132,8 @@ public partial class MonopolyViewModel : ViewModelBase
     private void Recalculate()
     {
         var localErrors = new List<string>();
-        if (!TryParseExpression(DemandExpression, "Pd(q)", localErrors, out var demand) ||
-            !TryParseExpression(CostExpression, "CT(q)", localErrors, out var cost))
+        if (!TryParseExpression(DemandExpression, Localization["Monopoly_Parse_Demand"], localErrors, out var demand) ||
+            !TryParseExpression(CostExpression, Localization["Monopoly_Parse_TotalCost"], localErrors, out var cost))
         {
             UpdateState(null, null, localErrors);
             return;
@@ -146,21 +153,21 @@ public partial class MonopolyViewModel : ViewModelBase
         if (result == null)
         {
             Series = Array.Empty<ISeries>();
-            MonopolyQuantityText = "q_m: —";
-            MonopolyPriceText = "p_m: —";
-            ProfitText = "Beneficio: —";
-            CompetitiveQuantityText = "q_CP: —";
-            DeadweightLossText = "Pérdida irrecup.: —";
-            IsoprofitExplanation = "La isobeneficio muestra combinaciones (q, p) con π constante. πₘ: —.";
+            MonopolyQuantityText = FormatMetric("Monopoly_Label_Quantity", null);
+            MonopolyPriceText = FormatMetric("Monopoly_Label_Price", null);
+            ProfitText = FormatMetric("Monopoly_Label_Profit", null);
+            CompetitiveQuantityText = FormatMetric("Monopoly_Label_CompetitiveQuantity", null);
+            DeadweightLossText = FormatMetric("Monopoly_Label_DeadweightLoss", null);
+            IsoprofitExplanation = BuildIsoprofitExplanation(null);
         }
         else
         {
             Series = BuildSeries(result, cost);
-            MonopolyQuantityText = FormatMetric("q_m", result.MonopolyPoint?.X);
-            MonopolyPriceText = FormatMetric("p_m", result.MonopolyPoint?.Y);
-            ProfitText = FormatMetric("Beneficio", result.Profit);
-            CompetitiveQuantityText = FormatMetric("q_CP", result.CompetitivePoint?.X);
-            DeadweightLossText = FormatMetric("Pérdida irrecup.", result.DeadweightLoss);
+            MonopolyQuantityText = FormatMetric("Monopoly_Label_Quantity", result.MonopolyPoint?.X);
+            MonopolyPriceText = FormatMetric("Monopoly_Label_Price", result.MonopolyPoint?.Y);
+            ProfitText = FormatMetric("Monopoly_Label_Profit", result.Profit);
+            CompetitiveQuantityText = FormatMetric("Monopoly_Label_CompetitiveQuantity", result.CompetitivePoint?.X);
+            DeadweightLossText = FormatMetric("Monopoly_Label_DeadweightLoss", result.DeadweightLoss);
             IsoprofitExplanation = BuildIsoprofitExplanation(result.Profit);
         }
 
@@ -173,9 +180,9 @@ public partial class MonopolyViewModel : ViewModelBase
     {
         var list = new List<ISeries>
         {
-            ChartSeriesBuilder.Line("Pd", result.Demand, SKColors.SteelBlue),
-            ChartSeriesBuilder.Line("IMg", result.MarginalRevenue, SKColors.DarkOrange),
-            ChartSeriesBuilder.Line("CMg", result.MarginalCost, SKColors.OliveDrab)
+            ChartSeriesBuilder.Line(Localization["Monopoly_Series_Demand"], result.Demand, SKColors.SteelBlue),
+            ChartSeriesBuilder.Line(Localization["Monopoly_Series_MarginalRevenue"], result.MarginalRevenue, SKColors.DarkOrange),
+            ChartSeriesBuilder.Line(Localization["Monopoly_Series_MarginalCost"], result.MarginalCost, SKColors.OliveDrab)
         };
 
         if (ShowIsoprofitCurve && cost != null && result.MonopolyPoint.HasValue && result.Profit.HasValue)
@@ -184,7 +191,7 @@ public partial class MonopolyViewModel : ViewModelBase
             var isoprofit = BuildIsoprofitPoints(cost, result.Profit.Value, qMin, qMax);
             if (isoprofit.Count > 1)
             {
-                list.Add(ChartSeriesBuilder.Line("Isobeneficio (π=π*)", isoprofit, SKColors.MediumPurple));
+                list.Add(ChartSeriesBuilder.Line(Localization["Monopoly_Series_Isoprofit"], isoprofit, SKColors.MediumPurple));
             }
         }
 
@@ -194,18 +201,18 @@ public partial class MonopolyViewModel : ViewModelBase
             var averageCost = BuildAverageCostPoints(cost, qMin, qMax);
             if (averageCost.Count > 1)
             {
-                list.Add(ChartSeriesBuilder.Line("CMe", averageCost, SKColors.CadetBlue));
+                list.Add(ChartSeriesBuilder.Line(Localization["Monopoly_Series_AverageCost"], averageCost, SKColors.CadetBlue));
             }
         }
 
         if (result.MonopolyPoint.HasValue)
         {
-            list.Add(ChartSeriesBuilder.Scatter("Monopolio", result.MonopolyPoint.Value, SKColors.Firebrick));
+            list.Add(ChartSeriesBuilder.Scatter(Localization["Monopoly_Series_MonopolyPoint"], result.MonopolyPoint.Value, SKColors.Firebrick));
         }
 
         if (result.CompetitivePoint.HasValue)
         {
-            list.Add(ChartSeriesBuilder.Scatter("CP", result.CompetitivePoint.Value, SKColors.DarkGreen));
+            list.Add(ChartSeriesBuilder.Scatter(Localization["Monopoly_Series_CompetitivePoint"], result.CompetitivePoint.Value, SKColors.DarkGreen));
         }
 
         if (ShowGuideLines && result.MonopolyPoint.HasValue)
@@ -214,15 +221,15 @@ public partial class MonopolyViewModel : ViewModelBase
             var (pMin, pMax) = GetChartPRange();
             var qm = result.MonopolyPoint.Value.X;
             var pm = result.MonopolyPoint.Value.Y;
-            list.Add(ChartSeriesBuilder.VerticalLine("qₘ", pMin, pMax, qm, SKColors.DimGray, true));
-            list.Add(ChartSeriesBuilder.HorizontalLine("pₘ", qMin, qMax, pm, SKColors.DimGray, true));
+            list.Add(ChartSeriesBuilder.VerticalLine(Localization["Monopoly_Series_QuantityGuide"], pMin, pMax, qm, SKColors.DimGray, true));
+            list.Add(ChartSeriesBuilder.HorizontalLine(Localization["Monopoly_Series_PriceGuide"], qMin, qMax, pm, SKColors.DimGray, true));
         }
 
         if (ShowGuideLines && result.CompetitivePoint.HasValue)
         {
             var (pMin, pMax) = GetChartPRange();
             var qcp = result.CompetitivePoint.Value.X;
-            list.Add(ChartSeriesBuilder.VerticalLine("q_CP", pMin, pMax, qcp, SKColors.DarkSeaGreen, true));
+            list.Add(ChartSeriesBuilder.VerticalLine(Localization["Monopoly_Series_CompetitiveQuantityGuide"], pMin, pMax, qcp, SKColors.DarkSeaGreen, true));
         }
 
         if (ShowDeadweightArea && result.MonopolyPoint.HasValue && result.CompetitivePoint.HasValue)
@@ -349,7 +356,7 @@ public partial class MonopolyViewModel : ViewModelBase
         return series[^1].Y;
     }
 
-    private static IEnumerable<ISeries> BuildDeadweightSeries(IReadOnlyList<AreaSamplePoint> samples, SKColor color)
+    private IEnumerable<ISeries> BuildDeadweightSeries(IReadOnlyList<AreaSamplePoint> samples, SKColor color)
     {
         if (samples.Count == 0)
         {
@@ -367,7 +374,7 @@ public partial class MonopolyViewModel : ViewModelBase
             GeometryFill = null,
             GeometryStroke = null,
             LineSmoothness = 0,
-            Name = "Pérdida irrecup.",
+            Name = Localization["Monopoly_Series_DeadweightLoss"],
             IsHoverable = false,
             Pivot = 0,
             ZIndex = 1
@@ -424,14 +431,34 @@ public partial class MonopolyViewModel : ViewModelBase
         return isDark ? new SKColor(255, 255, 255, 60) : new SKColor(0, 0, 0, 40);
     }
 
-    private static string BuildIsoprofitExplanation(double? profit)
+    private string BuildIsoprofitExplanation(double? profit)
     {
         var profitValue = profit.HasValue
-            ? profit.Value.ToString("F2", CultureInfo.InvariantCulture)
-            : "—";
+            ? profit.Value.ToString("F2", Localization.CurrentCulture)
+            : Localization["Common_EmptyValue"];
 
-        return "La isobeneficio recoge combinaciones (q, p) con π constante. " +
-               "En el óptimo monopolista, la curva con π=πₘ es tangente a Pd(q) porque IMg(qₘ)=CMg(qₘ). " +
-               $"πₘ = {profitValue}.";
+        return string.Format(
+            Localization.CurrentCulture,
+            Localization["Monopoly_Isoprofit_Explanation"],
+            profitValue);
+    }
+
+    private void UpdateAxisLabels()
+    {
+        if (XAxes.Length > 0)
+        {
+            XAxes[0].Name = Localization["Axis_QuantityLower"];
+        }
+
+        if (YAxes.Length > 0)
+        {
+            YAxes[0].Name = Localization["Axis_Price"];
+        }
+    }
+
+    private void OnLocalizationChanged()
+    {
+        UpdateAxisLabels();
+        Recalculate();
     }
 }

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using OfertaDemanda.Core.Models;
+using OfertaDemanda.Desktop.Services;
 using SkiaSharp;
 
 namespace OfertaDemanda.Desktop.ViewModels;
@@ -26,7 +27,13 @@ public partial class ElasticityViewModel : ViewModelBase
     public bool HasErrors => Errors.Count > 0;
 
     [ObservableProperty]
-    private string elasticityText = "Elasticidad: —";
+    private string elasticityText = string.Empty;
+
+    [ObservableProperty]
+    private string marketShockText = string.Empty;
+
+    [ObservableProperty]
+    private string priceText = string.Empty;
 
     public Axis[] XAxes { get; } =
     {
@@ -40,10 +47,14 @@ public partial class ElasticityViewModel : ViewModelBase
 
     public MarketViewModel Market => _market;
 
-    public ElasticityViewModel(MarketViewModel market)
+    public ElasticityViewModel(MarketViewModel market, LocalizationService localization)
+        : base(localization)
     {
         _market = market;
         _market.PropertyChanged += OnMarketPropertyChanged;
+        Localization.CultureChanged += (_, _) => OnLocalizationChanged();
+        UpdateAxisLabels();
+        UpdateMarketShockText();
         ApplyDefaults();
     }
 
@@ -57,13 +68,14 @@ public partial class ElasticityViewModel : ViewModelBase
 
     partial void OnPriceChanged(double value)
     {
+        UpdatePriceText();
         if (!_suppressUpdates) Recalculate();
     }
 
     private void Recalculate()
     {
         var localErrors = new List<string>();
-        if (!TryParseExpression(_market.DemandExpression, "Demanda inversa (mercado)", localErrors, out var demand))
+        if (!TryParseExpression(_market.DemandExpression, Localization["Elasticity_Parse_MarketDemand"], localErrors, out var demand))
         {
             UpdateState(null, localErrors);
             return;
@@ -83,12 +95,12 @@ public partial class ElasticityViewModel : ViewModelBase
         if (result == null)
         {
             Series = Array.Empty<ISeries>();
-            ElasticityText = "Elasticidad: —";
+            ElasticityText = FormatMetric("Elasticity_Label_Value", null);
         }
         else
         {
             Series = BuildSeries(result);
-            ElasticityText = FormatMetric("Elasticidad", result.Elasticity);
+            ElasticityText = FormatMetric("Elasticity_Label_Value", result.Elasticity);
         }
 
         Errors = localErrors.Count == 0 ? Array.Empty<string>() : localErrors.ToArray();
@@ -100,12 +112,12 @@ public partial class ElasticityViewModel : ViewModelBase
     {
         var list = new List<ISeries>
         {
-            ChartSeriesBuilder.Line("Pd", result.Demand, SKColors.SteelBlue)
+            ChartSeriesBuilder.Line(Localization["Elasticity_Series_Demand"], result.Demand, SKColors.SteelBlue)
         };
 
         if (result.Point.HasValue)
         {
-            list.Add(ChartSeriesBuilder.Scatter("Precio", result.Point.Value, SKColors.Firebrick));
+            list.Add(ChartSeriesBuilder.Scatter(Localization["Elasticity_Series_Price"], result.Point.Value, SKColors.Firebrick));
         }
 
         return list;
@@ -115,7 +127,39 @@ public partial class ElasticityViewModel : ViewModelBase
     {
         if (e.PropertyName is nameof(MarketViewModel.DemandExpression) or nameof(MarketViewModel.DemandShock))
         {
+            UpdateMarketShockText();
             Recalculate();
         }
+    }
+
+    private void UpdateMarketShockText()
+    {
+        MarketShockText = string.Format(Localization.CurrentCulture, Localization["Elasticity_Format_CurrentShock"], _market.DemandShock);
+    }
+
+    private void UpdatePriceText()
+    {
+        PriceText = string.Format(Localization.CurrentCulture, Localization["Elasticity_Format_CurrentPrice"], Price);
+    }
+
+    private void UpdateAxisLabels()
+    {
+        if (XAxes.Length > 0)
+        {
+            XAxes[0].Name = Localization["Axis_QuantityLower"];
+        }
+
+        if (YAxes.Length > 0)
+        {
+            YAxes[0].Name = Localization["Axis_Price"];
+        }
+    }
+
+    private void OnLocalizationChanged()
+    {
+        UpdateAxisLabels();
+        UpdateMarketShockText();
+        UpdatePriceText();
+        Recalculate();
     }
 }

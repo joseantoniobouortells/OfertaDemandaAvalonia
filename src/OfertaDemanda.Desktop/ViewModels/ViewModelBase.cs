@@ -1,12 +1,20 @@
 using System.Collections.Generic;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using OfertaDemanda.Desktop.Services;
 using OfertaDemanda.Core.Expressions;
 
 namespace OfertaDemanda.Desktop.ViewModels;
 
 public abstract partial class ViewModelBase : ObservableObject
 {
+    protected ViewModelBase(LocalizationService localization)
+    {
+        Localization = localization;
+    }
+
+    public LocalizationService Localization { get; }
+
     protected bool TryParseExpression(string raw, string label, List<string> errors, out ParsedExpression? expression)
     {
         try
@@ -22,11 +30,23 @@ public abstract partial class ViewModelBase : ObservableObject
         }
     }
 
-    protected static string FormatMetric(string label, double? value, string format = "F2")
+    protected string FormatMetric(string labelKey, double? value, string format = "F2")
+    {
+        return FormatMetricLabel(Localization[labelKey], value, format);
+    }
+
+    protected string FormatMetricLabel(string label, double? value, string format = "F2")
     {
         var suffix = value.HasValue
-            ? value.Value.ToString(format, CultureInfo.InvariantCulture)
-            : "—";
-        return $"{label}: {suffix}";
+            ? value.Value.ToString(format, Localization.CurrentCulture)
+            : Localization["Common_EmptyValue"];
+
+        return string.Format(Localization.CurrentCulture, Localization["Format_LabelValue"], label, suffix);
+    }
+
+    protected string FormatLabelValue(string label, string? value)
+    {
+        var suffix = string.IsNullOrWhiteSpace(value) ? Localization["Common_EmptyValue"] : value;
+        return string.Format(Localization.CurrentCulture, Localization["Format_LabelValue"], label, suffix);
     }
 }

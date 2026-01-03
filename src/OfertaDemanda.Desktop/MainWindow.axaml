@@ -8,71 +8,71 @@
         x:Class="OfertaDemanda.Desktop.MainWindow"
         Width="1200"
         Height="800"
-        Title="Oferta vs Demanda"
+        Title="{Binding Localization[App_Title]}"
         Icon="avares://OfertaDemanda.Desktop/Assets/icon_1024.png"
         x:CompileBindings="False">
     <Grid RowDefinitions="Auto,*" Margin="16">
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Stretch"
                     Margin="0,0,0,12">
-            <TextBlock Text="Oferta, demanda y elasticidades"
+            <TextBlock Text="{Binding Localization[Main_HeaderTitle]}"
                        FontSize="22"
                        FontWeight="Bold" />
-            <Button Content="Restablecer valores por defecto"
+            <Button Content="{Binding Localization[Main_ResetDefaults]}"
                     Command="{Binding ResetDefaultsCommand}"
                     Margin="16,0,0,0" />
         </StackPanel>
 
         <TabControl Grid.Row="1"
                     TabStripPlacement="Top">
-            <TabItem Header="Mercado">
+            <TabItem Header="{Binding Localization[Tab_Market]}">
                 <Grid ColumnDefinitions="340,*"
                       ColumnSpacing="16"
                       DataContext="{Binding Market}">
                     <ScrollViewer Grid.Column="0"
                                   VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="Funciones"
+                            <TextBlock Text="{Binding Localization[Market_Functions]}"
                                        FontWeight="Bold" />
-                            <TextBlock Text="Demanda inversa Pd(q)" />
+                            <TextBlock Text="{Binding Localization[Market_DemandInverse]}" />
                             <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="Oferta inversa Ps(q)"
+                            <TextBlock Text="{Binding Localization[Market_SupplyInverse]}"
                                        Margin="0,8,0,0" />
                             <TextBox Text="{Binding SupplyExpression, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Text="Shocks e impuesto"
+                            <TextBlock Text="{Binding Localization[Market_ShocksTax]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
-                            <TextBlock Text="Shock demanda ΔD" />
+                            <TextBlock Text="{Binding Localization[Market_DemandShock]}" />
                             <Slider Minimum="-30"
                                     Maximum="30"
                                     Value="{Binding DemandShock}"
                                     TickFrequency="5" />
-                            <TextBlock Text="{Binding DemandShock, StringFormat='Valor actual: {0:F0}'}"
+                            <TextBlock Text="{Binding DemandShockText}"
                                        FontSize="12" />
 
-                            <TextBlock Text="Shock oferta ΔS"
+                            <TextBlock Text="{Binding Localization[Market_SupplyShock]}"
                                        Margin="0,8,0,0" />
                             <Slider Minimum="-30"
                                     Maximum="30"
                                     Value="{Binding SupplyShock}"
                                     TickFrequency="5" />
-                            <TextBlock Text="{Binding SupplyShock, StringFormat='Valor actual: {0:F0}'}"
+                            <TextBlock Text="{Binding SupplyShockText}"
                                        FontSize="12" />
 
-                            <TextBlock Text="Impuesto unitario t"
+                            <TextBlock Text="{Binding Localization[Market_Tax]}"
                                        Margin="0,8,0,0" />
                             <Slider Minimum="0"
                                     Maximum="30"
                                     Value="{Binding Tax}"
                                     TickFrequency="5" />
-                            <TextBlock Text="{Binding Tax, StringFormat='Valor actual: {0:F0}'}"
+                            <TextBlock Text="{Binding TaxText}"
                                        FontSize="12" />
 
-                            <TextBlock Text="Costes"
+                            <TextBlock Text="{Binding Localization[Market_Costs]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
-                            <TextBlock Text="Tipo de función" />
+                            <TextBlock Text="{Binding Localization[Market_CostType]}" />
                             <ComboBox ItemsSource="{Binding CostTypeOptions}"
                                       SelectedItem="{Binding SelectedCostType}">
                                 <ComboBox.ItemTemplate>
@@ -81,29 +81,29 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <TextBlock Text="Coste fijo F"
+                            <TextBlock Text="{Binding Localization[Market_CostFixed]}"
                                        Margin="0,8,0,0" />
                             <TextBox Text="{Binding FixedCost, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="Coste lineal a"
+                            <TextBlock Text="{Binding Localization[Market_CostLinear]}"
                                        Margin="0,8,0,0" />
                             <TextBox Text="{Binding LinearCost, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="Coste cuadrático b"
+                            <TextBlock Text="{Binding Localization[Market_CostQuadratic]}"
                                        Margin="0,8,0,0" />
                             <TextBox Text="{Binding QuadraticCost, UpdateSourceTrigger=PropertyChanged}" />
                             <StackPanel IsVisible="{Binding IsCubicCostVisible}">
-                                <TextBlock Text="Coste cúbico c"
+                                <TextBlock Text="{Binding Localization[Market_CostCubic]}"
                                            Margin="0,8,0,0" />
                                 <TextBox Text="{Binding CubicCost, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
 
-                            <TextBlock Text="Curvas y elementos"
+                            <TextBlock Text="{Binding Localization[Market_CurvesElements]}"
                                        FontWeight="Bold"
                                        Margin="0,12,0,0" />
                             <StackPanel Orientation="Horizontal"
                                         Spacing="8">
-                                <Button Content="Mostrar todo"
+                                <Button Content="{Binding Localization[Market_ShowAll]}"
                                         Command="{Binding ShowAllTogglesCommand}" />
-                                <Button Content="Ocultar todo"
+                                <Button Content="{Binding Localization[Market_HideAll]}"
                                         Command="{Binding HideAllTogglesCommand}" />
                             </StackPanel>
                             <ItemsControl ItemsSource="{Binding ToggleGroups}"
@@ -115,7 +115,7 @@
                                                         Spacing="8">
                                                 <TextBlock Text="{Binding Label}"
                                                            FontWeight="SemiBold" />
-                                                <Button Content="Mostrar grupo"
+                                                <Button Content="{Binding DataContext.Localization[Market_ShowGroup], RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
                                                         Command="{Binding DataContext.ShowGroupCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
                                                         CommandParameter="{Binding}" />
                                             </StackPanel>
@@ -133,7 +133,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <TextBlock Text="Resultados"
+                            <TextBlock Text="{Binding Localization[Market_Results]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
                             <WrapPanel>
@@ -146,7 +146,7 @@
                                 <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
                             </WrapPanel>
 
-                            <TextBlock Text="Firma competitiva"
+                            <TextBlock Text="{Binding Localization[Market_FirmCompetitive]}"
                                        FontWeight="Bold"
                                        Margin="0,12,0,0" />
                             <WrapPanel>
@@ -163,34 +163,34 @@
                                     CornerRadius="6"
                                     Background="{DynamicResource ThemeControlLowBrush}">
                                 <StackPanel>
-                                    <TextBlock Text="Explicación"
+                                    <TextBlock Text="{Binding Localization[Market_Explanation_Title]}"
                                                FontWeight="SemiBold"
                                                Margin="0,0,0,6" />
                                     <StackPanel Margin="0,4,0,0">
-                                        <TextBlock Text="MC(q) = dC/dq"
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_MC_Title]}"
                                                    FontWeight="SemiBold" />
-                                        <TextBlock Text="Costo marginal en competencia perfecta: MR = P."
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_MC_Body]}"
                                                    FontSize="12"
                                                    Opacity="0.75" />
                                     </StackPanel>
                                     <StackPanel Margin="0,6,0,0">
-                                        <TextBlock Text="AVC(q) = VC(q)/q"
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_AVC_Title]}"
                                                    FontWeight="SemiBold" />
-                                        <TextBlock Text="Cierre si P &lt; min AVC."
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_AVC_Body]}"
                                                    FontSize="12"
                                                    Opacity="0.75" />
                                     </StackPanel>
                                     <StackPanel Margin="0,6,0,0">
-                                        <TextBlock Text="AC(q) = C(q)/q"
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_AC_Title]}"
                                                    FontWeight="SemiBold" />
-                                        <TextBlock Text="Beneficio si P > AC(q_f*), pérdida si P &lt; AC(q_f*)."
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_AC_Body]}"
                                                    FontSize="12"
                                                    Opacity="0.75" />
                                     </StackPanel>
                                     <StackPanel Margin="0,6,0,0">
-                                        <TextBlock Text="π(q) = Pq − C(q)"
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_Profit_Title]}"
                                                    FontWeight="SemiBold" />
-                                        <TextBlock Text="Área sombreada muestra beneficio o pérdida al q_f*."
+                                        <TextBlock Text="{Binding Localization[Market_Explanation_Profit_Body]}"
                                                    FontSize="12"
                                                    Opacity="0.75" />
                                     </StackPanel>
@@ -203,7 +203,7 @@
                                     CornerRadius="4"
                                     IsVisible="{Binding HasErrors}">
                                 <StackPanel>
-                                    <TextBlock Text="Errores"
+                                    <TextBlock Text="{Binding Localization[Common_Errors]}"
                                                FontWeight="Bold" />
                                     <ItemsControl ItemsSource="{Binding Errors}">
                                         <ItemsControl.ItemTemplate>
@@ -225,19 +225,19 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Empresa">
+            <TabItem Header="{Binding Localization[Tab_Firm]}">
                 <Grid ColumnDefinitions="340,*"
                       ColumnSpacing="16"
                       DataContext="{Binding Firm}">
                     <ScrollViewer Grid.Column="0"
                                   VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="Costes y modo"
+                            <TextBlock Text="{Binding Localization[Firm_CostMode_Title]}"
                                        FontWeight="Bold" />
-                            <TextBlock Text="CT(q)" />
+                            <TextBlock Text="{Binding Localization[Firm_TotalCost_Label]}" />
                             <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Text="Modo de operación"
+                            <TextBlock Text="{Binding Localization[Firm_Mode_Label]}"
                                        Margin="0,8,0,0" />
                             <ComboBox ItemsSource="{Binding ModeOptions}"
                                       SelectedItem="{Binding SelectedMode}">
@@ -248,16 +248,16 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
 
-                            <TextBlock Text="Precio del mercado (CP)"
+                            <TextBlock Text="{Binding Localization[Firm_MarketPrice_Label]}"
                                        Margin="0,8,0,0" />
                             <Slider Minimum="10"
                                     Maximum="100"
                                     Value="{Binding Price}"
                                     IsEnabled="{Binding IsPriceEditable}" />
-                            <TextBlock Text="{Binding Price, StringFormat='Valor actual: {0:F0}'}"
+                            <TextBlock Text="{Binding CurrentPriceText}"
                                        FontSize="12" />
 
-                            <TextBlock Text="Resultados"
+                            <TextBlock Text="{Binding Localization[Common_Results]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
                             <WrapPanel>
@@ -272,7 +272,7 @@
                                     CornerRadius="4"
                                     IsVisible="{Binding HasErrors}">
                                 <StackPanel>
-                                    <TextBlock Text="Errores"
+                                    <TextBlock Text="{Binding Localization[Common_Errors]}"
                                                FontWeight="Bold" />
                                     <ItemsControl ItemsSource="{Binding Errors}">
                                         <ItemsControl.ItemTemplate>
@@ -294,21 +294,21 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Monopolio">
+            <TabItem Header="{Binding Localization[Tab_Monopoly]}">
                 <Grid ColumnDefinitions="340,*"
                       ColumnSpacing="16"
                       DataContext="{Binding Monopoly}">
                     <ScrollViewer Grid.Column="0"
                                   VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="Demanda inversa Pd(q)"
+                            <TextBlock Text="{Binding Localization[Monopoly_DemandInverse_Label]}"
                                        FontWeight="Bold" />
                             <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="Coste total CT(q)"
+                            <TextBlock Text="{Binding Localization[Monopoly_TotalCost_Label]}"
                                        Margin="0,8,0,0" />
                             <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Text="Resultados"
+                            <TextBlock Text="{Binding Localization[Common_Results]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
                             <WrapPanel>
@@ -319,17 +319,17 @@
                                 <TextBlock Text="{Binding DeadweightLossText}" Margin="8,0,0,0" />
                             </WrapPanel>
 
-                            <TextBlock Text="Visualización"
+                            <TextBlock Text="{Binding Localization[Monopoly_Visualization_Title]}"
                                        FontWeight="Bold"
                                        Margin="0,16,0,0" />
                             <StackPanel Spacing="6">
-                                <CheckBox Content="Isobeneficio (π=π*)"
+                                <CheckBox Content="{Binding Localization[Monopoly_Toggle_Isoprofit]}"
                                           IsChecked="{Binding ShowIsoprofitCurve}" />
-                                <CheckBox Content="Coste medio (CMe)"
+                                <CheckBox Content="{Binding Localization[Monopoly_Toggle_AverageCost]}"
                                           IsChecked="{Binding ShowAverageCost}" />
-                                <CheckBox Content="Líneas guía (qₘ, pₘ)"
+                                <CheckBox Content="{Binding Localization[Monopoly_Toggle_Guides]}"
                                           IsChecked="{Binding ShowGuideLines}" />
-                                <CheckBox Content="Pérdida irrecuperable (área)"
+                                <CheckBox Content="{Binding Localization[Monopoly_Toggle_Deadweight]}"
                                           IsChecked="{Binding ShowDeadweightArea}" />
                             </StackPanel>
 
@@ -338,7 +338,7 @@
                                     Background="#1A1E88E5"
                                     CornerRadius="4">
                                 <StackPanel Spacing="6">
-                                    <TextBlock Text="Explicación"
+                                    <TextBlock Text="{Binding Localization[Common_Explanation]}"
                                                FontWeight="Bold" />
                                     <TextBlock Text="{Binding IsoprofitExplanation}"
                                                FontSize="12"
@@ -352,7 +352,7 @@
                                     CornerRadius="4"
                                     IsVisible="{Binding HasErrors}">
                                 <StackPanel>
-                                    <TextBlock Text="Errores"
+                                    <TextBlock Text="{Binding Localization[Common_Errors]}"
                                                FontWeight="Bold" />
                                     <ItemsControl ItemsSource="{Binding Errors}">
                                         <ItemsControl.ItemTemplate>
@@ -374,26 +374,26 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Elasticidad">
+            <TabItem Header="{Binding Localization[Tab_Elasticity]}">
                 <Grid ColumnDefinitions="340,*"
                       ColumnSpacing="16"
                       DataContext="{Binding Elasticity}">
                     <ScrollViewer Grid.Column="0"
                                   VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="Se usa la demanda base del mercado"
+                            <TextBlock Text="{Binding Localization[Elasticity_UsesMarketDemand]}"
                                        FontWeight="Bold" />
-                            <TextBlock Text="Demanda Pd(q)" />
+                            <TextBlock Text="{Binding Localization[Elasticity_Demand_Label]}" />
                             <TextBox Text="{Binding Market.DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="{Binding Market.DemandShock, StringFormat='Shock ΔD actual: {0:F0}'}"
+                            <TextBlock Text="{Binding MarketShockText}"
                                        FontSize="12" />
 
-                            <TextBlock Text="Precio para elasticidad"
+                            <TextBlock Text="{Binding Localization[Elasticity_Price_Label]}"
                                        Margin="0,12,0,0" />
                             <Slider Minimum="10"
                                     Maximum="110"
                                     Value="{Binding Price}" />
-                            <TextBlock Text="{Binding Price, StringFormat='Precio actual: {0:F0}'}"
+                            <TextBlock Text="{Binding PriceText}"
                                        FontSize="12" />
 
                             <TextBlock Text="{Binding ElasticityText}"
@@ -405,7 +405,7 @@
                                     CornerRadius="4"
                                     IsVisible="{Binding HasErrors}">
                                 <StackPanel>
-                                    <TextBlock Text="Errores"
+                                    <TextBlock Text="{Binding Localization[Common_Errors]}"
                                                FontWeight="Bold" />
                                     <ItemsControl ItemsSource="{Binding Errors}">
                                         <ItemsControl.ItemTemplate>
@@ -427,15 +427,15 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Isobeneficio">
+            <TabItem Header="{Binding Localization[Tab_IsoBenefit]}">
                 <views:IsoBenefitView DataContext="{Binding IsoBenefit}" />
             </TabItem>
 
-            <TabItem Header="Configuración">
+            <TabItem Header="{Binding Localization[Tab_Settings]}">
                 <views:SettingsView DataContext="{Binding Settings}" />
             </TabItem>
 
-            <TabItem Header="Acerca de">
+            <TabItem Header="{Binding Localization[Tab_About]}">
                 <views:AboutView DataContext="{Binding About}" />
             </TabItem>
         </TabControl>

@@ -11,36 +11,36 @@
     <ScrollViewer Grid.Column="0"
                   VerticalScrollBarVisibility="Auto">
       <StackPanel Spacing="12">
-        <TextBlock Text="Parámetros del mercado"
+        <TextBlock Text="{Binding Localization[IsoBenefit_MarketParams_Title]}"
                    FontSize="18"
                    FontWeight="SemiBold" />
 
         <StackPanel>
-          <TextBlock Text="Demanda inversa P_d(Q)"
+          <TextBlock Text="{Binding Localization[IsoBenefit_MarketDemand_Label]}"
                      FontWeight="Bold" />
           <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
         <StackPanel>
-          <TextBlock Text="Shock de demanda ΔD"
+          <TextBlock Text="{Binding Localization[IsoBenefit_DemandShock_Label]}"
                      FontWeight="Bold" />
           <Slider Minimum="-40"
                   Maximum="40"
                   Value="{Binding DemandShock}" />
-          <TextBlock Text="{Binding DemandShock, StringFormat='Valor actual: {0:F0}'}"
+          <TextBlock Text="{Binding DemandShockText}"
                      FontSize="12" />
         </StackPanel>
 
         <StackPanel>
-          <TextBlock Text="Empresas y costes"
+          <TextBlock Text="{Binding Localization[IsoBenefit_Firms_Title]}"
                      FontSize="16"
                      FontWeight="SemiBold" />
           <StackPanel Orientation="Horizontal"
                       Spacing="8"
                       Margin="0,4,0,0">
-            <Button Content="Añadir"
+            <Button Content="{Binding Localization[IsoBenefit_AddFirm]}"
                     Command="{Binding AddFirmCommand}" />
-            <Button Content="Eliminar"
+            <Button Content="{Binding Localization[IsoBenefit_RemoveFirm]}"
                     Command="{Binding RemoveFirmCommand}" />
           </StackPanel>
           <ListBox ItemsSource="{Binding Firms}"
@@ -51,10 +51,10 @@
               <DataTemplate>
                 <StackPanel Margin="0,0,0,8">
                   <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                           Watermark="Nombre de la empresa" />
+                           Watermark="{Binding DataContext.Localization[IsoBenefit_FirmName_Placeholder], RelativeSource={RelativeSource AncestorType=ListBox}}" />
                   <TextBox Text="{Binding CostExpression, UpdateSourceTrigger=PropertyChanged}"
                            Margin="0,4,0,0"
-                           Watermark="Coste total C(q)" />
+                           Watermark="{Binding DataContext.Localization[IsoBenefit_FirmCost_Placeholder], RelativeSource={RelativeSource AncestorType=ListBox}}" />
                 </StackPanel>
               </DataTemplate>
             </ListBox.ItemTemplate>
@@ -62,7 +62,7 @@
         </StackPanel>
 
         <StackPanel>
-          <TextBlock Text="Referencias competitivas"
+          <TextBlock Text="{Binding Localization[IsoBenefit_Reference_Title]}"
                      FontSize="16"
                      FontWeight="SemiBold" />
           <TextBlock Text="{Binding ReferencePriceText}" />
@@ -79,7 +79,7 @@
                 CornerRadius="4"
                 IsVisible="{Binding HasErrors}">
           <StackPanel>
-            <TextBlock Text="Errores"
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
                        FontWeight="Bold" />
             <ItemsControl ItemsSource="{Binding Errors}">
               <ItemsControl.ItemTemplate>
@@ -92,7 +92,7 @@
         </Border>
 
         <StackPanel>
-          <TextBlock Text="Estado de cada empresa"
+          <TextBlock Text="{Binding Localization[IsoBenefit_Status_Title]}"
                      FontSize="16"
                      FontWeight="SemiBold" />
           <ItemsControl ItemsSource="{Binding FirmStatuses}">
@@ -115,7 +115,7 @@
                 CornerRadius="6"
                 Background="{DynamicResource ThemeControlLowBrush}">
           <StackPanel>
-            <TextBlock Text="Fórmulas teóricas"
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Title]}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,4" />
@@ -129,10 +129,10 @@
     </ScrollViewer>
 
     <TabControl Grid.Column="1">
-      <TabItem Header="Mercado (Q,P)">
+      <TabItem Header="{Binding Localization[IsoBenefit_Tab_Market]}">
         <Grid RowDefinitions="Auto,*"
               RowSpacing="12">
-          <TextBlock Text="Isobeneficios agregados del mercado versus demanda."
+          <TextBlock Text="{Binding Localization[IsoBenefit_MarketChart_Description]}"
                      FontSize="13"
                      Opacity="0.85" />
           <lvc:CartesianChart Grid.Row="1"
@@ -143,10 +143,10 @@
         </Grid>
       </TabItem>
 
-      <TabItem Header="Empresas (q,p)">
+      <TabItem Header="{Binding Localization[IsoBenefit_Tab_Firms]}">
         <Grid RowDefinitions="Auto,*"
               RowSpacing="12">
-          <TextBlock Text="Curvas de isobeneficio por empresa y línea de precio p=P*."
+          <TextBlock Text="{Binding Localization[IsoBenefit_FirmChart_Description]}"
                      FontSize="13"
                      Opacity="0.85" />
           <lvc:CartesianChart Grid.Row="1"

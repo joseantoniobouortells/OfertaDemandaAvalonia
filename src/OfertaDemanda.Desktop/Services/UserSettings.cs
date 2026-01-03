@@ -56,11 +56,13 @@ public sealed record IsoBenefitSettings
 public sealed record UserSettings
 {
     public ThemeMode Theme { get; init; } = ThemeMode.System;
+    public string Language { get; init; } = LocalizationService.DefaultCultureCode;
     public IsoBenefitSettings IsoBenefit { get; init; } = IsoBenefitSettings.CreateDefault();
 
     public static UserSettings CreateDefault() => new()
     {
         Theme = ThemeMode.System,
+        Language = LocalizationService.DefaultCultureCode,
         IsoBenefit = IsoBenefitSettings.CreateDefault()
     };
 
@@ -69,6 +71,7 @@ public sealed record UserSettings
         var iso = IsoBenefit ?? IsoBenefitSettings.CreateDefault();
         return this with
         {
+            Language = LocalizationService.NormalizeCultureCode(Language),
             IsoBenefit = iso.Sanitize()
         };
     }

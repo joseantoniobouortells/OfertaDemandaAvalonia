@@ -7,7 +7,7 @@
              x:Class="OfertaDemanda.Desktop.Views.AboutView">
   <ScrollViewer VerticalScrollBarVisibility="Auto">
     <StackPanel Spacing="16">
-      <TextBlock Text="Acerca del autor"
+      <TextBlock Text="{Binding Localization[About_Title]}"
                  FontSize="20"
                  FontWeight="SemiBold" />
 
@@ -25,11 +25,11 @@
           <TextBlock Text="{Binding PurposeText}"
                      TextWrapping="Wrap"
                      Opacity="0.9" />
-          <Button Content="Repositorio en GitHub"
+          <Button Content="{Binding Localization[About_GitHubRepo_Button]}"
                   Command="{Binding OpenRepositoryCommand}"
                   IsVisible="{Binding HasRepositoryUrl}"
                   HorizontalAlignment="Left" />
-          <TextBlock Text="Repositorio en GitHub: (no configurado)"
+          <TextBlock Text="{Binding Localization[About_GitHubRepo_Missing]}"
                      IsVisible="{Binding HasNoRepositoryUrl}"
                      FontSize="12"
                      Opacity="0.7" />
@@ -59,25 +59,25 @@
 
           <Grid ColumnDefinitions="170,*"
                 RowDefinitions="Auto,Auto,Auto,Auto">
-            <TextBlock Text="Sistema operativo" />
+            <TextBlock Text="{Binding Localization[About_Label_OS]}" />
             <TextBlock Grid.Column="1"
                        Text="{Binding OsDescription}"
                        TextWrapping="Wrap" />
 
             <TextBlock Grid.Row="1"
-                       Text=".NET runtime" />
+                       Text="{Binding Localization[About_Label_Dotnet]}" />
             <TextBlock Grid.Row="1"
                        Grid.Column="1"
                        Text="{Binding DotnetVersion}" />
 
             <TextBlock Grid.Row="2"
-                       Text="Avalonia" />
+                       Text="{Binding Localization[About_Label_Avalonia]}" />
             <TextBlock Grid.Row="2"
                        Grid.Column="1"
                        Text="{Binding AvaloniaVersion}" />
 
             <TextBlock Grid.Row="3"
-                       Text="Arquitectura" />
+                       Text="{Binding Localization[About_Label_Architecture]}" />
             <TextBlock Grid.Row="3"
                        Grid.Column="1"
                        Text="{Binding Architecture}" />
@@ -88,11 +88,11 @@
                   CornerRadius="6">
             <Grid ColumnDefinitions="170,*"
                   RowDefinitions="Auto,Auto">
-              <TextBlock Text="Fecha de compilación" />
+              <TextBlock Text="{Binding Localization[About_Label_BuildDate]}" />
               <TextBlock Grid.Column="1"
                          Text="{Binding BuildDate}" />
               <TextBlock Grid.Row="1"
-                         Text="Commit" />
+                         Text="{Binding Localization[About_Label_Commit]}" />
               <TextBlock Grid.Row="1"
                          Grid.Column="1"
                          Text="{Binding CommitHash}" />

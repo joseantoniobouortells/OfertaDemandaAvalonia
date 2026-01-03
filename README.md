@@ -156,10 +156,16 @@ Salida esperada:
 
 ## Ajustes de tema y preferencias
 
-- La pestaña **Configuración** expone un selector (Sistema/Claro/Oscuro) que aplica el tema Fluent correspondiente en caliente usando `RequestedThemeVariant`.
-- La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows) y el mismo archivo guarda la lista de empresas y parámetros del tab Isobeneficio.
+- La pestaña **Configuración** expone selectores de **tema** (Sistema/Claro/Oscuro) y **idioma** (ES/EN/FR/IT) que aplican cambios en caliente.
+- La elección persiste en `ApplicationData/OfertaDemandaAvalonia/settings.json` (por ejemplo: `~/Library/Application Support/OfertaDemandaAvalonia/settings.json` en macOS o `%APPDATA%\OfertaDemandaAvalonia\settings.json` en Windows) y el mismo archivo guarda la lista de empresas, parámetros del tab Isobeneficio y el idioma seleccionado.
 - Para restablecer la apariencia basta con borrar ese archivo y reiniciar la app; se volverá al modo “Predeterminado del sistema”.
 - El almacenamiento es per‑usuario y no depende de servicios externos.
+
+## Idiomas / Languages
+
+- Las cadenas de UI viven en `src/OfertaDemanda.Desktop/Resources/Strings.resx` (español por defecto) y en los satélites `Strings.en.resx`, `Strings.fr.resx`, `Strings.it.resx`.
+- Para añadir un texto nuevo: define la clave en todos los `.resx` y consúmela desde XAML (`Localization[Clave]`) o desde los view models mediante `LocalizationService`.
+- Para añadir un idioma nuevo: agrega `Strings.<culture>.resx`, registra el culture en `src/OfertaDemanda.Desktop/Services/LocalizationService.cs` y añade la opción en `src/OfertaDemanda.Desktop/ViewModels/SettingsViewModel.cs`.
 
 ## Flujo de trabajo recomendado
 
@@ -168,4 +174,4 @@ Salida esperada:
 3. Valida manualmente la pestaña afectada ejecutando `dotnet run` y comparando la gráfica con el HTML de referencia cuando aplique.
 4. Para liberaciones o demostraciones, usa el script de publicación para obtener un `.app` firmado localmente.
 
-Este README recoge el contexto necesario para retomar el desarrollo rápidamente: describe qué calcula cada módulo, cómo se conectan, dónde viven los archivos relevantes y qué comandos ejecutar para compilar, probar o distribuir la aplicación.***
+Este README recoge el contexto necesario para retomar el desarrollo rápidamente: describe qué calcula cada módulo, cómo se conectan, dónde viven los archivos relevantes y qué comandos ejecutar para compilar, probar o distribuir la aplicación.

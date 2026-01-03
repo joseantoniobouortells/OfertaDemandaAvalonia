@@ -6,30 +6,39 @@ namespace OfertaDemanda.Desktop.ViewModels;
 
 public sealed partial class ChartSeriesToggle : ObservableObject
 {
-    public ChartSeriesToggle(string key, string label, string group, bool isVisible)
+    public ChartSeriesToggle(string key, string labelKey, string groupKey, bool isVisible)
     {
         Key = key;
-        Label = label;
-        Group = group;
+        LabelKey = labelKey;
+        GroupKey = groupKey;
+        label = labelKey;
         this.isVisible = isVisible;
     }
 
     public string Key { get; }
-    public string Label { get; }
-    public string Group { get; }
+    public string LabelKey { get; }
+    public string GroupKey { get; }
+
+    [ObservableProperty]
+    private string label;
 
     [ObservableProperty]
     private bool isVisible;
 }
 
-public sealed class ChartSeriesToggleGroup
+public sealed partial class ChartSeriesToggleGroup : ObservableObject
 {
-    public ChartSeriesToggleGroup(string label, IEnumerable<ChartSeriesToggle> items)
+    public ChartSeriesToggleGroup(string labelKey, IEnumerable<ChartSeriesToggle> items)
     {
-        Label = label;
+        LabelKey = labelKey;
+        label = labelKey;
         Items = new ObservableCollection<ChartSeriesToggle>(items);
     }
 
-    public string Label { get; }
+    public string LabelKey { get; }
+
+    [ObservableProperty]
+    private string label;
+
     public ObservableCollection<ChartSeriesToggle> Items { get; }
 }

@@ -5,16 +5,22 @@ using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia;
+using OfertaDemanda.Desktop.Services;
 
 namespace OfertaDemanda.Desktop.ViewModels;
 
 public sealed partial class AboutViewModel : ObservableObject
 {
     public string AuthorName { get; } = "José Antonio Bou Ortells";
-    public string AuthorRole { get; } = "Ingeniero de software · Estudiante del Grado en Economía (UNED)";
-    public string PurposeText { get; } =
-        "OfertaDemanda es una herramienta educativa de microeconomía. " +
-        "Permite explorar oferta y demanda, monopolio, elasticidades, costes e isobeneficio con gráficos interactivos.";
+    private readonly LocalizationService _localization;
+
+    public LocalizationService Localization => _localization;
+
+    [ObservableProperty]
+    private string authorRole = string.Empty;
+
+    [ObservableProperty]
+    private string purposeText = string.Empty;
 
     public string AppName { get; }
     public string AppVersion { get; }
@@ -30,8 +36,10 @@ public sealed partial class AboutViewModel : ObservableObject
 
     public IRelayCommand OpenRepositoryCommand { get; }
 
-    public AboutViewModel()
+    public AboutViewModel(LocalizationService localization)
     {
+        _localization = localization;
+        _localization.CultureChanged += (_, _) => UpdateLocalizedText();
         var assembly = Assembly.GetEntryAssembly() ?? typeof(AboutViewModel).Assembly;
         AppName = assembly.GetName().Name ?? "OfertaDemandaAvalonia";
         AppVersion = ResolveVersion(assembly);
@@ -43,6 +51,7 @@ public sealed partial class AboutViewModel : ObservableObject
         AvaloniaVersion = typeof(Application).Assembly.GetName().Version?.ToString() ?? "—";
         Architecture = $"{RuntimeInformation.OSArchitecture}/{RuntimeInformation.ProcessArchitecture}";
         OpenRepositoryCommand = new RelayCommand(OpenRepository, () => HasRepositoryUrl);
+        UpdateLocalizedText();
     }
 
     private void OpenRepository()
@@ -115,5 +124,11 @@ public sealed partial class AboutViewModel : ObservableObject
         }
 
         return string.Empty;
+    }
+
+    private void UpdateLocalizedText()
+    {
+        AuthorRole = _localization["About_AuthorRole"];
+        PurposeText = _localization["About_PurposeText"];
     }
 }

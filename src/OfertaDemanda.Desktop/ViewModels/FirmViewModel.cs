@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using OfertaDemanda.Core.Models;
+using OfertaDemanda.Desktop.Services;
 using SkiaSharp;
 
 namespace OfertaDemanda.Desktop.ViewModels;
@@ -12,11 +13,7 @@ namespace OfertaDemanda.Desktop.ViewModels;
 public partial class FirmViewModel : ViewModelBase
 {
     private bool _suppressUpdates;
-    private readonly SelectionOption<FirmMode>[] _modeOptions =
-    {
-        new("CP", FirmMode.ShortRun),
-        new("LP", FirmMode.LongRun)
-    };
+    private SelectionOption<FirmMode>[] _modeOptions = Array.Empty<SelectionOption<FirmMode>>();
 
     [ObservableProperty]
     private string costExpression = "200 + 10q + 0.5q^2";
@@ -28,6 +25,9 @@ public partial class FirmViewModel : ViewModelBase
     private SelectionOption<FirmMode> selectedMode = null!;
 
     [ObservableProperty]
+    private string currentPriceText = string.Empty;
+
+    [ObservableProperty]
     private IEnumerable<ISeries> series = Array.Empty<ISeries>();
 
     [ObservableProperty]
@@ -36,13 +36,13 @@ public partial class FirmViewModel : ViewModelBase
     public bool HasErrors => Errors.Count > 0;
 
     [ObservableProperty]
-    private string quantityText = "q*: —";
+    private string quantityText = string.Empty;
 
     [ObservableProperty]
-    private string priceText = "P: —";
+    private string priceText = string.Empty;
 
     [ObservableProperty]
-    private string profitText = "Beneficio: —";
+    private string profitText = string.Empty;
 
     public IReadOnlyList<SelectionOption<FirmMode>> ModeOptions => _modeOptions;
 
@@ -58,7 +58,14 @@ public partial class FirmViewModel : ViewModelBase
         new Axis { Name = "Costes / P", MinLimit = 0, MaxLimit = 120 }
     };
 
-    public FirmViewModel() => ApplyDefaults();
+    public FirmViewModel(LocalizationService localization)
+        : base(localization)
+    {
+        _modeOptions = BuildModeOptions();
+        Localization.CultureChanged += (_, _) => OnLocalizationChanged();
+        UpdateAxisLabels();
+        ApplyDefaults();
+    }
 
     public void ApplyDefaults()
     {
@@ -77,6 +84,7 @@ public partial class FirmViewModel : ViewModelBase
 
     partial void OnPriceChanged(double value)
     {
+        UpdateCurrentPriceText();
         if (!_suppressUpdates) Recalculate();
     }
 
@@ -89,7 +97,7 @@ public partial class FirmViewModel : ViewModelBase
     private void Recalculate()
     {
         var localErrors = new List<string>();
-        if (!TryParseExpression(CostExpression, "CT(q)", localErrors, out var cost))
+        if (!TryParseExpression(CostExpression, Localization["Firm_Parse_TotalCost"], localErrors, out var cost))
         {
             UpdateState(null, localErrors);
             return;
@@ -109,16 +117,16 @@ public partial class FirmViewModel : ViewModelBase
         if (result == null)
         {
             Series = Array.Empty<ISeries>();
-            QuantityText = "q*: —";
-            PriceText = "P: —";
-            ProfitText = "Beneficio: —";
+            QuantityText = FormatMetric("Firm_Label_Quantity", null);
+            PriceText = FormatMetric("Firm_Label_Price", null);
+            ProfitText = FormatMetric("Firm_Label_Profit", null);
         }
         else
         {
             Series = BuildSeries(result);
-            QuantityText = FormatMetric("q*", result.QuantityPoint?.X);
-            PriceText = FormatMetric("P", result.QuantityPoint?.Y);
-            ProfitText = FormatMetric("Beneficio", result.Profit);
+            QuantityText = FormatMetric("Firm_Label_Quantity", result.QuantityPoint?.X);
+            PriceText = FormatMetric("Firm_Label_Price", result.QuantityPoint?.Y);
+            ProfitText = FormatMetric("Firm_Label_Profit", result.Profit);
         }
 
         Errors = localErrors.Count == 0 ? Array.Empty<string>() : localErrors.ToArray();
@@ -130,19 +138,60 @@ public partial class FirmViewModel : ViewModelBase
     {
         var list = new List<ISeries>
         {
-            ChartSeriesBuilder.Line("CMg", result.MarginalCost, SKColors.SteelBlue),
-            ChartSeriesBuilder.Line("CMe", result.AverageCost, SKColors.DarkOrange),
-            ChartSeriesBuilder.Line("CMeV", result.AverageVariableCost, SKColors.MediumPurple)
+            ChartSeriesBuilder.Line(Localization["Firm_Series_MarginalCost"], result.MarginalCost, SKColors.SteelBlue),
+            ChartSeriesBuilder.Line(Localization["Firm_Series_AverageCost"], result.AverageCost, SKColors.DarkOrange),
+            ChartSeriesBuilder.Line(Localization["Firm_Series_AverageVariableCost"], result.AverageVariableCost, SKColors.MediumPurple)
         };
 
-        var priceLine = ChartSeriesBuilder.HorizontalLine("Precio", 0, 60, result.PriceLine, SKColors.Firebrick, SelectedMode.Value == FirmMode.LongRun);
+        var priceLine = ChartSeriesBuilder.HorizontalLine(Localization["Firm_Series_PriceLine"], 0, 60, result.PriceLine, SKColors.Firebrick, SelectedMode.Value == FirmMode.LongRun);
         list.Add(priceLine);
 
         if (result.QuantityPoint.HasValue)
         {
-            list.Add(ChartSeriesBuilder.Scatter("q*", result.QuantityPoint.Value, SKColors.Black));
+            list.Add(ChartSeriesBuilder.Scatter(Localization["Firm_Series_OptimalQuantity"], result.QuantityPoint.Value, SKColors.Black));
         }
 
         return list;
+    }
+
+    private SelectionOption<FirmMode>[] BuildModeOptions()
+    {
+        return
+        [
+            new SelectionOption<FirmMode>(Localization["Firm_Mode_ShortRun"], FirmMode.ShortRun),
+            new SelectionOption<FirmMode>(Localization["Firm_Mode_LongRun"], FirmMode.LongRun)
+        ];
+    }
+
+    private void UpdateAxisLabels()
+    {
+        if (XAxes.Length > 0)
+        {
+            XAxes[0].Name = Localization["Axis_QuantityLower"];
+        }
+
+        if (YAxes.Length > 0)
+        {
+            YAxes[0].Name = Localization["Firm_Axis_CostsPrice"];
+        }
+    }
+
+    private void OnLocalizationChanged()
+    {
+        _modeOptions = BuildModeOptions();
+        OnPropertyChanged(nameof(ModeOptions));
+        if (SelectedMode != null)
+        {
+            SelectedMode = _modeOptions.First(o => o.Value == SelectedMode.Value);
+        }
+
+        UpdateAxisLabels();
+        UpdateCurrentPriceText();
+        Recalculate();
+    }
+
+    private void UpdateCurrentPriceText()
+    {
+        CurrentPriceText = string.Format(Localization.CurrentCulture, Localization["Format_CurrentValue"], Price);
     }
 }

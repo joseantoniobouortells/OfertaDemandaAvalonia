@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="App_Title" xml:space="preserve">
+    <value>Supply vs Demand</value>
+  </data>
+  <data name="Main_HeaderTitle" xml:space="preserve">
+    <value>Supply, demand and elasticities</value>
+  </data>
+  <data name="Main_ResetDefaults" xml:space="preserve">
+    <value>Reset to defaults</value>
+  </data>
+  <data name="Tab_Market" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="Tab_Firm" xml:space="preserve">
+    <value>Firm</value>
+  </data>
+  <data name="Tab_Monopoly" xml:space="preserve">
+    <value>Monopoly</value>
+  </data>
+  <data name="Tab_Elasticity" xml:space="preserve">
+    <value>Elasticity</value>
+  </data>
+  <data name="Tab_IsoBenefit" xml:space="preserve">
+    <value>Isoprofit</value>
+  </data>
+  <data name="Tab_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Tab_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+
+  <data name="Common_EmptyValue" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="Common_Errors" xml:space="preserve">
+    <value>Errors</value>
+  </data>
+  <data name="Common_Results" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Common_Explanation" xml:space="preserve">
+    <value>Explanation</value>
+  </data>
+  <data name="Format_LabelValue" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Format_CurrentValue" xml:space="preserve">
+    <value>Current value: {0:F0}</value>
+  </data>
+
+  <data name="Axis_Quantity" xml:space="preserve">
+    <value>Q</value>
+  </data>
+  <data name="Axis_QuantityLower" xml:space="preserve">
+    <value>q</value>
+  </data>
+  <data name="Axis_Price" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Axis_PriceLower" xml:space="preserve">
+    <value>p</value>
+  </data>
+
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Appearance settings</value>
+  </data>
+  <data name="Settings_Subtitle" xml:space="preserve">
+    <value>Choose how the app looks across systems (macOS, Windows, Linux).</value>
+  </data>
+  <data name="Settings_Theme_Title" xml:space="preserve">
+    <value>App theme</value>
+  </data>
+  <data name="Settings_Theme_Hint" xml:space="preserve">
+    <value>Changes apply immediately and are saved for future sessions.</value>
+  </data>
+  <data name="Settings_Theme_System" xml:space="preserve">
+    <value>System default</value>
+  </data>
+  <data name="Settings_Theme_Light" xml:space="preserve">
+    <value>Light theme</value>
+  </data>
+  <data name="Settings_Theme_Dark" xml:space="preserve">
+    <value>Dark theme</value>
+  </data>
+  <data name="Settings_Language_Title" xml:space="preserve">
+    <value>App language</value>
+  </data>
+  <data name="Settings_Language_Hint" xml:space="preserve">
+    <value>Language applies immediately and is saved for future sessions.</value>
+  </data>
+  <data name="Settings_Config_Title" xml:space="preserve">
+    <value>Settings file</value>
+  </data>
+  <data name="Settings_Config_Hint" xml:space="preserve">
+    <value>Delete this file to reset preferences.</value>
+  </data>
+
+  <data name="Language_Spanish" xml:space="preserve">
+    <value>Español (es-ES)</value>
+  </data>
+  <data name="Language_English" xml:space="preserve">
+    <value>English (en-US)</value>
+  </data>
+  <data name="Language_French" xml:space="preserve">
+    <value>Français (fr-FR)</value>
+  </data>
+  <data name="Language_Italian" xml:space="preserve">
+    <value>Italiano (it-IT)</value>
+  </data>
+
+  <data name="About_Title" xml:space="preserve">
+    <value>About the author</value>
+  </data>
+  <data name="About_AuthorRole" xml:space="preserve">
+    <value>Software engineer · Economics undergraduate student (UNED)</value>
+  </data>
+  <data name="About_PurposeText" xml:space="preserve">
+    <value>OfertaDemanda is an educational microeconomics tool. It lets you explore supply and demand, monopoly, elasticities, costs and isoprofit with interactive charts.</value>
+  </data>
+  <data name="About_GitHubRepo_Button" xml:space="preserve">
+    <value>GitHub repository</value>
+  </data>
+  <data name="About_GitHubRepo_Missing" xml:space="preserve">
+    <value>GitHub repository: (not configured)</value>
+  </data>
+  <data name="About_Label_OS" xml:space="preserve">
+    <value>Operating system</value>
+  </data>
+  <data name="About_Label_Dotnet" xml:space="preserve">
+    <value>.NET runtime</value>
+  </data>
+  <data name="About_Label_Avalonia" xml:space="preserve">
+    <value>Avalonia</value>
+  </data>
+  <data name="About_Label_Architecture" xml:space="preserve">
+    <value>Architecture</value>
+  </data>
+  <data name="About_Label_BuildDate" xml:space="preserve">
+    <value>Build date</value>
+  </data>
+  <data name="About_Label_Commit" xml:space="preserve">
+    <value>Commit</value>
+  </data>
+
+  <data name="Market_Functions" xml:space="preserve">
+    <value>Functions</value>
+  </data>
+  <data name="Market_DemandInverse" xml:space="preserve">
+    <value>Inverse demand Pd(q)</value>
+  </data>
+  <data name="Market_SupplyInverse" xml:space="preserve">
+    <value>Inverse supply Ps(q)</value>
+  </data>
+  <data name="Market_ShocksTax" xml:space="preserve">
+    <value>Shocks and tax</value>
+  </data>
+  <data name="Market_DemandShock" xml:space="preserve">
+    <value>Demand shock ΔD</value>
+  </data>
+  <data name="Market_SupplyShock" xml:space="preserve">
+    <value>Supply shock ΔS</value>
+  </data>
+  <data name="Market_Tax" xml:space="preserve">
+    <value>Unit tax t</value>
+  </data>
+  <data name="Market_Costs" xml:space="preserve">
+    <value>Costs</value>
+  </data>
+  <data name="Market_CostType" xml:space="preserve">
+    <value>Function type</value>
+  </data>
+  <data name="Market_CostFixed" xml:space="preserve">
+    <value>Fixed cost F</value>
+  </data>
+  <data name="Market_CostLinear" xml:space="preserve">
+    <value>Linear cost a</value>
+  </data>
+  <data name="Market_CostQuadratic" xml:space="preserve">
+    <value>Quadratic cost b</value>
+  </data>
+  <data name="Market_CostCubic" xml:space="preserve">
+    <value>Cubic cost c</value>
+  </data>
+  <data name="Market_CurvesElements" xml:space="preserve">
+    <value>Curves and elements</value>
+  </data>
+  <data name="Market_ShowAll" xml:space="preserve">
+    <value>Show all</value>
+  </data>
+  <data name="Market_HideAll" xml:space="preserve">
+    <value>Hide all</value>
+  </data>
+  <data name="Market_ShowGroup" xml:space="preserve">
+    <value>Show group</value>
+  </data>
+  <data name="Market_Results" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Market_FirmCompetitive" xml:space="preserve">
+    <value>Competitive firm</value>
+  </data>
+  <data name="Market_Explanation_Title" xml:space="preserve">
+    <value>Explanation</value>
+  </data>
+  <data name="Market_Explanation_MC_Title" xml:space="preserve">
+    <value>MC(q) = dC/dq</value>
+  </data>
+  <data name="Market_Explanation_MC_Body" xml:space="preserve">
+    <value>Marginal cost in perfect competition: MR = P.</value>
+  </data>
+  <data name="Market_Explanation_AVC_Title" xml:space="preserve">
+    <value>AVC(q) = VC(q)/q</value>
+  </data>
+  <data name="Market_Explanation_AVC_Body" xml:space="preserve">
+    <value>Shut down if P &lt; min AVC.</value>
+  </data>
+  <data name="Market_Explanation_AC_Title" xml:space="preserve">
+    <value>AC(q) = C(q)/q</value>
+  </data>
+  <data name="Market_Explanation_AC_Body" xml:space="preserve">
+    <value>Profit if P &gt; AC(q_f*), loss if P &lt; AC(q_f*).</value>
+  </data>
+  <data name="Market_Explanation_Profit_Title" xml:space="preserve">
+    <value>π(q) = Pq − C(q)</value>
+  </data>
+  <data name="Market_Explanation_Profit_Body" xml:space="preserve">
+    <value>Shaded area shows profit or loss at q_f*.</value>
+  </data>
+
+  <data name="Market_Parse_DemandInverse" xml:space="preserve">
+    <value>Inverse demand</value>
+  </data>
+  <data name="Market_Parse_SupplyInverse" xml:space="preserve">
+    <value>Inverse supply</value>
+  </data>
+  <data name="Market_CostType_Quadratic" xml:space="preserve">
+    <value>Quadratic</value>
+  </data>
+  <data name="Market_CostType_Cubic" xml:space="preserve">
+    <value>Cubic</value>
+  </data>
+
+  <data name="Market_Label_EquilibriumQuantity" xml:space="preserve">
+    <value>Q*</value>
+  </data>
+  <data name="Market_Label_PriceConsumer" xml:space="preserve">
+    <value>P_c</value>
+  </data>
+  <data name="Market_Label_PriceProducer" xml:space="preserve">
+    <value>P_p</value>
+  </data>
+  <data name="Market_Label_ConsumerSurplus" xml:space="preserve">
+    <value>CS</value>
+  </data>
+  <data name="Market_Label_ProducerSurplus" xml:space="preserve">
+    <value>PS</value>
+  </data>
+  <data name="Market_Label_TaxRevenue" xml:space="preserve">
+    <value>Tax revenue</value>
+  </data>
+  <data name="Market_Label_DeadweightLoss" xml:space="preserve">
+    <value>Deadweight loss</value>
+  </data>
+  <data name="Market_Label_FirmQuantity" xml:space="preserve">
+    <value>q_f*</value>
+  </data>
+  <data name="Market_Label_FirmMarginalCost" xml:space="preserve">
+    <value>MC(q_f*)</value>
+  </data>
+  <data name="Market_Label_FirmAverageVariableCost" xml:space="preserve">
+    <value>AVC(q_f*)</value>
+  </data>
+  <data name="Market_Label_FirmAverageCost" xml:space="preserve">
+    <value>AC(q_f*)</value>
+  </data>
+  <data name="Market_Label_FirmProfit" xml:space="preserve">
+    <value>π(q_f*)</value>
+  </data>
+  <data name="Market_Label_FirmState" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="Market_State_Closed" xml:space="preserve">
+    <value>Shutdown</value>
+  </data>
+  <data name="Market_State_Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="Market_State_Loss" xml:space="preserve">
+    <value>Loss</value>
+  </data>
+
+  <data name="Market_Series_ConsumerSurplus" xml:space="preserve">
+    <value>CS</value>
+  </data>
+  <data name="Market_Series_ProducerSurplus" xml:space="preserve">
+    <value>PS</value>
+  </data>
+  <data name="Market_Series_DemandBase" xml:space="preserve">
+    <value>Pd₀</value>
+  </data>
+  <data name="Market_Series_SupplyBase" xml:space="preserve">
+    <value>Ps₀</value>
+  </data>
+  <data name="Market_Series_DemandShifted" xml:space="preserve">
+    <value>Pd₁</value>
+  </data>
+  <data name="Market_Series_SupplyShifted" xml:space="preserve">
+    <value>Ps₁</value>
+  </data>
+  <data name="Market_Series_Equilibrium" xml:space="preserve">
+    <value>Q*</value>
+  </data>
+  <data name="Market_Series_NoTaxEquilibrium" xml:space="preserve">
+    <value>Q without tax</value>
+  </data>
+  <data name="Market_Series_MarginalCost" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Market_Series_AverageVariableCost" xml:space="preserve">
+    <value>AVC</value>
+  </data>
+  <data name="Market_Series_AverageCost" xml:space="preserve">
+    <value>AC</value>
+  </data>
+  <data name="Market_Series_PriceLine" xml:space="preserve">
+    <value>P*</value>
+  </data>
+  <data name="Market_Series_FirmOptimalQuantity" xml:space="preserve">
+    <value>q_f*</value>
+  </data>
+  <data name="Market_Series_ShutdownPrice" xml:space="preserve">
+    <value>Shutdown price</value>
+  </data>
+  <data name="Market_Series_BreakEven" xml:space="preserve">
+    <value>P = AC</value>
+  </data>
+  <data name="Market_Series_BreakEvenIndexed" xml:space="preserve">
+    <value>P = AC {0}</value>
+  </data>
+  <data name="Market_Series_DeadweightShort" xml:space="preserve">
+    <value>DWL</value>
+  </data>
+  <data name="Market_Series_Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="Market_Series_Loss" xml:space="preserve">
+    <value>Loss</value>
+  </data>
+  <data name="Market_Series_PriceConsumer" xml:space="preserve">
+    <value>P_c</value>
+  </data>
+  <data name="Market_Series_PriceProducer" xml:space="preserve">
+    <value>P_p</value>
+  </data>
+  <data name="Market_Series_TaxWedge" xml:space="preserve">
+    <value>Wedge</value>
+  </data>
+  <data name="Market_Series_TaxQuantity" xml:space="preserve">
+    <value>Q with tax</value>
+  </data>
+
+  <data name="Market_ToggleGroup_Market" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="Market_ToggleGroup_Tax" xml:space="preserve">
+    <value>Tax</value>
+  </data>
+  <data name="Market_ToggleGroup_Surplus" xml:space="preserve">
+    <value>Surpluses</value>
+  </data>
+  <data name="Market_ToggleGroup_Firm" xml:space="preserve">
+    <value>Competitive firm</value>
+  </data>
+  <data name="Market_ToggleGroup_Costs" xml:space="preserve">
+    <value>Costs</value>
+  </data>
+
+  <data name="Market_Toggle_DemandBase" xml:space="preserve">
+    <value>Demand Pd₀</value>
+  </data>
+  <data name="Market_Toggle_DemandShifted" xml:space="preserve">
+    <value>Demand Pd₁</value>
+  </data>
+  <data name="Market_Toggle_SupplyBase" xml:space="preserve">
+    <value>Supply Ps₀</value>
+  </data>
+  <data name="Market_Toggle_SupplyShifted" xml:space="preserve">
+    <value>Supply Ps₁</value>
+  </data>
+  <data name="Market_Toggle_Equilibrium" xml:space="preserve">
+    <value>Equilibrium (Q*, P*)</value>
+  </data>
+  <data name="Market_Toggle_PriceConsumer" xml:space="preserve">
+    <value>Consumer price P_c</value>
+  </data>
+  <data name="Market_Toggle_PriceProducer" xml:space="preserve">
+    <value>Producer price P_p</value>
+  </data>
+  <data name="Market_Toggle_TaxQuantity" xml:space="preserve">
+    <value>Q with tax</value>
+  </data>
+  <data name="Market_Toggle_TaxWedge" xml:space="preserve">
+    <value>Tax wedge</value>
+  </data>
+  <data name="Market_Toggle_NoTaxEquilibrium" xml:space="preserve">
+    <value>Q without tax</value>
+  </data>
+  <data name="Market_Toggle_ConsumerSurplus" xml:space="preserve">
+    <value>Consumer surplus (CS)</value>
+  </data>
+  <data name="Market_Toggle_ProducerSurplus" xml:space="preserve">
+    <value>Producer surplus (PS)</value>
+  </data>
+  <data name="Market_Toggle_DeadweightLoss" xml:space="preserve">
+    <value>Deadweight loss</value>
+  </data>
+  <data name="Market_Toggle_PriceLine" xml:space="preserve">
+    <value>Price line P*</value>
+  </data>
+  <data name="Market_Toggle_FirmOptimal" xml:space="preserve">
+    <value>q_f*</value>
+  </data>
+  <data name="Market_Toggle_FirmShutdown" xml:space="preserve">
+    <value>Shutdown point (min AVC)</value>
+  </data>
+  <data name="Market_Toggle_FirmBreakEven" xml:space="preserve">
+    <value>P = AC</value>
+  </data>
+  <data name="Market_Toggle_FirmProfitLoss" xml:space="preserve">
+    <value>Profit/loss area</value>
+  </data>
+  <data name="Market_Toggle_CostMarginal" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Market_Toggle_CostAverageVariable" xml:space="preserve">
+    <value>AVC</value>
+  </data>
+  <data name="Market_Toggle_CostAverage" xml:space="preserve">
+    <value>AC</value>
+  </data>
+
+  <data name="Firm_CostMode_Title" xml:space="preserve">
+    <value>Costs and mode</value>
+  </data>
+  <data name="Firm_TotalCost_Label" xml:space="preserve">
+    <value>TC(q)</value>
+  </data>
+  <data name="Firm_Mode_Label" xml:space="preserve">
+    <value>Operating mode</value>
+  </data>
+  <data name="Firm_MarketPrice_Label" xml:space="preserve">
+    <value>Market price (SR)</value>
+  </data>
+  <data name="Firm_Parse_TotalCost" xml:space="preserve">
+    <value>TC(q)</value>
+  </data>
+  <data name="Firm_Label_Quantity" xml:space="preserve">
+    <value>q*</value>
+  </data>
+  <data name="Firm_Label_Price" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Firm_Label_Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="Firm_Series_MarginalCost" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Firm_Series_AverageCost" xml:space="preserve">
+    <value>AC</value>
+  </data>
+  <data name="Firm_Series_AverageVariableCost" xml:space="preserve">
+    <value>AVC</value>
+  </data>
+  <data name="Firm_Series_PriceLine" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Firm_Series_OptimalQuantity" xml:space="preserve">
+    <value>q*</value>
+  </data>
+  <data name="Firm_Mode_ShortRun" xml:space="preserve">
+    <value>SR</value>
+  </data>
+  <data name="Firm_Mode_LongRun" xml:space="preserve">
+    <value>LR</value>
+  </data>
+  <data name="Firm_Axis_CostsPrice" xml:space="preserve">
+    <value>Costs / P</value>
+  </data>
+
+  <data name="Elasticity_UsesMarketDemand" xml:space="preserve">
+    <value>Uses the market base demand</value>
+  </data>
+  <data name="Elasticity_Demand_Label" xml:space="preserve">
+    <value>Demand Pd(q)</value>
+  </data>
+  <data name="Elasticity_Price_Label" xml:space="preserve">
+    <value>Price for elasticity</value>
+  </data>
+  <data name="Elasticity_Format_CurrentShock" xml:space="preserve">
+    <value>Current ΔD shock: {0:F0}</value>
+  </data>
+  <data name="Elasticity_Format_CurrentPrice" xml:space="preserve">
+    <value>Current price: {0:F0}</value>
+  </data>
+  <data name="Elasticity_Label_Value" xml:space="preserve">
+    <value>Elasticity</value>
+  </data>
+  <data name="Elasticity_Parse_MarketDemand" xml:space="preserve">
+    <value>Inverse demand (market)</value>
+  </data>
+  <data name="Elasticity_Series_Demand" xml:space="preserve">
+    <value>Pd</value>
+  </data>
+  <data name="Elasticity_Series_Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+
+  <data name="Monopoly_DemandInverse_Label" xml:space="preserve">
+    <value>Inverse demand Pd(q)</value>
+  </data>
+  <data name="Monopoly_TotalCost_Label" xml:space="preserve">
+    <value>Total cost TC(q)</value>
+  </data>
+  <data name="Monopoly_Visualization_Title" xml:space="preserve">
+    <value>Visualization</value>
+  </data>
+  <data name="Monopoly_Toggle_Isoprofit" xml:space="preserve">
+    <value>Isoprofit (π=π*)</value>
+  </data>
+  <data name="Monopoly_Toggle_AverageCost" xml:space="preserve">
+    <value>Average cost (AC)</value>
+  </data>
+  <data name="Monopoly_Toggle_Guides" xml:space="preserve">
+    <value>Guide lines (q_m, p_m)</value>
+  </data>
+  <data name="Monopoly_Toggle_Deadweight" xml:space="preserve">
+    <value>Deadweight loss (area)</value>
+  </data>
+
+  <data name="Monopoly_Parse_Demand" xml:space="preserve">
+    <value>Pd(q)</value>
+  </data>
+  <data name="Monopoly_Parse_TotalCost" xml:space="preserve">
+    <value>TC(q)</value>
+  </data>
+  <data name="Monopoly_Label_Quantity" xml:space="preserve">
+    <value>q_m</value>
+  </data>
+  <data name="Monopoly_Label_Price" xml:space="preserve">
+    <value>p_m</value>
+  </data>
+  <data name="Monopoly_Label_Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="Monopoly_Label_CompetitiveQuantity" xml:space="preserve">
+    <value>q_CP</value>
+  </data>
+  <data name="Monopoly_Label_DeadweightLoss" xml:space="preserve">
+    <value>Deadweight loss</value>
+  </data>
+
+  <data name="Monopoly_Series_Demand" xml:space="preserve">
+    <value>Pd</value>
+  </data>
+  <data name="Monopoly_Series_MarginalRevenue" xml:space="preserve">
+    <value>MR</value>
+  </data>
+  <data name="Monopoly_Series_MarginalCost" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Monopoly_Series_Isoprofit" xml:space="preserve">
+    <value>Isoprofit (π=π*)</value>
+  </data>
+  <data name="Monopoly_Series_AverageCost" xml:space="preserve">
+    <value>AC</value>
+  </data>
+  <data name="Monopoly_Series_MonopolyPoint" xml:space="preserve">
+    <value>Monopoly</value>
+  </data>
+  <data name="Monopoly_Series_CompetitivePoint" xml:space="preserve">
+    <value>PC</value>
+  </data>
+  <data name="Monopoly_Series_QuantityGuide" xml:space="preserve">
+    <value>q_m</value>
+  </data>
+  <data name="Monopoly_Series_PriceGuide" xml:space="preserve">
+    <value>p_m</value>
+  </data>
+  <data name="Monopoly_Series_CompetitiveQuantityGuide" xml:space="preserve">
+    <value>q_CP</value>
+  </data>
+  <data name="Monopoly_Series_DeadweightLoss" xml:space="preserve">
+    <value>Deadweight loss</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Explanation" xml:space="preserve">
+    <value>The isoprofit curve shows (q, p) combinations with constant π. At the monopoly optimum, the curve with π=π_m is tangent to Pd(q) because MR(q_m)=MC(q_m). π_m = {0}.</value>
+  </data>
+
+  <data name="IsoBenefit_MarketParams_Title" xml:space="preserve">
+    <value>Market parameters</value>
+  </data>
+  <data name="IsoBenefit_MarketDemand_Label" xml:space="preserve">
+    <value>Inverse demand P_d(Q)</value>
+  </data>
+  <data name="IsoBenefit_DemandShock_Label" xml:space="preserve">
+    <value>Demand shock ΔD</value>
+  </data>
+  <data name="IsoBenefit_Firms_Title" xml:space="preserve">
+    <value>Firms and costs</value>
+  </data>
+  <data name="IsoBenefit_AddFirm" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IsoBenefit_RemoveFirm" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="IsoBenefit_FirmName_Placeholder" xml:space="preserve">
+    <value>Firm name</value>
+  </data>
+  <data name="IsoBenefit_FirmCost_Placeholder" xml:space="preserve">
+    <value>Total cost C(q)</value>
+  </data>
+  <data name="IsoBenefit_Reference_Title" xml:space="preserve">
+    <value>Competitive references</value>
+  </data>
+  <data name="IsoBenefit_Status_Title" xml:space="preserve">
+    <value>Firm status</value>
+  </data>
+  <data name="IsoBenefit_Theory_Title" xml:space="preserve">
+    <value>Theory formulas</value>
+  </data>
+  <data name="IsoBenefit_Tab_Market" xml:space="preserve">
+    <value>Market (Q,P)</value>
+  </data>
+  <data name="IsoBenefit_MarketChart_Description" xml:space="preserve">
+    <value>Aggregated market isoprofit curves versus demand.</value>
+  </data>
+  <data name="IsoBenefit_Tab_Firms" xml:space="preserve">
+    <value>Firms (q,p)</value>
+  </data>
+  <data name="IsoBenefit_FirmChart_Description" xml:space="preserve">
+    <value>Firm isoprofit curves and price line p=P*.</value>
+  </data>
+
+  <data name="IsoBenefit_Label_ReferencePrice" xml:space="preserve">
+    <value>P*</value>
+  </data>
+  <data name="IsoBenefit_Label_ReferenceQuantity" xml:space="preserve">
+    <value>Q*</value>
+  </data>
+  <data name="IsoBenefit_PriceNote_Invalid" xml:space="preserve">
+    <value>Select valid expressions to show curves.</value>
+  </data>
+  <data name="IsoBenefit_PriceNote_Fallback" xml:space="preserve">
+    <value>P*=40 was used as a reference because the competitive equilibrium did not converge.</value>
+  </data>
+  <data name="IsoBenefit_PriceNote_Normal" xml:space="preserve">
+    <value>P* is obtained by solving P_d(Q_s(P)) = P with Q_s(P)=Σq_i(P).</value>
+  </data>
+  <data name="IsoBenefit_Parse_MarketDemand" xml:space="preserve">
+    <value>Inverse market demand</value>
+  </data>
+  <data name="IsoBenefit_Parse_FirmCost" xml:space="preserve">
+    <value>Total cost ({0})</value>
+  </data>
+  <data name="IsoBenefit_Error_NoFirms" xml:space="preserve">
+    <value>You need at least one firm with a valid cost function.</value>
+  </data>
+  <data name="IsoBenefit_Error_CalcFailed" xml:space="preserve">
+    <value>Could not compute the isoprofit tab: {0}</value>
+  </data>
+  <data name="IsoBenefit_Series_MarketDemand" xml:space="preserve">
+    <value>Demand P_d(Q)</value>
+  </data>
+  <data name="IsoBenefit_Series_ProfitLevel" xml:space="preserve">
+    <value>Π̄ = {0:F0}</value>
+  </data>
+  <data name="IsoBenefit_Series_ProfitIntersection" xml:space="preserve">
+    <value>Intersection Π̄={0:F0}</value>
+  </data>
+  <data name="IsoBenefit_Series_PriceLine" xml:space="preserve">
+    <value>Price P*</value>
+  </data>
+  <data name="IsoBenefit_Series_CompetitiveReference" xml:space="preserve">
+    <value>Competitive reference</value>
+  </data>
+  <data name="IsoBenefit_Series_FirmProfitLevel" xml:space="preserve">
+    <value>{0} π̄={1:F0}</value>
+  </data>
+  <data name="IsoBenefit_Series_FirmIntersection" xml:space="preserve">
+    <value>{0} intersection</value>
+  </data>
+  <data name="IsoBenefit_Series_FirmOptimal" xml:space="preserve">
+    <value>{0} q*</value>
+  </data>
+  <data name="IsoBenefit_Status_Positive" xml:space="preserve">
+    <value>Profitable</value>
+  </data>
+  <data name="IsoBenefit_Status_Negative" xml:space="preserve">
+    <value>Unprofitable</value>
+  </data>
+  <data name="IsoBenefit_Status_Zero" xml:space="preserve">
+    <value>Zero profit</value>
+  </data>
+  <data name="IsoBenefit_Status_ProfitFormat" xml:space="preserve">
+    <value>π* = {0:F2}</value>
+  </data>
+  <data name="IsoBenefit_Status_QuantityFormat" xml:space="preserve">
+    <value>q* = {0:F2}</value>
+  </data>
+  <data name="IsoBenefit_Status_QuantityZero" xml:space="preserve">
+    <value>q* = 0</value>
+  </data>
+  <data name="IsoBenefit_DefaultFirmNameFormat" xml:space="preserve">
+    <value>Firm {0}</value>
+  </data>
+  <data name="IsoBenefit_TheoryText" xml:space="preserve">
+    <value>Profit for each firm: π_i(q,p)=p·q−C_i(q).
+Isoprofit curves: p(q;π̄_i)=(C_i(q)+π̄_i)/q for q&gt;0 with negative, zero and positive π̄_i levels.
+Under perfect competition the price is horizontal p=P* and the firm produces where MC_i(q)=P*, with shutdown rule P*&lt;AVC_i(q).
+The Earn/Lose/Zero label is evaluated with π_i*=P*·q_i*−C_i(q_i*).
+For the market we aggregate costs assuming equal split q_i=Q/N, so C_M(Q)=Σ C_i(Q/N) and Π(Q,P)=P·Q−C_M(Q).
+The market Π̄ curves are computed as P(Q;Π̄)=(C_M(Q)+Π̄)/Q avoiding Q=0 and intersect with demand P_d(Q).
+We determine P* by numerically solving P_d(Q_s(P))=P where Q_s(P)=Σ q_i(P); if there is no stable solution, we use P*=40 as reference.</value>
+  </data>
+</root>

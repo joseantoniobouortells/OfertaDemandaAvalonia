@@ -6,6 +6,7 @@ namespace OfertaDemanda.Desktop.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
+    public LocalizationService Localization { get; }
     public MarketViewModel Market { get; }
     public FirmViewModel Firm { get; }
     public MonopolyViewModel Monopoly { get; }
@@ -15,15 +16,16 @@ public sealed partial class MainViewModel : ObservableObject
     public AboutViewModel About { get; }
     public IRelayCommand ResetDefaultsCommand { get; }
 
-    public MainViewModel(ThemeService themeService, UserSettingsService userSettingsService)
+    public MainViewModel(ThemeService themeService, UserSettingsService userSettingsService, LocalizationService localizationService)
     {
-        Market = new MarketViewModel();
-        Firm = new FirmViewModel();
-        Monopoly = new MonopolyViewModel();
-        Elasticity = new ElasticityViewModel(Market);
-        IsoBenefit = new IsoBenefitViewModel(userSettingsService);
-        Settings = new SettingsViewModel(themeService);
-        About = new AboutViewModel();
+        Localization = localizationService;
+        Market = new MarketViewModel(localizationService);
+        Firm = new FirmViewModel(localizationService);
+        Monopoly = new MonopolyViewModel(localizationService);
+        Elasticity = new ElasticityViewModel(Market, localizationService);
+        IsoBenefit = new IsoBenefitViewModel(userSettingsService, localizationService);
+        Settings = new SettingsViewModel(themeService, localizationService);
+        About = new AboutViewModel(localizationService);
         ResetDefaultsCommand = new RelayCommand(ApplyDefaults);
         ApplyDefaults();
     }
