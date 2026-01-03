@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # publish-macos.sh
-# Compila, hace publish y genera un .dmg en la carpeta artifacts/
+# Compila, hace publish y genera un .dmg en artifacts/macos/dmg
 # Sin parámetros. Diseñado para ejecutarse desde cualquier ruta.
 
 die() { echo "ERROR: $*" >&2; exit 1; }
@@ -28,12 +28,17 @@ fi
 CONFIG="Release"
 SELF_CONTAINED="true"
 
-ARTIFACTS_DIR="$ROOT_DIR/artifacts"
-PUBLISH_DIR="$ARTIFACTS_DIR/publish/$RID"
-APP_OUT_DIR="$ARTIFACTS_DIR/app"
-DMG_STAGING_ROOT="$ARTIFACTS_DIR/dmg-staging"
+ARTIFACTS_DIR="$ROOT_DIR/artifacts/macos"
+DMG_DIR="$ARTIFACTS_DIR/dmg"
 
-mkdir -p "$ARTIFACTS_DIR" "$PUBLISH_DIR" "$APP_OUT_DIR" "$DMG_STAGING_ROOT"
+TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/ofertademanda-macos.XXXXXX")"
+trap 'rm -rf "$TMP_ROOT"' EXIT
+
+PUBLISH_DIR="$TMP_ROOT/publish/$RID"
+APP_OUT_DIR="$TMP_ROOT/app"
+DMG_STAGING_ROOT="$TMP_ROOT/dmg-staging"
+
+mkdir -p "$ARTIFACTS_DIR" "$DMG_DIR" "$PUBLISH_DIR" "$APP_OUT_DIR" "$DMG_STAGING_ROOT"
 
 # Intento 1: ruta “típica” si la tienes
 DEFAULT_CSPROJ="$ROOT_DIR/src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj"
@@ -147,7 +152,7 @@ plutil -lint "$INFO_PLIST" >/dev/null || die "Info.plist inválido"
 
 # Genera DMG (drag&drop a Applications)
 DMG_NAME="${APP_NAME}-${VERSION}-${RID}.dmg"
-DMG_PATH="$ARTIFACTS_DIR/$DMG_NAME"
+DMG_PATH="$DMG_DIR/$DMG_NAME"
 STAGING_DIR="$DMG_STAGING_ROOT/$APP_NAME"
 
 echo

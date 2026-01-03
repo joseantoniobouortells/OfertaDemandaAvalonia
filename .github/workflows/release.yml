@@ -88,20 +88,20 @@ jobs:
       - name: Validar y empaquetar artefactos Windows
         shell: pwsh
         run: |
-          $msi = Get-ChildItem artifacts\msi\*.msi -ErrorAction SilentlyContinue
-          if (-not $msi) { Write-Error "No se encontraron .msi en artifacts\\msi"; exit 1 }
-          $cab = Get-ChildItem artifacts\msi\*.cab -ErrorAction SilentlyContinue
+          $msi = Get-ChildItem artifacts\windows\msi\*.msi -ErrorAction SilentlyContinue
+          if (-not $msi) { Write-Error "No se encontraron .msi en artifacts\\windows\\msi"; exit 1 }
+          $cab = Get-ChildItem artifacts\windows\msi\*.cab -ErrorAction SilentlyContinue
 
-          $msix = Get-ChildItem artifacts\msix\*.msix -ErrorAction SilentlyContinue
-          if (-not $msix) { Write-Error "No se encontraron .msix en artifacts\\msix"; exit 1 }
-          $cer = Get-ChildItem artifacts\msix\*.cer -ErrorAction SilentlyContinue
+          $msix = Get-ChildItem artifacts\windows\msix\*.msix -ErrorAction SilentlyContinue
+          if (-not $msix) { Write-Error "No se encontraron .msix en artifacts\\windows\\msix"; exit 1 }
+          $cer = Get-ChildItem artifacts\windows\msix\*.cer -ErrorAction SilentlyContinue
 
-          $msiZipPath = Join-Path "artifacts\\msi" ($msi[0].BaseName + "_msi.zip")
+          $msiZipPath = Join-Path "artifacts\\windows\\msi" ($msi[0].BaseName + "_msi.zip")
           $msiFiles = @($msi.FullName)
           if ($cab) { $msiFiles += $cab.FullName }
           Compress-Archive -Path $msiFiles -DestinationPath $msiZipPath -Force
 
-          $msixZipPath = Join-Path "artifacts\\msix" ($msix[0].BaseName + "_msix.zip")
+          $msixZipPath = Join-Path "artifacts\\windows\\msix" ($msix[0].BaseName + "_msix.zip")
           $msixFiles = @($msix.FullName)
           if ($cer) { $msixFiles += $cer.FullName }
           Compress-Archive -Path $msixFiles -DestinationPath $msixZipPath -Force
@@ -112,14 +112,14 @@ jobs:
         shell: pwsh
         run: |
           $upload = @()
-          $upload += Get-ChildItem artifacts\msi\*.msi | ForEach-Object { $_.FullName }
-          $upload += Get-ChildItem artifacts\msix\*.msix | ForEach-Object { $_.FullName }
-          $cab = Get-ChildItem artifacts\msi\*.cab -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\windows\msi\*.msi | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\windows\msix\*.msix | ForEach-Object { $_.FullName }
+          $cab = Get-ChildItem artifacts\windows\msi\*.cab -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
           if ($cab) { $upload += $cab }
-          $cer = Get-ChildItem artifacts\msix\*.cer -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+          $cer = Get-ChildItem artifacts\windows\msix\*.cer -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
           if ($cer) { $upload += $cer }
-          $upload += Get-ChildItem artifacts\msi\*_msi.zip | ForEach-Object { $_.FullName }
-          $upload += Get-ChildItem artifacts\msix\*_msix.zip | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\windows\msi\*_msi.zip | ForEach-Object { $_.FullName }
+          $upload += Get-ChildItem artifacts\windows\msix\*_msix.zip | ForEach-Object { $_.FullName }
           if ($upload.Count -eq 0) { Write-Error "No hay artefactos Windows para subir."; exit 1 }
           gh release upload "${{ needs.create-release.outputs.tag }}" $upload --clobber
 
@@ -143,7 +143,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts/*.dmg --clobber
+          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts/macos/dmg/*.dmg --clobber
 
   linux:
     name: Linux publish
@@ -159,14 +159,26 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Publicar Linux
-        run: dotnet publish src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj -c Release -r linux-x64 --self-contained true -p:UseAppHost=true -o artifacts/publish/linux-x64
+        run: dotnet publish src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj -c Release -r linux-x64 --self-contained true -p:UseAppHost=true -o artifacts/linux/publish/linux-x64
 
       - name: Empaquetar Linux
         run: |
-          tar -czf artifacts/OfertaDemanda.Desktop-linux-x64.tar.gz -C artifacts/publish/linux-x64 .
+          mkdir -p artifacts/linux/tar
+          tar -czf artifacts/linux/tar/OfertaDemanda.Desktop-linux-x64.tar.gz -C artifacts/linux/publish/linux-x64 .
+
+      - name: Crear paquete .deb
+        run: ./scripts/create-linux-deb.sh
+
+      - name: Validar .deb
+        run: |
+          if ! ls artifacts/linux/deb/*.deb >/dev/null 2>&1; then
+            echo "No se generó ningún .deb en artifacts/linux/deb"
+            exit 1
+          fi
 
       - name: Subir artefactos Linux
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts/OfertaDemanda.Desktop-linux-x64.tar.gz --clobber
+          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts/linux/tar/OfertaDemanda.Desktop-linux-x64.tar.gz --clobber
+          gh release upload "${{ needs.create-release.outputs.tag }}" artifacts/linux/deb/*.deb --clobber

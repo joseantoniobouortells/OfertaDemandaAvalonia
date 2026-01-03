@@ -107,8 +107,8 @@ $projBase = [System.IO.Path]::GetFileNameWithoutExtension($projPath)
 
 if (-not $AppName) { $AppName = $projBase }
 
-$artifacts = Join-Path $root "artifacts"
-$publishDir = Join-Path $artifacts ("publish\" + $Rid)
+$artifactsRoot = Join-Path $root "artifacts\windows"
+$publishDir = Join-Path $artifactsRoot ("publish\" + $Rid)
 $installDir = Join-Path $env:LOCALAPPDATA ("Programs\" + $AppName)
 $shortcutPath = StartMenuShortcutPath $AppName
 

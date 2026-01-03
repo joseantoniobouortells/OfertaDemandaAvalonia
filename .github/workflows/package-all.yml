@@ -29,9 +29,9 @@ jobs:
         with:
           name: windows-installers
           path: |
-            artifacts/msix/*.msix
-            artifacts/msix/*.cer
-            artifacts/msi/*.msi
+            artifacts/windows/msix/*.msix
+            artifacts/windows/msix/*.cer
+            artifacts/windows/msi/*.msi
 
   macos:
     name: macOS DMG
@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-dmg
-          path: artifacts/*.dmg
+          path: artifacts/macos/dmg/*.dmg
 
   linux:
     name: Linux publish
@@ -67,10 +67,26 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Publicar Linux
-        run: dotnet publish src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj -c Release -r linux-x64 --self-contained true -p:UseAppHost=true -o artifacts/publish/linux-x64
+        run: dotnet publish src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj -c Release -r linux-x64 --self-contained true -p:UseAppHost=true -o artifacts/linux/publish/linux-x64
+
+      - name: Crear paquete .deb
+        run: ./scripts/create-linux-deb.sh
+
+      - name: Validar .deb
+        run: |
+          if ! ls artifacts/linux/deb/*.deb >/dev/null 2>&1; then
+            echo "No se generó ningún .deb en artifacts/linux/deb"
+            exit 1
+          fi
 
       - name: Publicar artefactos Linux
         uses: actions/upload-artifact@v4
         with:
           name: linux-publish
-          path: artifacts/publish/linux-x64
+          path: artifacts/linux/publish/linux-x64
+
+      - name: Publicar artefactos .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-deb
+          path: artifacts/linux/deb/*.deb

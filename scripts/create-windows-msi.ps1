@@ -257,84 +257,91 @@ $projBase = [System.IO.Path]::GetFileNameWithoutExtension($projPath)
 $versionRaw = Get-VersionFromProject $projPath
 $msiVersion = Normalize-MsiVersion $versionRaw
 
-$artifacts = Join-Path $root "artifacts"
-$publishDir = Join-Path $artifacts ("publish\" + $Rid)
-$msiRoot = Join-Path $artifacts "msi"
+$artifactsRoot = Join-Path $root "artifacts\windows"
+$msiRoot = Join-Path $artifactsRoot "msi"
 $msiPath = Join-Path $msiRoot ("{0}_{1}_{2}.msi" -f $PackageName, $msiVersion, $Rid)
 
 $wixDir = Join-Path $root "installer\wix"
 $packageWxs = Join-Path $wixDir "Package.wxs"
 $harvestWxs = Join-Path $wixDir "HarvestedFiles.wxs"
 
-$toolsDir = Join-Path $artifacts "tools\wix"
+$toolsDir = Join-Path $root "build\tools\wix"
 $wixExe = EnsureWixCli $toolsDir
+
+$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("OfertaDemandaAvalonia\msi\" + [System.Guid]::NewGuid().ToString("N"))
+$publishDir = Join-Path $tempRoot ("publish\" + $Rid)
 
 $iconSource = Join-Path $root "src\OfertaDemanda.Desktop\Assets\icon_1024.png"
 if (-not (Test-Path $iconSource)) { Die "No encuentro el icono: $iconSource" }
 
-EnsureDirectory $artifacts
 EnsureDirectory $msiRoot
 EnsureDirectory $wixDir
+EnsureDirectory $publishDir
 
-Write-Host "Repo root  : $root"
-Write-Host "Project    : $projPath"
-Write-Host "Config     : $Config"
-Write-Host "RID        : $Rid"
-Write-Host "Version    : $versionRaw (MSI: $msiVersion)"
-Write-Host "Wix CLI    : $wixExe"
-Write-Host "MSI output : $msiPath"
+try {
+  Write-Host "Repo root  : $root"
+  Write-Host "Project    : $projPath"
+  Write-Host "Config     : $Config"
+  Write-Host "RID        : $Rid"
+  Write-Host "Version    : $versionRaw (MSI: $msiVersion)"
+  Write-Host "Wix CLI    : $wixExe"
+  Write-Host "MSI output : $msiPath"
+  Write-Host "Publish dir: $publishDir"
 
-if (-not (Test-Path $packageWxs)) {
-  Die "No existe $packageWxs. Revisa installer\\wix\\Package.wxs."
+  if (-not (Test-Path $packageWxs)) {
+    Die "No existe $packageWxs. Revisa installer\\wix\\Package.wxs."
+  }
+
+  Write-Host "`n==> dotnet restore ..."
+  dotnet restore $projPath | Out-Host
+
+  Write-Host "`n==> dotnet build ..."
+  dotnet build $projPath -c $Config -r $Rid | Out-Host
+
+  Write-Host "`n==> dotnet publish ..."
+  dotnet publish $projPath `
+    -c $Config `
+    -r $Rid `
+    --self-contained:true `
+    -p:UseAppHost=true `
+    -o $publishDir | Out-Host
+
+  $exeInPublish = DetectExe $publishDir $projBase
+  $exeName = [System.IO.Path]::GetFileName($exeInPublish)
+  Write-Host "Executable : $exeName"
+
+  Write-Host "`n==> Generating icon (.ico) ..."
+  $iconPng = Join-Path $tempRoot "icon_256.png"
+  $iconIco = Join-Path $tempRoot "app.ico"
+  Resize-PngToFile -sourcePath $iconSource -destPath $iconPng -width 256 -height 256
+  Convert-PngToIco -pngPath $iconPng -icoPath $iconIco
+
+  Write-Host "`n==> Harvesting publish directory ..."
+  Write-HarvestWxs -publishDir $publishDir -harvestWxs $harvestWxs
+
+  Write-Host "`n==> Building MSI ..."
+  $arch = if ($Rid -eq "win-arm64") { "arm64" } else { "x64" }
+  & $wixExe build $packageWxs $harvestWxs `
+    -o $msiPath `
+    -arch $arch `
+    -d ProductName=$PackageName `
+    -d Manufacturer=$Manufacturer `
+    -d ProductVersion=$msiVersion `
+    -d UpgradeCode=$UpgradeCode `
+    -d SourceDir=$publishDir `
+    -d IconPath=$iconIco `
+    -d ExeName=$exeName | Out-Host
+
+  if (-not (Test-Path $msiPath)) { Die "No se genero el MSI: $msiPath" }
+
+  Write-Host "`n==> Verificacion"
+  Write-Host "MSI       : $msiPath"
+  Write-Host "Harvest   : $harvestWxs"
+  Write-Host "Product   : $PackageName"
+  Write-Host "Version   : $msiVersion"
+  Write-Host "Upgrade   : $UpgradeCode"
+
+  Write-Host "`nMSI listo."
+} finally {
+  if (Test-Path $tempRoot) { Remove-Item -Recurse -Force $tempRoot }
 }
-
-Write-Host "`n==> dotnet restore ..."
-dotnet restore $projPath | Out-Host
-
-Write-Host "`n==> dotnet build ..."
-dotnet build $projPath -c $Config -r $Rid | Out-Host
-
-Write-Host "`n==> dotnet publish ..."
-dotnet publish $projPath `
-  -c $Config `
-  -r $Rid `
-  --self-contained:true `
-  -p:UseAppHost=true `
-  -o $publishDir | Out-Host
-
-$exeInPublish = DetectExe $publishDir $projBase
-$exeName = [System.IO.Path]::GetFileName($exeInPublish)
-Write-Host "Executable : $exeName"
-
-Write-Host "`n==> Generating icon (.ico) ..."
-$iconPng = Join-Path $msiRoot "icon_256.png"
-$iconIco = Join-Path $msiRoot "app.ico"
-Resize-PngToFile -sourcePath $iconSource -destPath $iconPng -width 256 -height 256
-Convert-PngToIco -pngPath $iconPng -icoPath $iconIco
-
-Write-Host "`n==> Harvesting publish directory ..."
-Write-HarvestWxs -publishDir $publishDir -harvestWxs $harvestWxs
-
-Write-Host "`n==> Building MSI ..."
-$arch = if ($Rid -eq "win-arm64") { "arm64" } else { "x64" }
-& $wixExe build $packageWxs $harvestWxs `
-  -o $msiPath `
-  -arch $arch `
-  -d ProductName=$PackageName `
-  -d Manufacturer=$Manufacturer `
-  -d ProductVersion=$msiVersion `
-  -d UpgradeCode=$UpgradeCode `
-  -d SourceDir=$publishDir `
-  -d IconPath=$iconIco `
-  -d ExeName=$exeName | Out-Host
-
-if (-not (Test-Path $msiPath)) { Die "No se genero el MSI: $msiPath" }
-
-Write-Host "`n==> Verificacion"
-Write-Host "MSI       : $msiPath"
-Write-Host "Harvest   : $harvestWxs"
-Write-Host "Product   : $PackageName"
-Write-Host "Version   : $msiVersion"
-Write-Host "Upgrade   : $UpgradeCode"
-
-Write-Host "`nMSI listo."

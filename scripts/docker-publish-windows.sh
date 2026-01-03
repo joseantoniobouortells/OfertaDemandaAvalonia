@@ -30,7 +30,7 @@ fi
 
 dockerfile_path="${repo_root}/build/docker/Dockerfile.win-publish"
 image_tag="oferta-demanda-win-publish:local"
-output_dir="${repo_root}/artifacts/publish/win-x64"
+output_dir="${repo_root}/artifacts/windows/publish/win-x64"
 
 echo "==> Proyecto: ${project_path_rel}"
 echo "==> .NET SDK: ${dotnet_version}"

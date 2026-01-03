@@ -33,7 +33,7 @@ Cada pestaña comparte el motor del proyecto `OfertaDemanda.Core`, por lo que lo
 | `src/OfertaDemanda.Desktop`        | UI Avalonia + view models + composición principal.                         |
 | `test/OfertaDemanda.Core.Tests`    | Pruebas automatizadas de Core con xUnit.                                   |
 | `scripts/`                         | Scripts auxiliares de build/publicación.                                   |
-| `artifacts/`                       | Salida de builds/publish (carpeta ignorada por Git).                       |
+| `artifacts/`                       | Salida de builds/publish organizada por SO (carpeta ignorada por Git).     |
 
 ## Requisitos y configuración
 
@@ -72,9 +72,23 @@ Ejecutar:
 ```
 
 Salida:
-- `artifacts/publish/win-x64` (contiene el `.exe` autocontenido).
+- `artifacts/windows/publish/win-x64` (contiene el `.exe` autocontenido).
 
 Nota: este paso solo genera el publish win-x64; el empaquetado MSI/MSIX sigue requiriendo tooling de Windows.
+
+## Generar .deb desde macOS (Docker)
+
+Requisitos:
+- Docker Desktop con contenedores Linux.
+
+Ejecutar:
+
+```bash
+./scripts/docker-create-linux-deb.sh
+```
+
+Salida:
+- `artifacts/linux/deb` (contiene el `.deb` generado para Linux).
 
 ## Releases automáticas (GitHub Actions)
 
@@ -105,6 +119,17 @@ Salida esperada:
   xattr -dr com.apple.quarantine /Applications/OfertaDemanda.app
   ```
 
+### Linux (Debian/Ubuntu)
+- Descarga el `.deb` desde Releases (por ejemplo: `OfertaDemanda.Desktop_<version>_amd64.deb`).
+- Instálalo con:
+  ```bash
+  sudo apt install ./OfertaDemanda.Desktop_<version>_amd64.deb
+  ```
+- Lánzalo desde el menú o con:
+  ```bash
+  OfertaDemanda.Desktop
+  ```
+
 ### Windows (MSIX)
 - **Firmado**: doble clic e instala.
 - **Sin firmar / auto-firmado**: instala el certificado y luego el MSIX:
@@ -124,14 +149,14 @@ Salida esperada:
 powershell -ExecutionPolicy Bypass -File .\scripts\create-windows-msix.ps1
 
 # Instalar localmente el MSIX generado
-Add-AppxPackage -Path .\artifacts\msix\OfertaDemandaAvalonia_<version>_win-x64.msix
+Add-AppxPackage -Path .\artifacts\windows\msix\OfertaDemandaAvalonia_<version>_win-x64.msix
 ```
 
-Si no defines `SIGN_CERT_PFX`, el script genera un certificado de desarrollo y lo deja en `artifacts\msix\OfertaDemandaAvalonia.Dev.cer`. Para confiar localmente:
+Si no defines `SIGN_CERT_PFX`, el script genera un certificado de desarrollo y lo deja en `artifacts\windows\msix\OfertaDemandaAvalonia.Dev.cer`. Para confiar localmente:
 
 ```powershell
-Import-Certificate -FilePath .\artifacts\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\TrustedPeople
-Import-Certificate -FilePath .\artifacts\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\Root
+Import-Certificate -FilePath .\artifacts\windows\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\TrustedPeople
+Import-Certificate -FilePath .\artifacts\windows\msix\OfertaDemandaAvalonia.Dev.cer -CertStoreLocation Cert:\CurrentUser\Root
 ```
 
 Si tienes un PFX propio, exporta estas variables antes de ejecutar:
@@ -152,7 +177,7 @@ El script usa WiX Toolset v4 (dotnet tool) y lo instala si no esta disponible.
 
 Salida esperada:
 
-- `artifacts\msi\OfertaDemandaAvalonia_<version>_win-x64.msi`
+- `artifacts\windows\msi\OfertaDemandaAvalonia_<version>_win-x64.msi`
 
 ## Ajustes de tema y preferencias
 

@@ -216,12 +216,14 @@ $projBase = [System.IO.Path]::GetFileNameWithoutExtension($projPath)
 $versionRaw = Get-VersionFromProject $projPath
 $appxVersion = Normalize-AppxVersion $versionRaw
 
-$artifacts = Join-Path $root "artifacts"
-$publishDir = Join-Path $artifacts ("publish\msix\" + $Rid)
-$msixRoot = Join-Path $artifacts "msix"
-$stagingDir = Join-Path $msixRoot "staging"
-$assetsDir = Join-Path $stagingDir "Assets"
+$artifactsRoot = Join-Path $root "artifacts\windows"
+$msixRoot = Join-Path $artifactsRoot "msix"
 $msixPath = Join-Path $msixRoot ("{0}_{1}_{2}.msix" -f $PackageName, $appxVersion, $Rid)
+
+$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("OfertaDemandaAvalonia\msix\" + [System.Guid]::NewGuid().ToString("N"))
+$publishDir = Join-Path $tempRoot ("publish\" + $Rid)
+$stagingDir = Join-Path $tempRoot "staging"
+$assetsDir = Join-Path $stagingDir "Assets"
 
 $iconSource = Join-Path $root "src\OfertaDemanda.Desktop\Assets\icon_1024.png"
 if (-not (Test-Path $iconSource)) { Die "No encuentro el icono: $iconSource" }
@@ -232,105 +234,111 @@ if (-not $makeAppx) { Die "No encuentro MakeAppx.exe (Windows SDK requerido)." }
 $signTool = FindSdkTool "SignTool.exe"
 if (-not $signTool) { Die "No encuentro SignTool.exe (Windows SDK requerido)." }
 
-Write-Host "Repo root   : $root"
-Write-Host "Project     : $projPath"
-Write-Host "Config      : $Config"
-Write-Host "RID         : $Rid"
-Write-Host "Version     : $versionRaw (Appx: $appxVersion)"
-Write-Host "MSIX output : $msixPath"
-
-EnsureDirectory $artifacts
 EnsureDirectory $msixRoot
+EnsureDirectory $publishDir
 
-Write-Host "`n==> dotnet restore ..."
-dotnet restore $projPath | Out-Host
+try {
+  Write-Host "Repo root   : $root"
+  Write-Host "Project     : $projPath"
+  Write-Host "Config      : $Config"
+  Write-Host "RID         : $Rid"
+  Write-Host "Version     : $versionRaw (Appx: $appxVersion)"
+  Write-Host "MSIX output : $msixPath"
+  Write-Host "Publish dir : $publishDir"
 
-Write-Host "`n==> dotnet build ..."
-dotnet build $projPath -c $Config -r $Rid | Out-Host
+  Write-Host "`n==> dotnet restore ..."
+  dotnet restore $projPath | Out-Host
 
-Write-Host "`n==> dotnet publish ..."
-dotnet publish $projPath `
-  -c $Config `
-  -r $Rid `
-  --self-contained:true `
-  -p:UseAppHost=true `
-  -o $publishDir | Out-Host
+  Write-Host "`n==> dotnet build ..."
+  dotnet build $projPath -c $Config -r $Rid | Out-Host
 
-$exeInPublish = DetectExe $publishDir $projBase
-$exeName = [System.IO.Path]::GetFileName($exeInPublish)
-Write-Host "Executable : $exeName"
+  Write-Host "`n==> dotnet publish ..."
+  dotnet publish $projPath `
+    -c $Config `
+    -r $Rid `
+    --self-contained:true `
+    -p:UseAppHost=true `
+    -o $publishDir | Out-Host
 
-Write-Host "`n==> Staging files ..."
-CopyDirClean $publishDir $stagingDir
-EnsureDirectory $assetsDir
+  $exeInPublish = DetectExe $publishDir $projBase
+  $exeName = [System.IO.Path]::GetFileName($exeInPublish)
+  Write-Host "Executable : $exeName"
 
-Write-Host "==> Generating MSIX assets ..."
-$assetSpecs = @(
-  @{ Name = "StoreLogo.png"; Width = 50; Height = 50 }
-  @{ Name = "Square44x44Logo.png"; Width = 44; Height = 44 }
-  @{ Name = "Square71x71Logo.png"; Width = 71; Height = 71 }
-  @{ Name = "Square150x150Logo.png"; Width = 150; Height = 150 }
-  @{ Name = "Wide310x150Logo.png"; Width = 310; Height = 150 }
-  @{ Name = "Square310x310Logo.png"; Width = 310; Height = 310 }
-  @{ Name = "SplashScreen.png"; Width = 620; Height = 300 }
-)
+  Write-Host "`n==> Staging files ..."
+  CopyDirClean $publishDir $stagingDir
+  EnsureDirectory $assetsDir
 
-foreach ($spec in $assetSpecs) {
-  $destPath = Join-Path $assetsDir $spec.Name
-  Resize-PngToFile -sourcePath $iconSource -destPath $destPath -width $spec.Width -height $spec.Height
+  Write-Host "==> Generating MSIX assets ..."
+  $assetSpecs = @(
+    @{ Name = "StoreLogo.png"; Width = 50; Height = 50 }
+    @{ Name = "Square44x44Logo.png"; Width = 44; Height = 44 }
+    @{ Name = "Square71x71Logo.png"; Width = 71; Height = 71 }
+    @{ Name = "Square150x150Logo.png"; Width = 150; Height = 150 }
+    @{ Name = "Wide310x150Logo.png"; Width = 310; Height = 150 }
+    @{ Name = "Square310x310Logo.png"; Width = 310; Height = 310 }
+    @{ Name = "SplashScreen.png"; Width = 620; Height = 300 }
+  )
+
+  foreach ($spec in $assetSpecs) {
+    $destPath = Join-Path $assetsDir $spec.Name
+    Resize-PngToFile -sourcePath $iconSource -destPath $destPath -width $spec.Width -height $spec.Height
+  }
+
+  $manifestPath = Join-Path $stagingDir "AppxManifest.xml"
+  Write-Host "==> Writing AppxManifest.xml ..."
+  Create-AppxManifest -path $manifestPath -exeName $exeName -appxVersion $appxVersion
+
+  Write-Host "`n==> Packing MSIX ..."
+  & $makeAppx pack /d $stagingDir /p $msixPath /o | Out-Host
+
+  Write-Host "`n==> Signing MSIX ..."
+  $pfxPath = $env:SIGN_CERT_PFX
+  $pfxPassword = $env:SIGN_CERT_PASSWORD
+  $createdCert = $false
+  $tempPfx = $null
+
+  if ($pfxPath) {
+    if (-not (Test-Path $pfxPath)) { Die "SIGN_CERT_PFX no existe: $pfxPath" }
+    if (-not $pfxPassword) { Die "SIGN_CERT_PASSWORD es obligatorio cuando SIGN_CERT_PFX esta definido." }
+  } else {
+    Write-Host "No se encontro SIGN_CERT_PFX. Creando certificado de desarrollo..."
+    $createdCert = $true
+    $cert = New-SelfSignedCertificate `
+      -Subject $Publisher `
+      -CertStoreLocation "Cert:\CurrentUser\My" `
+      -KeyAlgorithm RSA `
+      -KeyLength 2048 `
+      -HashAlgorithm SHA256 `
+      -KeyExportPolicy Exportable `
+      -NotAfter (Get-Date).AddYears(5) `
+      -Type CodeSigningCert
+
+    $tempPfx = Join-Path $tempRoot "OfertaDemandaAvalonia.Dev.pfx"
+    $cerPath = Join-Path $msixRoot "OfertaDemandaAvalonia.Dev.cer"
+    $pfxPath = $tempPfx
+    $pfxPassword = ([Guid]::NewGuid().ToString("N"))
+    $securePassword = ConvertTo-SecureString -String $pfxPassword -Force -AsPlainText
+
+    Export-PfxCertificate -Cert $cert -FilePath $pfxPath -Password $securePassword | Out-Null
+    Export-Certificate -Cert $cert -FilePath $cerPath | Out-Null
+    Write-Host "Certificado exportado: $cerPath"
+  }
+
+  & $signTool sign /fd SHA256 /a /f $pfxPath /p $pfxPassword $msixPath | Out-Host
+
+  if (-not (Test-Path $msixPath)) { Die "No se genero el MSIX: $msixPath" }
+
+  Write-Host "`n==> Verificacion"
+  Write-Host "MSIX      : $msixPath"
+  Write-Host "Identity  : $IdentityName"
+  Write-Host "Publisher : $Publisher"
+  Write-Host "Version   : $appxVersion"
+
+  if ($createdCert) {
+    Write-Host "Cert CER  : $cerPath"
+  }
+
+  Write-Host "`nMSIX listo."
+} finally {
+  if (Test-Path $tempRoot) { Remove-Item -Recurse -Force $tempRoot }
 }
-
-$manifestPath = Join-Path $stagingDir "AppxManifest.xml"
-Write-Host "==> Writing AppxManifest.xml ..."
-Create-AppxManifest -path $manifestPath -exeName $exeName -appxVersion $appxVersion
-
-Write-Host "`n==> Packing MSIX ..."
-& $makeAppx pack /d $stagingDir /p $msixPath /o | Out-Host
-
-Write-Host "`n==> Signing MSIX ..."
-$pfxPath = $env:SIGN_CERT_PFX
-$pfxPassword = $env:SIGN_CERT_PASSWORD
-$createdCert = $false
-
-if ($pfxPath) {
-  if (-not (Test-Path $pfxPath)) { Die "SIGN_CERT_PFX no existe: $pfxPath" }
-  if (-not $pfxPassword) { Die "SIGN_CERT_PASSWORD es obligatorio cuando SIGN_CERT_PFX esta definido." }
-} else {
-  Write-Host "No se encontro SIGN_CERT_PFX. Creando certificado de desarrollo..."
-  $createdCert = $true
-  $cert = New-SelfSignedCertificate `
-    -Subject $Publisher `
-    -CertStoreLocation "Cert:\CurrentUser\My" `
-    -KeyAlgorithm RSA `
-    -KeyLength 2048 `
-    -HashAlgorithm SHA256 `
-    -KeyExportPolicy Exportable `
-    -NotAfter (Get-Date).AddYears(5) `
-    -Type CodeSigningCert
-
-  $pfxPath = Join-Path $msixRoot "OfertaDemandaAvalonia.Dev.pfx"
-  $cerPath = Join-Path $msixRoot "OfertaDemandaAvalonia.Dev.cer"
-  $pfxPassword = ([Guid]::NewGuid().ToString("N"))
-  $securePassword = ConvertTo-SecureString -String $pfxPassword -Force -AsPlainText
-
-  Export-PfxCertificate -Cert $cert -FilePath $pfxPath -Password $securePassword | Out-Null
-  Export-Certificate -Cert $cert -FilePath $cerPath | Out-Null
-  Write-Host "Certificado exportado: $cerPath"
-}
-
-& $signTool sign /fd SHA256 /a /f $pfxPath /p $pfxPassword $msixPath | Out-Host
-
-if (-not (Test-Path $msixPath)) { Die "No se genero el MSIX: $msixPath" }
-
-Write-Host "`n==> Verificacion"
-Write-Host "MSIX      : $msixPath"
-Write-Host "Staging   : $stagingDir"
-Write-Host "Identity  : $IdentityName"
-Write-Host "Publisher : $Publisher"
-Write-Host "Version   : $appxVersion"
-
-if ($createdCert) {
-  Write-Host "Cert CER  : $cerPath"
-}
-
-Write-Host "`nMSIX listo."
