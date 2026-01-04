@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              x:Class="OfertaDemanda.Mobile.Views.MonopolyModelPage">
-  <Grid RowDefinitions="Auto,*" RowSpacing="12" Padding="12">
-    <ScrollView Grid.Row="0">
+  <Grid RowDefinitions="*,Auto" RowSpacing="12" Padding="12">
+    <ScrollView Grid.Row="0" VerticalOptions="FillAndExpand">
       <VerticalStackLayout Spacing="10">
         <Label Text="{Binding Localization[Monopoly_DemandInverse_Label]}" FontAttributes="Bold" />
         <Entry Text="{Binding DemandExpression}" />
@@ -44,13 +44,13 @@
         <Frame IsVisible="{Binding HasErrors}" BackgroundColor="#FFF0F0" Padding="8" CornerRadius="6">
           <VerticalStackLayout>
             <Label Text="{Binding Localization[Common_Errors]}" FontAttributes="Bold" />
-            <CollectionView ItemsSource="{Binding Errors}">
-              <CollectionView.ItemTemplate>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Errors}" Spacing="2">
+              <BindableLayout.ItemTemplate>
                 <DataTemplate>
                   <Label Text="• {Binding .}" />
                 </DataTemplate>
-              </CollectionView.ItemTemplate>
-            </CollectionView>
+              </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
           </VerticalStackLayout>
         </Frame>
       </VerticalStackLayout>
@@ -60,6 +60,7 @@
                         Series="{Binding Series}"
                         XAxes="{Binding XAxes}"
                         YAxes="{Binding YAxes}"
-                        LegendPosition="Right" />
+                        LegendPosition="Right"
+                        HeightRequest="260" />
   </Grid>
-</ContentPage>
+</ContentView>

@@ -1,9 +1,19 @@
+using System;
+
 namespace OfertaDemanda.Mobile.Views;
 
-public partial class ElasticityPage : ContentPage
+public partial class ElasticityPage : ContentView
 {
     public ElasticityPage()
     {
-        InitializeComponent();
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ElasticityPage InitializeComponent failed: {ex}");
+            throw;
+        }
     }
 }

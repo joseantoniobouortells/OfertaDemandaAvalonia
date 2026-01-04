@@ -1,9 +1,19 @@
+using System;
+
 namespace OfertaDemanda.Mobile.Views;
 
-public partial class MonopolyModelPage : ContentPage
+public partial class MonopolyModelPage : ContentView
 {
     public MonopolyModelPage()
     {
-        InitializeComponent();
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"MonopolyModelPage InitializeComponent failed: {ex}");
+            throw;
+        }
     }
 }

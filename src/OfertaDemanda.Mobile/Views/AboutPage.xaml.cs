@@ -8,6 +8,19 @@ public partial class AboutPage : ContentPage
     public AboutPage()
     {
         InitializeComponent();
-        BindingContext = App.Services.GetService<AboutViewModel>();
+    }
+
+    protected override void OnAppearing()
+    {
+        try
+        {
+            base.OnAppearing();
+            BindingContext ??= Application.Current?.Handler?.MauiContext?.Services.GetService<AboutViewModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AboutPage OnAppearing failed: {ex}");
+            throw;
+        }
     }
 }

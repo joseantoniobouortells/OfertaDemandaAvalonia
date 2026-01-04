@@ -8,6 +8,19 @@ public partial class SettingsPage : ContentPage
     public SettingsPage()
     {
         InitializeComponent();
-        BindingContext = App.Services.GetService<SettingsViewModel>();
+    }
+
+    protected override void OnAppearing()
+    {
+        try
+        {
+            base.OnAppearing();
+            BindingContext ??= Application.Current?.Handler?.MauiContext?.Services.GetService<SettingsViewModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SettingsPage OnAppearing failed: {ex}");
+            throw;
+        }
     }
 }

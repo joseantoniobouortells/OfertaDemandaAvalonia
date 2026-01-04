@@ -4,8 +4,8 @@
             xmlns:views="clr-namespace:OfertaDemanda.Mobile.Views"
             x:Class="OfertaDemanda.Mobile.Views.MainTabbedPage"
             x:Name="Root">
-    <views:PerfectCompetitionPage Title="{Binding Localization[Nav_PerfectCompetition], Source={x:Reference Root}}" />
-    <views:MonopolyPage Title="{Binding Localization[Nav_Monopoly], Source={x:Reference Root}}" />
-    <views:SettingsPage Title="{Binding Localization[Nav_Settings], Source={x:Reference Root}}" />
-    <views:AboutPage Title="{Binding Localization[Nav_About], Source={x:Reference Root}}" />
+    <views:PerfectCompetitionPage Title="{Binding Localization[Tab_PerfectCompetition], Source={x:Reference Root}}" />
+    <views:MonopolyPage Title="{Binding Localization[Tab_Monopoly], Source={x:Reference Root}}" />
+    <views:SettingsPage Title="{Binding Localization[Tab_Settings], Source={x:Reference Root}}" />
+    <views:AboutPage Title="{Binding Localization[Tab_About], Source={x:Reference Root}}" />
 </TabbedPage>

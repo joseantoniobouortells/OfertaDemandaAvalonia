@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using OfertaDemanda.Mobile.ViewModels;
 
@@ -7,7 +8,28 @@ public partial class MainTabbedPage : TabbedPage
 {
     public MainTabbedPage()
     {
-        InitializeComponent();
-        BindingContext = App.Services.GetService<MainViewModel>();
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"MainTabbedPage InitializeComponent failed: {ex}");
+            throw;
+        }
+    }
+
+    protected override void OnAppearing()
+    {
+        try
+        {
+            base.OnAppearing();
+            BindingContext ??= Application.Current?.Handler?.MauiContext?.Services.GetService<MainViewModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"MainTabbedPage OnAppearing failed: {ex}");
+            throw;
+        }
     }
 }

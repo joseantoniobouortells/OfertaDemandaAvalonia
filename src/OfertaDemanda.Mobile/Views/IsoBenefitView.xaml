@@ -4,8 +4,8 @@
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              x:Class="OfertaDemanda.Mobile.Views.IsoBenefitView"
              x:Name="Root">
-  <Grid RowDefinitions="Auto,*" RowSpacing="12">
-    <ScrollView Grid.Row="0">
+  <Grid RowDefinitions="*,Auto" RowSpacing="12">
+    <ScrollView Grid.Row="0" VerticalOptions="FillAndExpand">
       <VerticalStackLayout Spacing="10">
         <Label Text="{Binding Localization[IsoBenefit_MarketParams_Title]}" FontSize="18" FontAttributes="Bold" />
         <Label Text="{Binding Localization[IsoBenefit_MarketDemand_Label]}" FontAttributes="Bold" />
@@ -20,16 +20,16 @@
           <Button Text="{Binding Localization[IsoBenefit_AddFirm]}" Command="{Binding AddFirmCommand}" />
           <Button Text="{Binding Localization[IsoBenefit_RemoveFirm]}" Command="{Binding RemoveFirmCommand}" />
         </HorizontalStackLayout>
-        <CollectionView ItemsSource="{Binding Firms}" SelectionMode="Single" SelectedItem="{Binding SelectedFirm}">
-          <CollectionView.ItemTemplate>
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Firms}" Spacing="6">
+          <BindableLayout.ItemTemplate>
             <DataTemplate>
               <VerticalStackLayout Spacing="4" Padding="0,4">
                 <Entry Text="{Binding Name}" Placeholder="{Binding Source={x:Reference Root}, Path=BindingContext.Localization[IsoBenefit_FirmName_Placeholder]}" />
                 <Entry Text="{Binding CostExpression}" Placeholder="{Binding Source={x:Reference Root}, Path=BindingContext.Localization[IsoBenefit_FirmCost_Placeholder]}" />
               </VerticalStackLayout>
             </DataTemplate>
-          </CollectionView.ItemTemplate>
-        </CollectionView>
+          </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
 
         <Label Text="{Binding Localization[IsoBenefit_Reference_Title]}" FontSize="16" FontAttributes="Bold" />
         <Label Text="{Binding ReferencePriceText}" />
@@ -39,19 +39,19 @@
         <Frame IsVisible="{Binding HasErrors}" BackgroundColor="#FFF0F0" Padding="8" CornerRadius="6">
           <VerticalStackLayout>
             <Label Text="{Binding Localization[Common_Errors]}" FontAttributes="Bold" />
-            <CollectionView ItemsSource="{Binding Errors}">
-              <CollectionView.ItemTemplate>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Errors}" Spacing="2">
+              <BindableLayout.ItemTemplate>
                 <DataTemplate>
                   <Label Text="• {Binding .}" />
                 </DataTemplate>
-              </CollectionView.ItemTemplate>
-            </CollectionView>
+              </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
           </VerticalStackLayout>
         </Frame>
 
         <Label Text="{Binding Localization[IsoBenefit_Status_Title]}" FontSize="16" FontAttributes="Bold" />
-        <CollectionView ItemsSource="{Binding FirmStatuses}">
-          <CollectionView.ItemTemplate>
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding FirmStatuses}" Spacing="6">
+          <BindableLayout.ItemTemplate>
             <DataTemplate>
               <VerticalStackLayout Spacing="2">
                 <Label Text="{Binding Name}" FontAttributes="Bold" />
@@ -59,8 +59,8 @@
                 <Label Text="{Binding Details}" FontSize="12" Opacity="0.8" />
               </VerticalStackLayout>
             </DataTemplate>
-          </CollectionView.ItemTemplate>
-        </CollectionView>
+          </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
 
         <Frame Padding="10" CornerRadius="6" BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#1E1E1E}">
           <VerticalStackLayout>
@@ -75,6 +75,7 @@
                         Series="{Binding Series}"
                         XAxes="{Binding XAxes}"
                         YAxes="{Binding YAxes}"
-                        LegendPosition="Right" />
+                        LegendPosition="Right"
+                        HeightRequest="260" />
   </Grid>
 </ContentView>

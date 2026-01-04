@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              xmlns:views="clr-namespace:OfertaDemanda.Mobile.Views"
              x:Class="OfertaDemanda.Mobile.Views.FirmPage"
              x:Name="Root">
-  <Grid RowDefinitions="Auto,*" RowSpacing="12" Padding="12">
-    <ScrollView Grid.Row="0">
+  <Grid RowDefinitions="*,Auto" RowSpacing="12" Padding="12">
+    <ScrollView Grid.Row="0" VerticalOptions="FillAndExpand">
       <VerticalStackLayout Spacing="10" BindingContext="{Binding Firm}">
         <Label Text="{Binding Localization[Firm_CostMode_Title]}" FontAttributes="Bold" />
         <Label Text="{Binding Localization[Firm_TotalCost_Label]}" />
@@ -37,26 +37,27 @@
         <Frame IsVisible="{Binding HasErrors}" BackgroundColor="#FFF0F0" Padding="8" CornerRadius="6">
           <VerticalStackLayout>
             <Label Text="{Binding Localization[Common_Errors]}" FontAttributes="Bold" />
-            <CollectionView ItemsSource="{Binding Errors}">
-              <CollectionView.ItemTemplate>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Errors}" Spacing="2">
+              <BindableLayout.ItemTemplate>
                 <DataTemplate>
                   <Label Text="• {Binding .}" />
                 </DataTemplate>
-              </CollectionView.ItemTemplate>
-            </CollectionView>
+              </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
           </VerticalStackLayout>
         </Frame>
       </VerticalStackLayout>
     </ScrollView>
 
-    <Grid Grid.Row="1">
-      <lvc:CartesianChart Series="{Binding Firm.Series}"
-                          XAxes="{Binding Firm.XAxes}"
-                          YAxes="{Binding Firm.YAxes}"
-                          LegendPosition="Right"
-                          IsVisible="{Binding ShowFirmChart}" />
-      <views:IsoBenefitView BindingContext="{Binding IsoBenefit}"
-                            IsVisible="{Binding ShowIsoBenefitPanel}" />
-    </Grid>
+    <lvc:CartesianChart Grid.Row="1"
+                        Series="{Binding Firm.Series}"
+                        XAxes="{Binding Firm.XAxes}"
+                        YAxes="{Binding Firm.YAxes}"
+                        LegendPosition="Right"
+                        HeightRequest="260"
+                        IsVisible="{Binding ShowFirmChart}" />
+    <views:IsoBenefitView Grid.Row="1"
+                          BindingContext="{Binding IsoBenefit}"
+                          IsVisible="{Binding ShowIsoBenefitPanel}" />
   </Grid>
-</ContentPage>
+</ContentView>
