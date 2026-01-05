@@ -19,7 +19,7 @@ Cada sección comparte el motor del proyecto `OfertaDemanda.Core`, por lo que lo
   - Parser seguro de expresiones (`Expressions/`) que convierte cadenas con `q`, potencias y multiplicación implícita a RPN evaluable.
   - Utilidades numéricas (`Numerics/`) con integración, derivación y búsqueda de raíces robusta (`FindRoot`, `Integrate`, `Derivative`, `Safe`).
   - Modelos económicos (`Models/`) que encapsulan parámetros/resultados y exponen calculadoras puras (`MarketCalculator`, `FirmCalculator`, `MonopolyCalculator`, `ElasticityCalculator`).
-- **`src/OfertaDemanda.Desktop`**: cliente Avalonia (.NET 8) con MVVM Toolkit + LiveCharts2. Los view models contienen el estado observable, parsean las entradas del usuario mediante el motor y transforman los resultados en series de gráficos y métricas de texto.
+- **`src/OfertaDemanda.Desktop`**: cliente Avalonia (.NET 10) con MVVM Toolkit + LiveCharts2. Los view models contienen el estado observable, parsean las entradas del usuario mediante el motor y transforman los resultados en series de gráficos y métricas de texto.
 - **`test/OfertaDemanda.Core.Tests`**: batería xUnit que valida parser, métodos numéricos y modelos con el conjunto de expresiones del HTML original.
 - **`scripts/publish-macos.sh`**: automatiza `dotnet publish` para generar un bundle `.app` autocontenido y opcionalmente instalarlo en `/Applications`.
 - **`scripts/create-windows-msix.ps1`**: genera un `.msix` firmado para Windows 11 usando el SDK de Windows.
@@ -38,7 +38,7 @@ Cada sección comparte el motor del proyecto `OfertaDemanda.Core`, por lo que lo
 
 ## Requisitos y configuración
 
-- .NET 8 SDK (incluye la plantilla de Avalonia referenciada en el `.csproj`).
+- .NET 10 SDK (incluye la plantilla de Avalonia referenciada en el `.csproj`).
 - macOS/Windows/Linux con soporte para Skia (LiveCharts2 lo usa para dibujar).
 - No se requieren secretos ni servicios externos: todo el cálculo es local.
 
@@ -60,28 +60,6 @@ dotnet run --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj
 # Generar bundle macOS autocontenido (Release + install opcional)
 ./scripts/publish-macos.sh --project src/OfertaDemanda.Desktop/OfertaDemanda.Desktop.csproj --config Release --install
 ```
-
-## Mobile (MAUI)
-
-Requisitos:
-- Xcode instalado (iOS Simulator).
-- Workloads MAUI: `dotnet workload install maui`.
-
-Ejecutar en iOS Simulator:
-
-```bash
-dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -f net8.0-ios
-dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -t:Run -f net8.0-ios -p:_DeviceName="iPhone 15"
-```
-
-Ejecutar en Android:
-
-```bash
-dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -f net8.0-android
-dotnet build src/OfertaDemanda.Mobile/OfertaDemanda.Mobile.csproj -t:Run -f net8.0-android
-```
-
-Nota: la app móvil usa .NET MAUI y comparte `OfertaDemanda.Core` y los mismos recursos RESX de localización que la app de escritorio (Avalonia).
 
 ## Publicar Windows desde macOS (Docker)
 
