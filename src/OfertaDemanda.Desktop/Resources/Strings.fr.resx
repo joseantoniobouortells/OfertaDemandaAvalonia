@@ -477,6 +477,9 @@
   <data name="Firm_Series_PriceLine" xml:space="preserve">
     <value>Prix</value>
   </data>
+  <data name="Firm_Series_TotalRevenue" xml:space="preserve">
+    <value>RT</value>
+  </data>
   <data name="Firm_Series_OptimalQuantity" xml:space="preserve">
     <value>q*</value>
   </data>
@@ -734,6 +737,12 @@ Nous déterminons P* en résolvant numériquement P_d(Q_s(P))=P où Q_s(P)=Σ q_
   </data>
   <data name="Firm_Toggle_IsoBenefit" xml:space="preserve">
     <value>Afficher l'isoprofit</value>
+  </data>
+  <data name="Firm_Toggle_TotalRevenue" xml:space="preserve">
+    <value>Afficher la recette totale</value>
+  </data>
+  <data name="Firm_TotalRevenue_Hint" xml:space="preserve">
+    <value>En concurrence parfaite, RT = P · q.</value>
   </data>
   <data name="Language_German" xml:space="preserve">
     <value>Allemand (de-DE)</value>

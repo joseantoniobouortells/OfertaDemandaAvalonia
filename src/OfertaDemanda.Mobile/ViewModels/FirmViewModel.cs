@@ -13,6 +13,7 @@ namespace OfertaDemanda.Mobile.ViewModels;
 
 public partial class FirmViewModel : ViewModelBase
 {
+    private const double FirmMaxQuantity = 60d;
     private bool _suppressUpdates;
     private SelectionOption<FirmMode>[] _modeOptions = Array.Empty<SelectionOption<FirmMode>>();
 
@@ -24,6 +25,9 @@ public partial class FirmViewModel : ViewModelBase
 
     [ObservableProperty]
     private SelectionOption<FirmMode> selectedMode = null!;
+
+    [ObservableProperty]
+    private bool showTotalRevenue;
 
     [ObservableProperty]
     private string currentPriceText = string.Empty;
@@ -51,7 +55,7 @@ public partial class FirmViewModel : ViewModelBase
 
     public Axis[] XAxes { get; } =
     {
-        new Axis { Name = "q", MinLimit = 0, MaxLimit = 60 }
+        new Axis { Name = "q", MinLimit = 0, MaxLimit = FirmMaxQuantity }
     };
 
     public Axis[] YAxes { get; } =
@@ -74,6 +78,7 @@ public partial class FirmViewModel : ViewModelBase
         CostExpression = AppDefaults.Firm.CostExpression;
         Price = AppDefaults.Firm.Price;
         SelectedMode = _modeOptions.First(o => o.Value == AppDefaults.Firm.Mode);
+        ShowTotalRevenue = false;
         _suppressUpdates = false;
         Recalculate();
     }
@@ -92,6 +97,11 @@ public partial class FirmViewModel : ViewModelBase
     partial void OnSelectedModeChanged(SelectionOption<FirmMode> value)
     {
         OnPropertyChanged(nameof(IsPriceEditable));
+        if (!_suppressUpdates) Recalculate();
+    }
+
+    partial void OnShowTotalRevenueChanged(bool value)
+    {
         if (!_suppressUpdates) Recalculate();
     }
 
@@ -144,8 +154,14 @@ public partial class FirmViewModel : ViewModelBase
             ChartSeriesBuilder.Line(Localization["Firm_Series_AverageVariableCost"], result.AverageVariableCost, SKColors.MediumPurple)
         };
 
-        var priceLine = ChartSeriesBuilder.HorizontalLine(Localization["Firm_Series_PriceLine"], 0, 60, result.PriceLine, SKColors.Firebrick, SelectedMode.Value == FirmMode.LongRun);
+        var priceLine = ChartSeriesBuilder.HorizontalLine(Localization["Firm_Series_PriceLine"], 0, FirmMaxQuantity, result.PriceLine, SKColors.Firebrick, SelectedMode.Value == FirmMode.LongRun);
         list.Add(priceLine);
+
+        if (ShowTotalRevenue)
+        {
+            var totalRevenue = BuildTotalRevenue(result.PriceLine);
+            list.Add(ChartSeriesBuilder.Line(Localization["Firm_Series_TotalRevenue"], totalRevenue, SKColors.SeaGreen));
+        }
 
         if (result.QuantityPoint.HasValue)
         {
@@ -153,6 +169,17 @@ public partial class FirmViewModel : ViewModelBase
         }
 
         return list;
+    }
+
+    private static IReadOnlyList<ChartPoint> BuildTotalRevenue(double price)
+    {
+        var points = new List<ChartPoint>();
+        for (var q = 0d; q <= FirmMaxQuantity; q += 1d)
+        {
+            points.Add(new ChartPoint(q, price * q));
+        }
+
+        return points;
     }
 
     private SelectionOption<FirmMode>[] BuildModeOptions()

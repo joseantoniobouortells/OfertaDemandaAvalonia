@@ -33,6 +33,11 @@
           <CheckBox IsChecked="{Binding Source={x:Reference Root}, Path=BindingContext.ShowIsoBenefitPanel}" />
           <Label Text="{Binding Localization[Firm_Toggle_IsoBenefit]}" />
         </HorizontalStackLayout>
+        <HorizontalStackLayout Spacing="8">
+          <CheckBox IsChecked="{Binding ShowTotalRevenue}" />
+          <Label Text="{Binding Localization[Firm_Toggle_TotalRevenue]}" />
+        </HorizontalStackLayout>
+        <Label Text="{Binding Localization[Firm_TotalRevenue_Hint]}" FontSize="12" Opacity="0.7" />
 
         <Frame IsVisible="{Binding HasErrors}" BackgroundColor="#FFF0F0" Padding="8" CornerRadius="6">
           <VerticalStackLayout>
