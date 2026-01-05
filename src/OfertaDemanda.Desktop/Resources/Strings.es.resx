@@ -211,25 +211,34 @@
     <value>Explicación</value>
   </data>
   <data name="Market_Explanation_MC_Title" xml:space="preserve">
-    <value>MC(q) = dC/dq</value>
+    <value>MC(q)=\frac{dC}{dq}</value>
   </data>
   <data name="Market_Explanation_MC_Body" xml:space="preserve">
-    <value>Costo marginal en competencia perfecta: MR = P.</value>
+    <value>Costo marginal en competencia perfecta.</value>
+  </data>
+  <data name="Market_Explanation_MC_Formula" xml:space="preserve">
+    <value>IMg=P</value>
   </data>
   <data name="Market_Explanation_AVC_Title" xml:space="preserve">
-    <value>AVC(q) = VC(q)/q</value>
+    <value>AVC(q)=\frac{VC(q)}{q}</value>
   </data>
   <data name="Market_Explanation_AVC_Body" xml:space="preserve">
-    <value>Cierre si P &lt; min AVC.</value>
+    <value>Cierre si el precio está por debajo del costo variable medio.</value>
+  </data>
+  <data name="Market_Explanation_AVC_Formula" xml:space="preserve">
+    <value>P&lt;\min AVC(q)</value>
   </data>
   <data name="Market_Explanation_AC_Title" xml:space="preserve">
-    <value>AC(q) = C(q)/q</value>
+    <value>AC(q)=\frac{C(q)}{q}</value>
   </data>
   <data name="Market_Explanation_AC_Body" xml:space="preserve">
-    <value>Beneficio si P &gt; AC(q_f*), pérdida si P &lt; AC(q_f*).</value>
+    <value>Beneficio si el precio está por encima del costo medio, pérdida si está por debajo.</value>
+  </data>
+  <data name="Market_Explanation_AC_Formula" xml:space="preserve">
+    <value>P \gtrless AC(q_f^*)</value>
   </data>
   <data name="Market_Explanation_Profit_Title" xml:space="preserve">
-    <value>π(q) = Pq − C(q)</value>
+    <value>\pi(q)=Pq-C(q)</value>
   </data>
   <data name="Market_Explanation_Profit_Body" xml:space="preserve">
     <value>Área sombreada muestra beneficio o pérdida al q_f*.</value>
@@ -477,6 +486,9 @@
   <data name="Firm_Series_PriceLine" xml:space="preserve">
     <value>Precio</value>
   </data>
+  <data name="Firm_Series_TotalRevenue" xml:space="preserve">
+    <value>IT</value>
+  </data>
   <data name="Firm_Series_OptimalQuantity" xml:space="preserve">
     <value>q*</value>
   </data>
@@ -593,6 +605,15 @@
   </data>
   <data name="Monopoly_Isoprofit_Explanation" xml:space="preserve">
     <value>La isobeneficio recoge combinaciones (q, p) con π constante. En el óptimo monopolista, la curva con π=πₘ es tangente a Pd(q) porque IMg(qₘ)=CMg(qₘ). πₘ = {0}.</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Text" xml:space="preserve">
+    <value>La isobeneficio recoge combinaciones (q, p) con π constante. En el óptimo monopolista, la curva con π=πₘ es tangente a Pd(q).</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Tangent" xml:space="preserve">
+    <value>IMg(q_m)=CMg(q_m)</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Profit" xml:space="preserve">
+    <value>\pi_m={0}</value>
   </data>
   <data name="IsoBenefit_MarketParams_Title" xml:space="preserve">
     <value>Parámetros del mercado</value>
@@ -720,6 +741,57 @@ Para el mercado agregamos costes suponiendo reparto uniforme q_i=Q/N, de modo qu
 Las curvas Π̄ del mercado se calculan como P(Q;Π̄)=(C_M(Q)+Π̄)/Q evitando Q=0 y se cruzan con la demanda P_d(Q).
 Determinamos P* resolviendo numéricamente P_d(Q_s(P))=P donde Q_s(P)=Σ q_i(P); si no hay solución estable, usamos P*=40 como referencia.</value>
   </data>
+  <data name="IsoBenefit_Theory_Section_Profit" xml:space="preserve">
+    <value>Beneficio / ingreso / coste</value>
+  </data>
+  <data name="IsoBenefit_Theory_ProfitFormula" xml:space="preserve">
+    <value>\pi_i(q,p)=p\cdot q - C_i(q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_ProfitHint" xml:space="preserve">
+    <value>Beneficio de cada empresa en función de q y p.</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Costs" xml:space="preserve">
+    <value>Costes medios y marginales</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsMC" xml:space="preserve">
+    <value>CMg_i(q)=\frac{dC_i}{dq}</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsAVC" xml:space="preserve">
+    <value>CMeV_i(q)=\frac{CV_i(q)}{q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsAC" xml:space="preserve">
+    <value>CMe_i(q)=\frac{C_i(q)}{q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Competition" xml:space="preserve">
+    <value>Competencia perfecta</value>
+  </data>
+  <data name="IsoBenefit_Theory_CompetitionCondition" xml:space="preserve">
+    <value>CMg_i(q)=P^*</value>
+  </data>
+  <data name="IsoBenefit_Theory_CompetitionShutdown" xml:space="preserve">
+    <value>P^*&lt;\min CMeV_i(q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Isoprofit" xml:space="preserve">
+    <value>Isobeneficio</value>
+  </data>
+  <data name="IsoBenefit_Theory_Isoprofit" xml:space="preserve">
+    <value>p(q;\bar{\pi}_i)=\frac{C_i(q)+\bar{\pi}_i}{q},\; q&gt;0</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Market" xml:space="preserve">
+    <value>Mercado agregado</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketCost" xml:space="preserve">
+    <value>C_M(Q)=\sum_i C_i(Q/N)</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketProfit" xml:space="preserve">
+    <value>\Pi(Q,P)=P\cdot Q - C_M(Q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketIsoProfit" xml:space="preserve">
+    <value>P(Q;\bar{\Pi})=\frac{C_M(Q)+\bar{\Pi}}{Q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketEquilibrium" xml:space="preserve">
+    <value>P_d(Q_s(P))=P,\; Q_s(P)=\sum_i q_i(P)</value>
+  </data>
   <data name="Tab_PerfectCompetition" xml:space="preserve">
     <value>Competencia perfecta</value>
   </data>
@@ -734,6 +806,12 @@ Determinamos P* resolviendo numéricamente P_d(Q_s(P))=P donde Q_s(P)=Σ q_i(P);
   </data>
   <data name="Firm_Toggle_IsoBenefit" xml:space="preserve">
     <value>Mostrar isobeneficio</value>
+  </data>
+  <data name="Firm_Toggle_TotalRevenue" xml:space="preserve">
+    <value>Mostrar ingreso total</value>
+  </data>
+  <data name="Firm_TotalRevenue_Hint" xml:space="preserve">
+    <value>En competencia perfecta, IT = P · q.</value>
   </data>
   <data name="Language_German" xml:space="preserve">
     <value>Alemán (de-DE)</value>

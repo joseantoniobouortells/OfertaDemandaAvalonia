@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfertaDemanda.Desktop.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfertaDemanda.Shared", "src\OfertaDemanda.Shared\OfertaDemanda.Shared.csproj", "{25C282C2-1E5F-4EEB-9680-30E176271953}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfertaDemanda.Mobile", "src\OfertaDemanda.Mobile\OfertaDemanda.Mobile.csproj", "{8E4EC938-7AC8-41D0-9381-7815D5305183}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,8 +46,6 @@ Global
 		{25C282C2-1E5F-4EEB-9680-30E176271953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25C282C2-1E5F-4EEB-9680-30E176271953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25C282C2-1E5F-4EEB-9680-30E176271953}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E4EC938-7AC8-41D0-9381-7815D5305183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E4EC938-7AC8-41D0-9381-7815D5305183}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{96247413-1B22-43D7-8A93-0528DA1FE6F0} = {88AF32C4-6813-4711-8D5C-CE5010775CDC}
@@ -57,6 +53,5 @@ Global
 		{29BD5414-A36B-4520-847B-B003B7A74EB1} = {08CF3B83-153E-4264-9FA6-D08BEFBBF63C}
 		{C2B31669-7E9F-4D1D-9265-EF53609D8101} = {08CF3B83-153E-4264-9FA6-D08BEFBBF63C}
 		{25C282C2-1E5F-4EEB-9680-30E176271953} = {88AF32C4-6813-4711-8D5C-CE5010775CDC}
-		{8E4EC938-7AC8-41D0-9381-7815D5305183} = {88AF32C4-6813-4711-8D5C-CE5010775CDC}
 	EndGlobalSection
 EndGlobal
