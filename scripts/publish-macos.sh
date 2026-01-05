@@ -51,15 +51,15 @@ else
   [[ -n "$CSPROJ" ]] || die "No se ha encontrado el .csproj. Ajusta DEFAULT_CSPROJ o revisa la estructura /src."
 fi
 
-APP_NAME="$(basename "$CSPROJ" .csproj)"
+APP_NAME="OfertaDemanda"
+APP_DISPLAY_NAME="OfertaDemanda"
 
 # Extrae Version si existe en el csproj (fallback: 0.0.0)
 VERSION="$(grep -m1 -E '<Version>[^<]+' "$CSPROJ" | sed -E 's/.*<Version>([^<]+)<\/Version>.*/\1/' || true)"
 VERSION="${VERSION:-0.0.0}"
 
 # Identificador bundle (simple y estable)
-APP_ID_BASE="$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')"
-BUNDLE_ID="com.${APP_ID_BASE}.${APP_ID_BASE}"
+BUNDLE_ID="com.joseantoniobou.ofertademandaavalonia"
 
 echo "==> Repo root     : $ROOT_DIR"
 echo "==> Project       : $CSPROJ"
@@ -127,7 +127,7 @@ cat > "$INFO_PLIST" <<EOF
   <key>CFBundleName</key>
   <string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key>
-  <string>${APP_NAME}</string>
+  <string>${APP_DISPLAY_NAME}</string>
   <key>CFBundleIdentifier</key>
   <string>${BUNDLE_ID}</string>
   <key>CFBundleVersion</key>

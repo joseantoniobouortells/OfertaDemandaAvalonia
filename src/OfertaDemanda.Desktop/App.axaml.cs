@@ -11,13 +11,16 @@ namespace OfertaDemanda.Desktop;
 
 public partial class App : Application
 {
+    private const string AppDisplayName = "OfertaDemanda";
     private ThemeService? _themeService;
     private UserSettingsService? _userSettingsService;
     private LocalizationService? _localizationService;
+    private MacMenuService? _macMenuService;
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        Name = AppDisplayName;
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -31,10 +34,14 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel(_themeService, _userSettingsService, _localizationService)
-            };
+            var aboutNavigator = new AboutNavigator();
+            _macMenuService = new MacMenuService(_localizationService, aboutNavigator);
+            _macMenuService.Initialize(this);
+
+            var mainWindow = new MainWindow();
+            mainWindow.AttachAboutNavigator(aboutNavigator);
+            mainWindow.DataContext = new MainViewModel(_themeService, _userSettingsService, _localizationService);
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
