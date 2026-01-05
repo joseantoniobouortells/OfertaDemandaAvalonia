@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OfertaDemanda.Core\OfertaDemanda.Core.csproj" />
+    <ProjectReference Include="..\..\src\OfertaDemanda.Shared\OfertaDemanda.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,6 +10,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using OfertaDemanda.Core.Models;
 using OfertaDemanda.Mobile.Services;
+using OfertaDemanda.Shared.Math;
 using OfertaDemanda.Shared.Settings;
 using SkiaSharp;
 
@@ -91,6 +92,9 @@ public partial class MarketViewModel : ViewModelBase
 
     [ObservableProperty]
     private double cubicCost;
+
+    [ObservableProperty]
+    private string totalCostFormulaLatex = string.Empty;
 
     [ObservableProperty]
     private string equilibriumText = string.Empty;
@@ -183,6 +187,7 @@ public partial class MarketViewModel : ViewModelBase
         LinearCost = AppDefaults.Market.LinearCost;
         QuadraticCost = AppDefaults.Market.QuadraticCost;
         CubicCost = AppDefaults.Market.CubicCost;
+        UpdateTotalCostFormula();
         ResetToggleDefaults();
         _suppressUpdates = false;
         Recalculate();
@@ -219,26 +224,31 @@ public partial class MarketViewModel : ViewModelBase
     partial void OnSelectedCostTypeChanged(SelectionOption<MarketCostFunctionType> value)
     {
         OnPropertyChanged(nameof(IsCubicCostVisible));
+        UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
     }
 
     partial void OnFixedCostChanged(double value)
     {
+        UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
     }
 
     partial void OnLinearCostChanged(double value)
     {
+        UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
     }
 
     partial void OnQuadraticCostChanged(double value)
     {
+        UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
     }
 
     partial void OnCubicCostChanged(double value)
     {
+        UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
     }
 
@@ -747,6 +757,7 @@ public partial class MarketViewModel : ViewModelBase
         UpdateDemandShockText();
         UpdateSupplyShockText();
         UpdateTaxText();
+        UpdateTotalCostFormula();
         Recalculate();
     }
 
@@ -797,5 +808,17 @@ public partial class MarketViewModel : ViewModelBase
     private void UpdateTaxText()
     {
         TaxText = string.Format(Localization.CurrentCulture, Localization["Format_CurrentValue"], Tax);
+    }
+
+    private void UpdateTotalCostFormula()
+    {
+        var costType = SelectedCostType?.Value ?? MarketCostFunctionType.Quadratic;
+        TotalCostFormulaLatex = TotalCostFormulaBuilder.Build(
+            costType,
+            FixedCost,
+            LinearCost,
+            QuadraticCost,
+            CubicCost,
+            Localization.CurrentCulture);
     }
 }

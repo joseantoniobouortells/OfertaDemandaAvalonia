@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:controls="using:OfertaDemanda.Desktop.Controls"
              x:CompileBindings="False"
              mc:Ignorable="d"
              x:Class="OfertaDemanda.Desktop.Views.MarketView">
@@ -48,9 +49,17 @@
         <TextBlock Text="{Binding TaxText}"
                    FontSize="12" />
 
-        <TextBlock Text="{Binding Localization[Market_Costs]}"
-                   FontWeight="Bold"
-                   Margin="0,16,0,0" />
+        <Grid Margin="0,16,0,0"
+              ColumnDefinitions="*,Auto"
+              VerticalAlignment="Center">
+          <TextBlock Text="{Binding Localization[Market_Costs]}"
+                     FontWeight="Bold" />
+          <controls:MathBlock Grid.Column="1"
+                              Latex="{Binding TotalCostFormulaLatex}"
+                              FontSize="14"
+                              Inline="True"
+                              Margin="8,0,0,0" />
+        </Grid>
         <TextBlock Text="{Binding Localization[Market_CostType]}" />
         <ComboBox ItemsSource="{Binding CostTypeOptions}"
                   SelectedItem="{Binding SelectedCostType}">
@@ -146,29 +155,35 @@
                        FontWeight="SemiBold"
                        Margin="0,0,0,6" />
             <StackPanel Margin="0,4,0,0">
-              <TextBlock Text="{Binding Localization[Market_Explanation_MC_Title]}"
-                         FontWeight="SemiBold" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_MC_Title]}"
+                                  FontSize="16" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_MC_Formula]}"
+                                  FontSize="15" />
               <TextBlock Text="{Binding Localization[Market_Explanation_MC_Body]}"
                          FontSize="12"
                          Opacity="0.75" />
             </StackPanel>
             <StackPanel Margin="0,6,0,0">
-              <TextBlock Text="{Binding Localization[Market_Explanation_AVC_Title]}"
-                         FontWeight="SemiBold" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_AVC_Title]}"
+                                  FontSize="16" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_AVC_Formula]}"
+                                  FontSize="15" />
               <TextBlock Text="{Binding Localization[Market_Explanation_AVC_Body]}"
                          FontSize="12"
                          Opacity="0.75" />
             </StackPanel>
             <StackPanel Margin="0,6,0,0">
-              <TextBlock Text="{Binding Localization[Market_Explanation_AC_Title]}"
-                         FontWeight="SemiBold" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_AC_Title]}"
+                                  FontSize="16" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_AC_Formula]}"
+                                  FontSize="15" />
               <TextBlock Text="{Binding Localization[Market_Explanation_AC_Body]}"
                          FontSize="12"
                          Opacity="0.75" />
             </StackPanel>
             <StackPanel Margin="0,6,0,0">
-              <TextBlock Text="{Binding Localization[Market_Explanation_Profit_Title]}"
-                         FontWeight="SemiBold" />
+              <controls:MathBlock Latex="{Binding Localization[Market_Explanation_Profit_Title]}"
+                                  FontSize="16" />
               <TextBlock Text="{Binding Localization[Market_Explanation_Profit_Body]}"
                          FontSize="12"
                          Opacity="0.75" />

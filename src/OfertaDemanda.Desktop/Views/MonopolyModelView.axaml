@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:controls="using:OfertaDemanda.Desktop.Controls"
              x:CompileBindings="False"
              mc:Ignorable="d"
              x:Class="OfertaDemanda.Desktop.Views.MonopolyModelView">
@@ -46,9 +47,13 @@
           <StackPanel Spacing="6">
             <TextBlock Text="{Binding Localization[Common_Explanation]}"
                        FontWeight="Bold" />
-            <TextBlock Text="{Binding IsoprofitExplanation}"
+            <TextBlock Text="{Binding IsoprofitText}"
                        FontSize="12"
                        TextWrapping="Wrap" />
+            <controls:MathBlock Latex="{Binding IsoprofitTangentLatex}"
+                                FontSize="16" />
+            <controls:MathBlock Latex="{Binding IsoprofitProfitLatex}"
+                                FontSize="16" />
           </StackPanel>
         </Border>
 

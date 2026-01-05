@@ -4,6 +4,7 @@ using OfertaDemanda.Mobile.Services;
 using OfertaDemanda.Mobile.ViewModels;
 using OfertaDemanda.Mobile.Views;
 using OfertaDemanda.Shared.Settings;
+using OfertaDemanda.Shared.Math;
 using SkiaSharp.Views.Maui.Handlers;
 
 namespace OfertaDemanda.Mobile;
@@ -44,6 +45,7 @@ public static class MauiProgram
 			builder.Services.AddSingleton<UserSettingsService>();
 			builder.Services.AddSingleton<LocalizationService>();
 			builder.Services.AddSingleton<ThemeService>();
+			builder.Services.AddSingleton<IMathFormulaRenderer, CSharpMathFormulaRenderer>();
 			builder.Services.AddSingleton<MainViewModel>();
 			builder.Services.AddSingleton<SettingsViewModel>();
 			builder.Services.AddSingleton<AboutViewModel>();

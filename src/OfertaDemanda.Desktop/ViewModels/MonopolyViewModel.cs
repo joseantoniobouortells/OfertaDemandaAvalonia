@@ -58,6 +58,15 @@ public partial class MonopolyViewModel : ViewModelBase
     private string isoprofitExplanation = string.Empty;
 
     [ObservableProperty]
+    private string isoprofitText = string.Empty;
+
+    [ObservableProperty]
+    private string isoprofitTangentLatex = string.Empty;
+
+    [ObservableProperty]
+    private string isoprofitProfitLatex = string.Empty;
+
+    [ObservableProperty]
     private bool showIsoprofitCurve = true;
 
     [ObservableProperty]
@@ -159,7 +168,7 @@ public partial class MonopolyViewModel : ViewModelBase
             ProfitText = FormatMetric("Monopoly_Label_Profit", null);
             CompetitiveQuantityText = FormatMetric("Monopoly_Label_CompetitiveQuantity", null);
             DeadweightLossText = FormatMetric("Monopoly_Label_DeadweightLoss", null);
-            IsoprofitExplanation = BuildIsoprofitExplanation(null);
+        UpdateIsoprofitExplanation(null);
         }
         else
         {
@@ -169,7 +178,7 @@ public partial class MonopolyViewModel : ViewModelBase
             ProfitText = FormatMetric("Monopoly_Label_Profit", result.Profit);
             CompetitiveQuantityText = FormatMetric("Monopoly_Label_CompetitiveQuantity", result.CompetitivePoint?.X);
             DeadweightLossText = FormatMetric("Monopoly_Label_DeadweightLoss", result.DeadweightLoss);
-            IsoprofitExplanation = BuildIsoprofitExplanation(result.Profit);
+        UpdateIsoprofitExplanation(result.Profit);
         }
 
         Errors = localErrors.Count == 0 ? Array.Empty<string>() : localErrors.ToArray();
@@ -432,15 +441,17 @@ public partial class MonopolyViewModel : ViewModelBase
         return isDark ? new SKColor(255, 255, 255, 60) : new SKColor(0, 0, 0, 40);
     }
 
-    private string BuildIsoprofitExplanation(double? profit)
+    private void UpdateIsoprofitExplanation(double? profit)
     {
         var profitValue = profit.HasValue
             ? profit.Value.ToString("F2", Localization.CurrentCulture)
             : Localization["Common_EmptyValue"];
 
-        return string.Format(
+        IsoprofitText = Localization["Monopoly_Isoprofit_Text"];
+        IsoprofitTangentLatex = Localization["Monopoly_Isoprofit_Tangent"];
+        IsoprofitProfitLatex = string.Format(
             Localization.CurrentCulture,
-            Localization["Monopoly_Isoprofit_Explanation"],
+            Localization["Monopoly_Isoprofit_Profit"],
             profitValue);
     }
 

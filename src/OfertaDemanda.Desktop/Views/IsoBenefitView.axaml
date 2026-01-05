@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:controls="using:OfertaDemanda.Desktop.Controls"
              x:CompileBindings="False"
              mc:Ignorable="d"
              x:Class="OfertaDemanda.Desktop.Views.IsoBenefitView">
@@ -114,15 +115,45 @@
         <Border Padding="12"
                 CornerRadius="6"
                 Background="{DynamicResource ThemeControlLowBrush}">
-          <StackPanel>
+          <StackPanel Spacing="8">
             <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Title]}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Margin="0,0,0,4" />
-            <TextBlock Text="{Binding TheoryText}"
-                       TextWrapping="Wrap"
-                       FontFamily="Inter,Segoe UI,Helvetica,sans-serif"
-                       FontSize="12" />
+
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Section_Profit]}"
+                       FontWeight="SemiBold" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_ProfitFormula]}"
+                                FontSize="16" />
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_ProfitHint]}"
+                       FontSize="12"
+                       Opacity="0.75" />
+
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Section_Costs]}"
+                       FontWeight="SemiBold"
+                       Margin="0,6,0,0" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_CostsMC]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_CostsAVC]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_CostsAC]}" FontSize="16" />
+
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Section_Competition]}"
+                       FontWeight="SemiBold"
+                       Margin="0,6,0,0" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_CompetitionCondition]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_CompetitionShutdown]}" FontSize="16" />
+
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Section_Isoprofit]}"
+                       FontWeight="SemiBold"
+                       Margin="0,6,0,0" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_Isoprofit]}" FontSize="16" />
+
+            <TextBlock Text="{Binding Localization[IsoBenefit_Theory_Section_Market]}"
+                       FontWeight="SemiBold"
+                       Margin="0,6,0,0" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_MarketCost]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_MarketProfit]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_MarketIsoProfit]}" FontSize="16" />
+            <controls:MathBlock Latex="{Binding Localization[IsoBenefit_Theory_MarketEquilibrium]}" FontSize="16" />
           </StackPanel>
         </Border>
       </StackPanel>

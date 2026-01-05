@@ -211,25 +211,34 @@
     <value>Erläuterung</value>
   </data>
   <data name="Market_Explanation_MC_Title" xml:space="preserve">
-    <value>MC(q) = dC/dq</value>
+    <value>MC(q)=\frac{dC}{dq}</value>
   </data>
   <data name="Market_Explanation_MC_Body" xml:space="preserve">
-    <value>Grenzkosten bei vollkommenem Wettbewerb: MR = P.</value>
+    <value>Grenzkosten im vollkommenen Wettbewerb.</value>
+  </data>
+  <data name="Market_Explanation_MC_Formula" xml:space="preserve">
+    <value>IMg=P</value>
   </data>
   <data name="Market_Explanation_AVC_Title" xml:space="preserve">
-    <value>AVC(q) = VC(q)/q</value>
+    <value>AVC(q)=\frac{VC(q)}{q}</value>
   </data>
   <data name="Market_Explanation_AVC_Body" xml:space="preserve">
-    <value>Schließung, wenn P &lt; min AVC.</value>
+    <value>Schließung, wenn der Preis unter den durchschnittlichen variablen Kosten liegt.</value>
+  </data>
+  <data name="Market_Explanation_AVC_Formula" xml:space="preserve">
+    <value>P&lt;\min AVC(q)</value>
   </data>
   <data name="Market_Explanation_AC_Title" xml:space="preserve">
-    <value>AC(q) = C(q)/q</value>
+    <value>AC(q)=\frac{C(q)}{q}</value>
   </data>
   <data name="Market_Explanation_AC_Body" xml:space="preserve">
-    <value>Gewinn, wenn P &gt; AC(q_f*), Verlust, wenn P &lt; AC(q_f*).</value>
+    <value>Gewinn, wenn der Preis über den durchschnittlichen Kosten liegt, Verlust, wenn er darunter liegt.</value>
+  </data>
+  <data name="Market_Explanation_AC_Formula" xml:space="preserve">
+    <value>P \gtrless AC(q_f^*)</value>
   </data>
   <data name="Market_Explanation_Profit_Title" xml:space="preserve">
-    <value>π(q) = Pq − C(q)</value>
+    <value>\pi(q)=Pq-C(q)</value>
   </data>
   <data name="Market_Explanation_Profit_Body" xml:space="preserve">
     <value>Die schattierte Fläche zeigt Gewinn oder Verlust bei q_f*.</value>
@@ -597,6 +606,15 @@
   <data name="Monopoly_Isoprofit_Explanation" xml:space="preserve">
     <value>Die Isogewinnkurve enthält Kombinationen (q, p) mit konstantem π. Im Monopoloptimum ist die Kurve mit π=πₘ tangential an Pd(q), weil IMg(qₘ)=CMg(qₘ). πₘ = {0}.</value>
   </data>
+  <data name="Monopoly_Isoprofit_Text" xml:space="preserve">
+    <value>TODO: Isogewinn-Text (DE)</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Tangent" xml:space="preserve">
+    <value>IMg(q_m)=CMg(q_m)</value>
+  </data>
+  <data name="Monopoly_Isoprofit_Profit" xml:space="preserve">
+    <value>\pi_m={0}</value>
+  </data>
   <data name="IsoBenefit_MarketParams_Title" xml:space="preserve">
     <value>Marktparameter</value>
   </data>
@@ -722,6 +740,57 @@ Die Kennzeichnung Gewinn/Verlust/Null wird mit π_i*=P*·q_i*−C_i(q_i*) bewert
 Für den Markt aggregieren wir die Kosten unter der Annahme einer gleichmäßigen Aufteilung q_i=Q/N, sodass C_M(Q)=Σ C_i(Q/N) und Π(Q,P)=P·Q−C_M(Q).
 Die Π̄-Kurven des Marktes werden als P(Q;Π̄)=(C_M(Q)+Π̄)/Q berechnet, wobei Q=0 vermieden wird, und sie schneiden die Nachfrage P_d(Q).
 Wir bestimmen P* numerisch durch Lösen von P_d(Q_s(P))=P, wobei Q_s(P)=Σ q_i(P); falls es keine stabile Lösung gibt, verwenden wir P*=40 als Referenz.</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Profit" xml:space="preserve">
+    <value>TODO: Abschnitt Gewinn (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_ProfitFormula" xml:space="preserve">
+    <value>\pi_i(q,p)=p\cdot q - C_i(q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_ProfitHint" xml:space="preserve">
+    <value>TODO: Hinweis Gewinn (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Costs" xml:space="preserve">
+    <value>TODO: Abschnitt Kosten (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsMC" xml:space="preserve">
+    <value>CMg_i(q)=\frac{dC_i}{dq}</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsAVC" xml:space="preserve">
+    <value>CMeV_i(q)=\frac{CV_i(q)}{q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_CostsAC" xml:space="preserve">
+    <value>CMe_i(q)=\frac{C_i(q)}{q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Competition" xml:space="preserve">
+    <value>TODO: Abschnitt Wettbewerb (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_CompetitionCondition" xml:space="preserve">
+    <value>CMg_i(q)=P^*</value>
+  </data>
+  <data name="IsoBenefit_Theory_CompetitionShutdown" xml:space="preserve">
+    <value>P^*&lt;\min CMeV_i(q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Isoprofit" xml:space="preserve">
+    <value>TODO: Abschnitt Isogewinn (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_Isoprofit" xml:space="preserve">
+    <value>p(q;\bar{\pi}_i)=\frac{C_i(q)+\bar{\pi}_i}{q},\; q&gt;0</value>
+  </data>
+  <data name="IsoBenefit_Theory_Section_Market" xml:space="preserve">
+    <value>TODO: Abschnitt Markt (DE)</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketCost" xml:space="preserve">
+    <value>C_M(Q)=\sum_i C_i(Q/N)</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketProfit" xml:space="preserve">
+    <value>\Pi(Q,P)=P\cdot Q - C_M(Q)</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketIsoProfit" xml:space="preserve">
+    <value>P(Q;\bar{\Pi})=\frac{C_M(Q)+\bar{\Pi}}{Q}</value>
+  </data>
+  <data name="IsoBenefit_Theory_MarketEquilibrium" xml:space="preserve">
+    <value>P_d(Q_s(P))=P,\; Q_s(P)=\sum_i q_i(P)</value>
   </data>
   <data name="Tab_PerfectCompetition" xml:space="preserve">
     <value>Vollkommener Wettbewerb</value>

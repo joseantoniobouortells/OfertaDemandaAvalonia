@@ -2,6 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:controls="clr-namespace:OfertaDemanda.Mobile.Controls"
              x:Class="OfertaDemanda.Mobile.Views.MonopolyModelPage">
   <Grid RowDefinitions="*,Auto" RowSpacing="12" Padding="12">
     <ScrollView Grid.Row="0" VerticalOptions="FillAndExpand">
@@ -37,7 +38,9 @@
         <Frame BackgroundColor="#1A1E88E5" Padding="10" CornerRadius="6">
           <VerticalStackLayout Spacing="6">
             <Label Text="{Binding Localization[Common_Explanation]}" FontAttributes="Bold" TextColor="White" />
-            <Label Text="{Binding IsoprofitExplanation}" FontSize="12" TextColor="White" />
+            <Label Text="{Binding IsoprofitText}" FontSize="12" TextColor="White" />
+            <controls:MathView Latex="{Binding IsoprofitTangentLatex}" FontSize="16" />
+            <controls:MathView Latex="{Binding IsoprofitProfitLatex}" FontSize="16" />
           </VerticalStackLayout>
         </Frame>
 
