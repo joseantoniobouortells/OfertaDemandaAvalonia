@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OfertaDemanda.Desktop.Services;
@@ -10,6 +12,9 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool showIsoBenefitPanel;
 
+    [ObservableProperty]
+    private string appTitle = string.Empty;
+
     public LocalizationService Localization { get; }
     public MarketViewModel Market { get; }
     public FirmViewModel Firm { get; }
@@ -19,6 +24,7 @@ public sealed partial class MainViewModel : ObservableObject
     public IsoBenefitViewModel IsoBenefit { get; }
     public AboutViewModel About { get; }
     public IRelayCommand ResetDefaultsCommand { get; }
+    public string AppVersion { get; }
 
     public MainViewModel(ThemeService themeService, UserSettingsService userSettingsService, LocalizationService localizationService)
     {
@@ -32,6 +38,9 @@ public sealed partial class MainViewModel : ObservableObject
         Settings = new SettingsViewModel(themeService, localizationService);
         About = new AboutViewModel(localizationService);
         ResetDefaultsCommand = new RelayCommand(ApplyDefaults);
+        AppVersion = ResolveVersion(Assembly.GetEntryAssembly() ?? typeof(MainViewModel).Assembly);
+        Localization.CultureChanged += (_, _) => UpdateAppTitle();
+        UpdateAppTitle();
         ApplyDefaults();
     }
 
@@ -48,5 +57,22 @@ public sealed partial class MainViewModel : ObservableObject
         Firm.ApplyDefaults();
         Monopoly.ApplyDefaults();
         Elasticity.ApplyDefaults();
+    }
+
+    private void UpdateAppTitle()
+    {
+        AppTitle = $"{Localization["App_Title"]} {AppVersion}";
+    }
+
+    private static string ResolveVersion(Assembly assembly)
+    {
+        var info = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        if (!string.IsNullOrWhiteSpace(info))
+        {
+            var trimmed = info.Split('+', 2, StringSplitOptions.RemoveEmptyEntries)[0];
+            return trimmed;
+        }
+
+        return assembly.GetName().Version?.ToString() ?? "—";
     }
 }
