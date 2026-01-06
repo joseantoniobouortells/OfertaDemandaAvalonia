@@ -36,84 +36,11 @@ jobs:
           echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Crear release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="${{ steps.resolve-tag.outputs.tag || steps.resolve-tag-push.outputs.tag }}"
-          git fetch --tags --force
-          PREV_TAG="$(git tag --sort=-v:refname | grep -v "^${TAG}$" | head -n 1 || true)"
-          if [[ -n "$PREV_TAG" ]]; then
-            RANGE="${PREV_TAG}..${TAG}"
-            RANGE_LABEL="${PREV_TAG} → ${TAG}"
-          else
-            RANGE="${TAG}"
-            RANGE_LABEL="inicio → ${TAG}"
-          fi
-
-          mkdir -p artifacts
-
-          mapfile -t COMMITS < <(git log --pretty=format:'%s' "$RANGE")
-          mapfile -t FILES < <(git diff --name-only "$RANGE" | sort -u)
-
-          HIGHLIGHTS=()
-          FIXES=()
-          for subject in "${COMMITS[@]}"; do
-            if [[ "$subject" =~ ^(fix|fix:|corrige|arregla|bug|hotfix) ]]; then
-              FIXES+=("$subject")
-            else
-              HIGHLIGHTS+=("$subject")
-            fi
-          done
-
-          commit_count="${#COMMITS[@]}"
-
-          {
-            echo "# Resumen"
-            echo "- Rango: ${RANGE_LABEL}"
-            echo "- Commits: ${commit_count}"
-            echo
-            echo "# Cambios destacados"
-            if [[ ${#HIGHLIGHTS[@]} -eq 0 ]]; then
-              echo "- Sin cambios destacados."
-            else
-              for item in "${HIGHLIGHTS[@]}"; do
-                echo "- ${item}"
-              done
-            fi
-            echo
-            echo "# Correcciones"
-            if [[ ${#FIXES[@]} -eq 0 ]]; then
-              echo "- Sin correcciones registradas."
-            else
-              for item in "${FIXES[@]}"; do
-                echo "- ${item}"
-              done
-            fi
-            echo
-            echo "# Distribución / Instaladores"
-            echo "- macOS: .dmg"
-            echo "- Windows: .msix y .msi"
-            echo "- Linux: .deb y .tar.gz"
-            echo
-            echo "# Notas"
-            if [[ ${#FILES[@]} -eq 0 ]]; then
-              echo "- Sin cambios detectados en archivos."
-            else
-              echo "Archivos modificados:"
-              for file in "${FILES[@]}"; do
-                echo "- ${file}"
-              done
-            fi
-          } > artifacts/release-notes.md
-
-          if gh release view "$TAG" > /dev/null 2>&1; then
-            echo "Release ya existe, se reutiliza."
-            gh release edit "$TAG" --draft=false --notes-file artifacts/release-notes.md
-          else
-            gh release create "$TAG" \
-              --title "$TAG" \
-              --notes-file artifacts/release-notes.md
-          fi
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.resolve-tag.outputs.tag || steps.resolve-tag-push.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
 
   windows:
     name: Windows MSI/MSIX
