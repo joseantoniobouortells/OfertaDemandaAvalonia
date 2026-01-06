@@ -19,7 +19,7 @@ public sealed class CSharpMathFormulaRenderer : IMathFormulaRenderer
             return new MathRenderResult(Array.Empty<byte>(), 0, 0);
         }
 
-        var key = $"{latex}|{fontSize:F2}|{theme}|{dpiScale:F2}";
+        var key = $"{latex}|{fontSize:F2}|{theme}";
         lock (_lock)
         {
             if (_cache.TryGetValue(key, out var cached))
@@ -34,7 +34,7 @@ public sealed class CSharpMathFormulaRenderer : IMathFormulaRenderer
             LaTeX = latex,
             FontSize = fontSize,
             TextColor = color,
-            Magnification = System.Math.Max(1f, dpiScale),
+            Magnification = 1f,
             AntiAlias = true
         };
 

@@ -11,6 +11,7 @@ namespace OfertaDemanda.Desktop.Controls;
 
 public partial class MathBlock : UserControl
 {
+    private const double LayoutEpsilon = 0.5;
     public static readonly StyledProperty<string?> LatexProperty =
         AvaloniaProperty.Register<MathBlock, string?>(nameof(Latex));
 
@@ -24,6 +25,12 @@ public partial class MathBlock : UserControl
         AvaloniaProperty.Register<MathBlock, bool>(nameof(Inline), false);
 
     public static IMathFormulaRenderer? DefaultRenderer { get; set; }
+    private string? _lastLatex;
+    private double _lastFontSize;
+    private MathTheme _lastTheme;
+    private double _lastScale;
+    private double _lastAvailableWidth;
+    private double _lastAvailableHeight;
 
     public string? Latex
     {
@@ -110,6 +117,12 @@ public partial class MathBlock : UserControl
             return;
         }
 
+        if (e.Property == BoundsProperty || e.Property == MaxWidthProperty || e.Property == MaxHeightProperty)
+        {
+            RenderFormula();
+            return;
+        }
+
         if (e.Property == HintProperty)
         {
             UpdateHint();
@@ -141,15 +154,75 @@ public partial class MathBlock : UserControl
             ? MathTheme.Dark
             : MathTheme.Light;
         var scale = (float)(VisualRoot?.RenderScaling ?? 1d);
+        var availableWidth = MaxWidth;
+        if (double.IsInfinity(availableWidth) || availableWidth <= 0)
+        {
+            availableWidth = Bounds.Width;
+        }
 
-        var result = renderer.Render(latex, (float)FontSize, theme, scale);
+        var availableHeight = MaxHeight;
+        if (double.IsInfinity(availableHeight) || availableHeight <= 0)
+        {
+            availableHeight = Bounds.Height;
+        }
+        if (availableWidth <= 0)
+        {
+            availableWidth = double.PositiveInfinity;
+        }
+        if (availableHeight <= 0)
+        {
+            availableHeight = double.PositiveInfinity;
+        }
+
+        if (string.Equals(_lastLatex, latex, StringComparison.Ordinal) &&
+            Math.Abs(_lastFontSize - FontSize) < LayoutEpsilon &&
+            _lastTheme == theme &&
+            Math.Abs(_lastScale - scale) < LayoutEpsilon &&
+            Math.Abs(_lastAvailableWidth - availableWidth) < LayoutEpsilon &&
+            Math.Abs(_lastAvailableHeight - availableHeight) < LayoutEpsilon)
+        {
+            return;
+        }
+
+        var targetFontSize = (float)FontSize;
+        var result = renderer.Render(latex, targetFontSize, theme, scale);
         if (result.PngBytes.Length == 0)
         {
             FormulaImage.Source = null;
             return;
         }
 
+        var visualWidth = result.Width / scale;
+        if (availableWidth < double.PositiveInfinity && visualWidth > availableWidth)
+        {
+            var ratio = (float)(availableWidth / visualWidth);
+            targetFontSize = (float)Math.Max(8d, FontSize * ratio);
+            result = renderer.Render(latex, targetFontSize, theme, scale);
+            if (result.PngBytes.Length == 0)
+            {
+                FormulaImage.Source = null;
+                return;
+            }
+        }
+
         using var stream = new MemoryStream(result.PngBytes);
         FormulaImage.Source = new Bitmap(stream);
+        if (availableWidth < double.PositiveInfinity)
+        {
+            FormulaImage.Width = availableWidth;
+        }
+        else
+        {
+            FormulaImage.Width = double.NaN;
+        }
+
+        FormulaImage.Height = double.NaN;
+
+        _lastLatex = latex;
+        _lastFontSize = FontSize;
+        _lastTheme = theme;
+        _lastScale = scale;
+        _lastAvailableWidth = availableWidth;
+        _lastAvailableHeight = availableHeight;
     }
 }

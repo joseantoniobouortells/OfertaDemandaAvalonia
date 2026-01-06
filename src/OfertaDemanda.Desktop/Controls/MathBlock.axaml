@@ -4,7 +4,8 @@
   <StackPanel x:Name="RootPanel"
               Spacing="4">
     <Image x:Name="FormulaImage"
-           Stretch="None" />
+           Stretch="Uniform"
+           StretchDirection="DownOnly" />
     <TextBlock x:Name="HintText"
                FontSize="11"
                Opacity="0.7"
