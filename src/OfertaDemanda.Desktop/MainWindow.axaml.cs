@@ -7,8 +7,10 @@ namespace OfertaDemanda.Desktop;
 
 public partial class MainWindow : Window
 {
+    private const int SettingsTabIndex = 2;
     private const int AboutTabIndex = 3;
     private IAboutNavigator? _aboutNavigator;
+    private ISettingsNavigator? _settingsNavigator;
 
     public MainWindow()
     {
@@ -26,9 +28,25 @@ public partial class MainWindow : Window
         _aboutNavigator.Requested += OnAboutRequested;
     }
 
+    public void AttachSettingsNavigator(ISettingsNavigator navigator)
+    {
+        if (_settingsNavigator != null)
+        {
+            _settingsNavigator.Requested -= OnSettingsRequested;
+        }
+
+        _settingsNavigator = navigator;
+        _settingsNavigator.Requested += OnSettingsRequested;
+    }
+
     private void OnAboutRequested(object? sender, EventArgs e)
     {
         ShowAboutTab();
+    }
+
+    private void OnSettingsRequested(object? sender, EventArgs e)
+    {
+        ShowSettingsTab();
     }
 
     private void ShowAboutTab()
@@ -39,6 +57,17 @@ public partial class MainWindow : Window
         }
 
         MainTabs.SelectedIndex = AboutTabIndex;
+        Activate();
+    }
+
+    private void ShowSettingsTab()
+    {
+        if (MainTabs == null)
+        {
+            return;
+        }
+
+        MainTabs.SelectedIndex = SettingsTabIndex;
         Activate();
     }
 }

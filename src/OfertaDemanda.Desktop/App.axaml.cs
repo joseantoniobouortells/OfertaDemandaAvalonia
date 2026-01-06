@@ -11,7 +11,6 @@ namespace OfertaDemanda.Desktop;
 
 public partial class App : Application
 {
-    private const string AppDisplayName = "OfertaDemanda";
     private ThemeService? _themeService;
     private UserSettingsService? _userSettingsService;
     private LocalizationService? _localizationService;
@@ -20,7 +19,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        Name = AppDisplayName;
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -30,20 +28,39 @@ public partial class App : Application
         _themeService = new ThemeService(this, _userSettingsService);
         _themeService.Initialize();
         _localizationService = new LocalizationService(_userSettingsService);
+        UpdateAppName();
         MathBlock.DefaultRenderer = new CSharpMathFormulaRenderer();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var aboutNavigator = new AboutNavigator();
-            _macMenuService = new MacMenuService(_localizationService, aboutNavigator);
+            var settingsNavigator = new SettingsNavigator();
+            _macMenuService = new MacMenuService(_localizationService, aboutNavigator, settingsNavigator);
             _macMenuService.Initialize(this);
+            _localizationService.CultureChanged += (_, _) =>
+            {
+                UpdateAppName();
+                _macMenuService.RebuildMenu();
+            };
 
             var mainWindow = new MainWindow();
             mainWindow.AttachAboutNavigator(aboutNavigator);
+            mainWindow.AttachSettingsNavigator(settingsNavigator);
             mainWindow.DataContext = new MainViewModel(_themeService, _userSettingsService, _localizationService);
+            _macMenuService.AttachToWindow(mainWindow);
             desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void UpdateAppName()
+    {
+        if (_localizationService == null)
+        {
+            return;
+        }
+
+        Name = _localizationService["AppName"];
     }
 }

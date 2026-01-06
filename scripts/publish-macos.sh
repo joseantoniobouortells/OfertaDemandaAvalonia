@@ -12,8 +12,8 @@ command -v hdiutil >/dev/null 2>&1 || die "hdiutil no está disponible (debería
 command -v plutil >/dev/null 2>&1 || die "plutil no está disponible (debería venir en macOS)"
 
 # Repo root = padre de la carpeta donde vive este script (scripts/)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 
 cd "$ROOT_DIR"
 
@@ -51,15 +51,17 @@ else
   [[ -n "$CSPROJ" ]] || die "No se ha encontrado el .csproj. Ajusta DEFAULT_CSPROJ o revisa la estructura /src."
 fi
 
-APP_NAME="OfertaDemanda"
-APP_DISPLAY_NAME="OfertaDemanda"
+APP_NAME="$(basename "$CSPROJ" .csproj)"
+APP_DISPLAY_NAME="$APP_NAME"
+APP_EXEC_NAME="$APP_NAME"
 
 # Extrae Version si existe en el csproj (fallback: 0.0.0)
 VERSION="$(grep -m1 -E '<Version>[^<]+' "$CSPROJ" | sed -E 's/.*<Version>([^<]+)<\/Version>.*/\1/' || true)"
 VERSION="${VERSION:-0.0.0}"
 
 # Identificador bundle (simple y estable)
-BUNDLE_ID="com.joseantoniobou.ofertademandaavalonia"
+APP_ID_BASE="$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9')"
+BUNDLE_ID="com.${APP_ID_BASE}.${APP_ID_BASE}"
 
 echo "==> Repo root     : $ROOT_DIR"
 echo "==> Project       : $CSPROJ"
@@ -87,10 +89,10 @@ dotnet publish "$CSPROJ" \
   -o "$PUBLISH_DIR"
 
 # El ejecutable apphost suele llamarse igual que el proyecto
-EXEC_PATH="$PUBLISH_DIR/$APP_NAME"
+EXEC_PATH="$PUBLISH_DIR/$APP_EXEC_NAME"
 if [[ ! -f "$EXEC_PATH" ]]; then
   # Fallback: busca un binario ejecutable sin extensión en la raíz del publish
-  EXEC_PATH="$(find "$PUBLISH_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | head -n 1 || true)"
+  EXEC_PATH="$(find "$PUBLISH_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | rg -v '\\.dll$' | head -n 1 || true)"
 fi
 [[ -n "${EXEC_PATH:-}" && -f "$EXEC_PATH" ]] || die "No se ha encontrado el ejecutable en el publish. Revisa $PUBLISH_DIR"
 
