@@ -14,6 +14,7 @@ public partial class App : Application
     private ThemeService? _themeService;
     private UserSettingsService? _userSettingsService;
     private LocalizationService? _localizationService;
+    private MacMenuService? _macMenuService;
 
     public override void Initialize()
     {
@@ -27,16 +28,39 @@ public partial class App : Application
         _themeService = new ThemeService(this, _userSettingsService);
         _themeService.Initialize();
         _localizationService = new LocalizationService(_userSettingsService);
+        UpdateAppName();
         MathBlock.DefaultRenderer = new CSharpMathFormulaRenderer();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
+            var aboutNavigator = new AboutNavigator();
+            var settingsNavigator = new SettingsNavigator();
+            _macMenuService = new MacMenuService(_localizationService, aboutNavigator, settingsNavigator);
+            _macMenuService.Initialize(this);
+            _localizationService.CultureChanged += (_, _) =>
             {
-                DataContext = new MainViewModel(_themeService, _userSettingsService, _localizationService)
+                UpdateAppName();
+                _macMenuService.RebuildMenu();
             };
+
+            var mainWindow = new MainWindow();
+            mainWindow.AttachAboutNavigator(aboutNavigator);
+            mainWindow.AttachSettingsNavigator(settingsNavigator);
+            mainWindow.DataContext = new MainViewModel(_themeService, _userSettingsService, _localizationService);
+            _macMenuService.AttachToWindow(mainWindow);
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void UpdateAppName()
+    {
+        if (_localizationService == null)
+        {
+            return;
+        }
+
+        Name = _localizationService["AppName"];
     }
 }

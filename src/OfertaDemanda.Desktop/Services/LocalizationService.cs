@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Linq;
 using System.Resources;
 using OfertaDemanda.Shared.Settings;
@@ -15,13 +16,15 @@ public sealed class LocalizationService : INotifyPropertyChanged
         AppLocalization.SupportedCultureCodes.Select(code => new CultureInfo(code)).ToArray();
 
     private readonly UserSettingsService _settingsService;
-    private readonly ResourceManager _resourceManager =
-        new("OfertaDemanda.Desktop.Resources.Strings", typeof(LocalizationService).Assembly);
+    private readonly ResourceManager _resourceManager;
     private readonly CultureInfo _fallbackCulture = new(DefaultCultureCode);
 
     public LocalizationService(UserSettingsService settingsService)
     {
         _settingsService = settingsService;
+        var assembly = typeof(LocalizationService).Assembly;
+        var baseName = ResolveResourceBaseName(assembly);
+        _resourceManager = new ResourceManager(baseName, assembly);
         CurrentCulture = SupportedCultures[0];
         ApplyCulture(settingsService.Settings.Language, persist: false);
     }
@@ -104,5 +107,24 @@ public sealed class LocalizationService : INotifyPropertyChanged
         var neutral = trimmed.Split('-', StringSplitOptions.RemoveEmptyEntries)[0];
         var byNeutral = SupportedCultures.FirstOrDefault(c => string.Equals(c.TwoLetterISOLanguageName, neutral, StringComparison.OrdinalIgnoreCase));
         return byNeutral ?? SupportedCultures[0];
+    }
+
+    private static string ResolveResourceBaseName(Assembly assembly)
+    {
+        var assemblyName = assembly.GetName().Name ?? "OfertaDemanda.Desktop";
+        var resourceNames = assembly.GetManifestResourceNames();
+        var withFolder = $"{assemblyName}.Resources.Strings.resources";
+        if (resourceNames.Contains(withFolder))
+        {
+            return $"{assemblyName}.Resources.Strings";
+        }
+
+        var flat = $"{assemblyName}.Strings.resources";
+        if (resourceNames.Contains(flat))
+        {
+            return $"{assemblyName}.Strings";
+        }
+
+        return $"{assemblyName}.Resources.Strings";
     }
 }

@@ -15,6 +15,30 @@
   <data name="App_Title" xml:space="preserve">
     <value>Oferta vs Demanda</value>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>OfertaDemanda</value>
+  </data>
+  <data name="Menu_AboutFmt" xml:space="preserve">
+    <value>Acerca de {0}</value>
+  </data>
+  <data name="Menu_Preferences" xml:space="preserve">
+    <value>Preferencias</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>Acerca de {0}</value>
+  </data>
+  <data name="Menu_Hide" xml:space="preserve">
+    <value>Ocultar {0}</value>
+  </data>
+  <data name="Menu_HideOthers" xml:space="preserve">
+    <value>Ocultar otros</value>
+  </data>
+  <data name="Menu_ShowAll" xml:space="preserve">
+    <value>Mostrar todo</value>
+  </data>
+  <data name="Menu_Quit" xml:space="preserve">
+    <value>Salir de {0}</value>
+  </data>
   <data name="Main_HeaderTitle" xml:space="preserve">
     <value>Oferta, demanda y elasticidades</value>
   </data>

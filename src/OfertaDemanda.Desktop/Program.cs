@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Native;
 using System;
 
 namespace OfertaDemanda.Desktop;
@@ -16,6 +17,10 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
+            .With(new MacOSPlatformOptions
+            {
+                DisableDefaultApplicationMenuItems = true
+            })
             .WithInterFont()
             .LogToTrace();
 }

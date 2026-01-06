@@ -99,11 +99,11 @@ Opciones para lanzarlo:
 
 ```bash
 # Opción 1: tag (se dispara automáticamente)
-git tag v1.1.2
-git push origin v1.1.2
+git tag v2.0.2
+git push origin v2.0.2
 
 # Opción 2: manual (workflow_dispatch)
-GH_CONFIG_DIR=~/.config/gh-personal gh workflow run release.yml -f tag=v1.1.2
+GH_CONFIG_DIR=~/.config/gh-personal gh workflow run release.yml -f tag=v2.0.2
 ```
 
 Salida esperada:

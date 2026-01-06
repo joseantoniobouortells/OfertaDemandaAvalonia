@@ -12,8 +12,8 @@ command -v hdiutil >/dev/null 2>&1 || die "hdiutil no está disponible (debería
 command -v plutil >/dev/null 2>&1 || die "plutil no está disponible (debería venir en macOS)"
 
 # Repo root = padre de la carpeta donde vive este script (scripts/)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 
 cd "$ROOT_DIR"
 
@@ -52,6 +52,8 @@ else
 fi
 
 APP_NAME="$(basename "$CSPROJ" .csproj)"
+APP_DISPLAY_NAME="$APP_NAME"
+APP_EXEC_NAME="$APP_NAME"
 
 # Extrae Version si existe en el csproj (fallback: 0.0.0)
 VERSION="$(grep -m1 -E '<Version>[^<]+' "$CSPROJ" | sed -E 's/.*<Version>([^<]+)<\/Version>.*/\1/' || true)"
@@ -87,10 +89,10 @@ dotnet publish "$CSPROJ" \
   -o "$PUBLISH_DIR"
 
 # El ejecutable apphost suele llamarse igual que el proyecto
-EXEC_PATH="$PUBLISH_DIR/$APP_NAME"
+EXEC_PATH="$PUBLISH_DIR/$APP_EXEC_NAME"
 if [[ ! -f "$EXEC_PATH" ]]; then
   # Fallback: busca un binario ejecutable sin extensión en la raíz del publish
-  EXEC_PATH="$(find "$PUBLISH_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | head -n 1 || true)"
+  EXEC_PATH="$(find "$PUBLISH_DIR" -maxdepth 1 -type f -perm +111 2>/dev/null | rg -v '\\.dll$' | head -n 1 || true)"
 fi
 [[ -n "${EXEC_PATH:-}" && -f "$EXEC_PATH" ]] || die "No se ha encontrado el ejecutable en el publish. Revisa $PUBLISH_DIR"
 
@@ -127,7 +129,7 @@ cat > "$INFO_PLIST" <<EOF
   <key>CFBundleName</key>
   <string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key>
-  <string>${APP_NAME}</string>
+  <string>${APP_DISPLAY_NAME}</string>
   <key>CFBundleIdentifier</key>
   <string>${BUNDLE_ID}</string>
   <key>CFBundleVersion</key>
