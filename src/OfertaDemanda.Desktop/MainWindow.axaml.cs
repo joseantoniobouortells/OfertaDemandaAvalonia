@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Avalonia.Controls;
 using OfertaDemanda.Desktop.Services;
 using OfertaDemanda.Desktop.ViewModels;
@@ -7,8 +8,6 @@ namespace OfertaDemanda.Desktop;
 
 public partial class MainWindow : Window
 {
-    private const int SettingsTabIndex = 2;
-    private const int AboutTabIndex = 3;
     private IAboutNavigator? _aboutNavigator;
     private ISettingsNavigator? _settingsNavigator;
 
@@ -51,23 +50,23 @@ public partial class MainWindow : Window
 
     private void ShowAboutTab()
     {
-        if (MainTabs == null)
+        if (DataContext is MainViewModel viewModel)
         {
-            return;
+            viewModel.SelectedNavigationItem = viewModel.NavigationItems.FirstOrDefault(item => item is AboutNavigationItem)
+                                               ?? viewModel.SelectedNavigationItem;
         }
 
-        MainTabs.SelectedIndex = AboutTabIndex;
         Activate();
     }
 
     private void ShowSettingsTab()
     {
-        if (MainTabs == null)
+        if (DataContext is MainViewModel viewModel)
         {
-            return;
+            viewModel.SelectedNavigationItem = viewModel.NavigationItems.FirstOrDefault(item => item is SettingsNavigationItem)
+                                               ?? viewModel.SelectedNavigationItem;
         }
 
-        MainTabs.SelectedIndex = SettingsTabIndex;
         Activate();
     }
 }

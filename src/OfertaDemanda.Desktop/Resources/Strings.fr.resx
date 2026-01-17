@@ -54,6 +54,18 @@
   <data name="Tab_Compare" xml:space="preserve">
     <value>Comparaison</value>
   </data>
+  <data name="Nav_Icon_PerfectCompetition" xml:space="preserve">
+    <value>📈</value>
+  </data>
+  <data name="Nav_Icon_Monopoly" xml:space="preserve">
+    <value>👑</value>
+  </data>
+  <data name="Nav_Icon_Settings" xml:space="preserve">
+    <value>⚙️</value>
+  </data>
+  <data name="Nav_Icon_About" xml:space="preserve">
+    <value>💡</value>
+  </data>
   <data name="Tab_Monopoly" xml:space="preserve">
     <value>Monopole</value>
   </data>
@@ -245,6 +257,9 @@
   </data>
   <data name="Market_Preset_Label" xml:space="preserve">
     <value>Vue</value>
+  </data>
+  <data name="Market_AdvancedToggle" xml:space="preserve">
+    <value>Voir les options avancées</value>
   </data>
   <data name="Market_Preset_Basic" xml:space="preserve">
     <value>Basique</value>

@@ -9,21 +9,25 @@
              x:Class="OfertaDemanda.Desktop.Views.MarketView">
   <Grid ColumnDefinitions="340,*"
         ColumnSpacing="16">
-    <TabControl Grid.Column="0">
-      <TabItem Header="{Binding Localization[Market_SubTab_Equilibrium]}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <StackPanel Spacing="12">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="10">
             <TextBlock Text="{Binding Localization[Market_Functions]}"
-                       FontWeight="Bold" />
+                       FontWeight="SemiBold" />
             <TextBlock Text="{Binding Localization[Market_DemandInverse]}" />
             <TextBox Text="{Binding DemandExpression, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{Binding Localization[Market_SupplyInverse]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <TextBox Text="{Binding SupplyExpression, UpdateSourceTrigger=PropertyChanged}" />
+          </StackPanel>
+        </Border>
 
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="10">
             <TextBlock Text="{Binding Localization[Market_ShocksTax]}"
-                       FontWeight="Bold"
-                       Margin="0,16,0,0" />
+                       FontWeight="SemiBold" />
             <TextBlock Text="{Binding Localization[Market_DemandShock]}" />
             <Slider Minimum="-30"
                     Maximum="30"
@@ -33,7 +37,7 @@
                        FontSize="12" />
 
             <TextBlock Text="{Binding Localization[Market_SupplyShock]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <Slider Minimum="-30"
                     Maximum="30"
                     Value="{Binding SupplyShock}"
@@ -42,19 +46,22 @@
                        FontSize="12" />
 
             <TextBlock Text="{Binding Localization[Market_Tax]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <Slider Minimum="0"
                     Maximum="30"
                     Value="{Binding Tax}"
                     TickFrequency="5" />
             <TextBlock Text="{Binding TaxText}"
                        FontSize="12" />
+          </StackPanel>
+        </Border>
 
-            <Grid Margin="0,16,0,0"
-                  ColumnDefinitions="*,Auto"
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="10">
+            <Grid ColumnDefinitions="*,Auto"
                   VerticalAlignment="Center">
               <TextBlock Text="{Binding Localization[Market_Costs]}"
-                         FontWeight="Bold" />
+                         FontWeight="SemiBold" />
               <controls:MathBlock Grid.Column="1"
                                   Latex="{Binding TotalCostFormulaLatex}"
                                   FontSize="14"
@@ -73,56 +80,50 @@
               </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock Text="{Binding Localization[Market_CostFixed]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <TextBox Text="{Binding FixedCost, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{Binding Localization[Market_CostLinear]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <TextBox Text="{Binding LinearCost, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{Binding Localization[Market_CostQuadratic]}"
-                       Margin="0,8,0,0" />
+                       Margin="0,6,0,0" />
             <TextBox Text="{Binding QuadraticCost, UpdateSourceTrigger=PropertyChanged}" />
-            <StackPanel IsVisible="{Binding IsCubicCostVisible}">
-              <TextBlock Text="{Binding Localization[Market_CostCubic]}"
-                         Margin="0,8,0,0" />
-              <TextBox Text="{Binding CubicCost, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel IsVisible="{Binding ShowAdvanced}"
+                        Spacing="6">
+              <StackPanel IsVisible="{Binding IsCubicCostVisible}">
+                <TextBlock Text="{Binding Localization[Market_CostCubic]}"
+                           Margin="0,6,0,0" />
+                <TextBox Text="{Binding CubicCost, UpdateSourceTrigger=PropertyChanged}" />
+              </StackPanel>
             </StackPanel>
+          </StackPanel>
+        </Border>
 
-            <TextBlock Text="{Binding Localization[Market_EquilibriumResults]}"
-                       FontWeight="Bold"
-                       Margin="0,16,0,0" />
-            <WrapPanel>
-              <TextBlock Text="{Binding EquilibriumText}" />
-              <TextBlock Text="{Binding PriceConsumerText}" Margin="8,0,0,0" />
-              <TextBlock Text="{Binding PriceProducerText}" Margin="8,0,0,0" />
-            </WrapPanel>
-
-            <TextBlock Text="{Binding Localization[Market_FirmCompetitive]}"
-                       FontWeight="Bold"
-                       Margin="0,12,0,0" />
-            <WrapPanel>
-              <TextBlock Text="{Binding FirmQuantityText}" />
-              <TextBlock Text="{Binding FirmMarginalCostText}" Margin="8,0,0,0" />
-              <TextBlock Text="{Binding FirmAverageVariableCostText}" Margin="8,0,0,0" />
-              <TextBlock Text="{Binding FirmAverageCostText}" Margin="8,0,0,0" />
-              <TextBlock Text="{Binding FirmProfitText}" Margin="8,0,0,0" />
-              <TextBlock Text="{Binding FirmStateText}" Margin="8,0,0,0" />
-            </WrapPanel>
-
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="10">
             <TextBlock Text="{Binding Localization[Market_CurvesElements]}"
-                       FontWeight="Bold"
-                       Margin="0,16,0,0" />
-            <StackPanel>
-              <TextBlock Text="{Binding Localization[Market_Preset_Label]}"
-                         FontSize="12"
-                         Opacity="0.7" />
-              <ComboBox ItemsSource="{Binding PresetOptions}"
-                        SelectedItem="{Binding SelectedPreset}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Label}" />
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                       FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Localization[Market_Preset_Label]}"
+                       FontSize="12"
+                       Opacity="0.7" />
+            <ListBox ItemsSource="{Binding PresetOptions}"
+                     SelectedItem="{Binding SelectedPreset}"
+                     Classes="chip-list">
+              <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal"
+                              Spacing="6" />
+                </ItemsPanelTemplate>
+              </ListBox.ItemsPanel>
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Label}" />
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <CheckBox Content="{Binding Localization[Market_AdvancedToggle]}"
+                      IsChecked="{Binding ShowAdvanced}" />
+            <StackPanel IsVisible="{Binding ShowAdvanced}">
               <Expander Header="{Binding Localization[Market_Customize_Toggles]}"
                         Margin="0,8,0,0">
                 <StackPanel Spacing="8">
@@ -161,32 +162,40 @@
                 </StackPanel>
               </Expander>
             </StackPanel>
-
-            <Border Margin="0,12,0,0"
-                    Padding="8"
-                    Background="#3FFFF0F0"
-                    CornerRadius="4"
-                    IsVisible="{Binding HasErrors}">
-              <StackPanel>
-                <TextBlock Text="{Binding Localization[Common_Errors]}"
-                           FontWeight="Bold" />
-                <ItemsControl ItemsSource="{Binding Errors}">
-                  <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="• {Binding}" />
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>
-                </ItemsControl>
-              </StackPanel>
-            </Border>
           </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Header="{Binding Localization[Market_SubTab_Welfare]}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <StackPanel Spacing="12">
+        </Border>
+
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="8">
+            <TextBlock Text="{Binding Localization[Market_EquilibriumResults]}"
+                       FontWeight="SemiBold" />
+            <WrapPanel>
+              <TextBlock Text="{Binding EquilibriumText}" />
+              <TextBlock Text="{Binding PriceConsumerText}" Margin="8,0,0,0" />
+              <TextBlock Text="{Binding PriceProducerText}" Margin="8,0,0,0" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="8">
+            <TextBlock Text="{Binding Localization[Market_FirmCompetitive]}"
+                       FontWeight="SemiBold" />
+            <WrapPanel>
+              <TextBlock Text="{Binding FirmQuantityText}" />
+              <TextBlock Text="{Binding FirmMarginalCostText}" Margin="8,0,0,0" />
+              <TextBlock Text="{Binding FirmAverageVariableCostText}" Margin="8,0,0,0" />
+              <TextBlock Text="{Binding FirmAverageCostText}" Margin="8,0,0,0" />
+              <TextBlock Text="{Binding FirmProfitText}" Margin="8,0,0,0" />
+              <TextBlock Text="{Binding FirmStateText}" Margin="8,0,0,0" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="8">
             <TextBlock Text="{Binding Localization[Market_WelfareResults]}"
-                       FontWeight="Bold" />
+                       FontWeight="SemiBold" />
             <WrapPanel>
               <TextBlock Text="{Binding ConsumerSurplusText}" />
               <TextBlock Text="{Binding ProducerSurplusText}" Margin="8,0,0,0" />
@@ -242,9 +251,27 @@
               </Border>
             </Expander>
           </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-    </TabControl>
+        </Border>
+
+        <Border Margin="0,12,0,0"
+                Padding="8"
+                Background="#3FFFF0F0"
+                CornerRadius="4"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
 
     <lvc:CartesianChart Grid.Column="1"
                         Series="{Binding Series}"

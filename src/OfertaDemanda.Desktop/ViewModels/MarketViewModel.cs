@@ -72,6 +72,9 @@ public partial class MarketViewModel : ViewModelBase
     private double tax = 0;
 
     [ObservableProperty]
+    private bool showAdvanced;
+
+    [ObservableProperty]
     private string demandShockText = string.Empty;
 
     [ObservableProperty]
@@ -190,6 +193,7 @@ public partial class MarketViewModel : ViewModelBase
         DemandShock = AppDefaults.Market.DemandShock;
         SupplyShock = AppDefaults.Market.SupplyShock;
         Tax = AppDefaults.Market.Tax;
+        ShowAdvanced = false;
         SelectedCostType = _costOptions.First(o => o.Value == AppDefaults.Market.CostType);
         FixedCost = AppDefaults.Market.FixedCost;
         LinearCost = AppDefaults.Market.LinearCost;
