@@ -49,7 +49,9 @@ public partial class MarketViewModel : ViewModelBase
 
     private bool _suppressUpdates;
     private bool _suppressToggleUpdates;
+    private bool _suppressPresetUpdates;
     private SelectionOption<MarketCostFunctionType>[] _costOptions = Array.Empty<SelectionOption<MarketCostFunctionType>>();
+    private SelectionOption<MarketVisualizationPreset>[] _presetOptions = Array.Empty<SelectionOption<MarketVisualizationPreset>>();
     private readonly Dictionary<string, ChartSeriesToggle> _toggleLookup = new();
     private MarketResult? _lastMarketResult;
     private MarketFirmResult? _lastFirmResult;
@@ -148,6 +150,11 @@ public partial class MarketViewModel : ViewModelBase
 
     public IRelayCommand<ChartSeriesToggleGroup> ShowGroupCommand { get; }
 
+    public IReadOnlyList<SelectionOption<MarketVisualizationPreset>> PresetOptions => _presetOptions;
+
+    [ObservableProperty]
+    private SelectionOption<MarketVisualizationPreset> selectedPreset = null!;
+
     [ObservableProperty]
     private IEnumerable<ISeries> series = Array.Empty<ISeries>();
 
@@ -165,6 +172,7 @@ public partial class MarketViewModel : ViewModelBase
         : base(localization)
     {
         _costOptions = BuildCostOptions();
+        _presetOptions = BuildPresetOptions();
         InitializeToggles();
         ShowAllTogglesCommand = new RelayCommand(() => SetAllToggles(true));
         HideAllTogglesCommand = new RelayCommand(() => SetAllToggles(false));
@@ -188,7 +196,8 @@ public partial class MarketViewModel : ViewModelBase
         QuadraticCost = AppDefaults.Market.QuadraticCost;
         CubicCost = AppDefaults.Market.CubicCost;
         UpdateTotalCostFormula();
-        ResetToggleDefaults();
+        SelectedPreset = _presetOptions.First(o => o.Value == MarketVisualizationPreset.Basic);
+        ApplyPreset(SelectedPreset.Value);
         _suppressUpdates = false;
         Recalculate();
     }
@@ -250,6 +259,16 @@ public partial class MarketViewModel : ViewModelBase
     {
         UpdateTotalCostFormula();
         if (!_suppressUpdates) Recalculate();
+    }
+
+    partial void OnSelectedPresetChanged(SelectionOption<MarketVisualizationPreset> value)
+    {
+        if (_suppressPresetUpdates || _suppressUpdates)
+        {
+            return;
+        }
+
+        ApplyPreset(value.Value);
     }
 
     public IReadOnlyList<SelectionOption<MarketCostFunctionType>> CostTypeOptions => _costOptions;
@@ -679,6 +698,7 @@ public partial class MarketViewModel : ViewModelBase
                 {
                     if (!_suppressToggleUpdates)
                     {
+                        MarkPresetCustom();
                         RefreshSeries();
                     }
                 }
@@ -747,6 +767,16 @@ public partial class MarketViewModel : ViewModelBase
     {
         _costOptions = BuildCostOptions();
         OnPropertyChanged(nameof(CostTypeOptions));
+        _presetOptions = BuildPresetOptions();
+        OnPropertyChanged(nameof(PresetOptions));
+        if (SelectedPreset != null)
+        {
+            var presetValue = SelectedPreset.Value;
+            _suppressPresetUpdates = true;
+            SelectedPreset = _presetOptions.First(o => o.Value == presetValue);
+            _suppressPresetUpdates = false;
+        }
+
         if (SelectedCostType != null)
         {
             SelectedCostType = _costOptions.First(o => o.Value == SelectedCostType.Value);
@@ -779,6 +809,96 @@ public partial class MarketViewModel : ViewModelBase
             {
                 toggle.Label = Localization[toggle.LabelKey];
             }
+        }
+    }
+
+    private SelectionOption<MarketVisualizationPreset>[] BuildPresetOptions()
+    {
+        return
+        [
+            new SelectionOption<MarketVisualizationPreset>(Localization["Market_Preset_Basic"], MarketVisualizationPreset.Basic),
+            new SelectionOption<MarketVisualizationPreset>(Localization["Market_Preset_Tax"], MarketVisualizationPreset.Tax),
+            new SelectionOption<MarketVisualizationPreset>(Localization["Market_Preset_Welfare"], MarketVisualizationPreset.Welfare),
+            new SelectionOption<MarketVisualizationPreset>(Localization["Market_Preset_Complete"], MarketVisualizationPreset.Complete),
+            new SelectionOption<MarketVisualizationPreset>(Localization["Market_Preset_Custom"], MarketVisualizationPreset.Custom)
+        ];
+    }
+
+    private void ApplyPreset(MarketVisualizationPreset preset)
+    {
+        _suppressToggleUpdates = true;
+        _suppressPresetUpdates = true;
+
+        if (preset != MarketVisualizationPreset.Custom)
+        {
+            foreach (var toggle in _toggleLookup.Values)
+            {
+                toggle.IsVisible = false;
+            }
+
+            foreach (var key in GetPresetKeys(preset))
+            {
+                if (_toggleLookup.TryGetValue(key, out var toggle))
+                {
+                    toggle.IsVisible = true;
+                }
+            }
+        }
+
+        _suppressToggleUpdates = false;
+        _suppressPresetUpdates = false;
+        RefreshSeries();
+    }
+
+    private IReadOnlyList<string> GetPresetKeys(MarketVisualizationPreset preset)
+    {
+        return preset switch
+        {
+            MarketVisualizationPreset.Basic =>
+            [
+                ToggleDemandShifted,
+                ToggleSupplyShifted,
+                ToggleMarketEquilibrium
+            ],
+            MarketVisualizationPreset.Tax =>
+            [
+                ToggleDemandShifted,
+                ToggleSupplyShifted,
+                ToggleMarketEquilibrium,
+                ToggleTaxPriceConsumer,
+                ToggleTaxPriceProducer,
+                ToggleTaxQuantity,
+                ToggleTaxWedge,
+                ToggleNoTaxEquilibrium
+            ],
+            MarketVisualizationPreset.Welfare =>
+            [
+                ToggleDemandShifted,
+                ToggleSupplyShifted,
+                ToggleMarketEquilibrium,
+                ToggleConsumerSurplus,
+                ToggleProducerSurplus,
+                ToggleDeadweight
+            ],
+            MarketVisualizationPreset.Complete => _toggleLookup.Keys.ToArray(),
+            MarketVisualizationPreset.Custom => Array.Empty<string>(),
+            _ => Array.Empty<string>()
+        };
+    }
+
+    private void MarkPresetCustom()
+    {
+        if (_suppressPresetUpdates)
+        {
+            return;
+        }
+
+        var custom = _presetOptions.First(o => o.Value == MarketVisualizationPreset.Custom);
+        if (!Equals(SelectedPreset, custom))
+        {
+            _suppressPresetUpdates = true;
+            SelectedPreset = custom;
+            _suppressPresetUpdates = false;
         }
     }
 

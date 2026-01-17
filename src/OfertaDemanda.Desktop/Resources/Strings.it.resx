@@ -228,6 +228,39 @@
   <data name="Market_Results" xml:space="preserve">
     <value>Risultati</value>
   </data>
+  <data name="Market_SubTab_Equilibrium" xml:space="preserve">
+    <value>Equilibrio</value>
+  </data>
+  <data name="Market_SubTab_Welfare" xml:space="preserve">
+    <value>Benessere</value>
+  </data>
+  <data name="Market_EquilibriumResults" xml:space="preserve">
+    <value>Risultati di equilibrio</value>
+  </data>
+  <data name="Market_WelfareResults" xml:space="preserve">
+    <value>Risultati di benessere</value>
+  </data>
+  <data name="Market_Preset_Label" xml:space="preserve">
+    <value>Vista</value>
+  </data>
+  <data name="Market_Preset_Basic" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="Market_Preset_Tax" xml:space="preserve">
+    <value>Imposte</value>
+  </data>
+  <data name="Market_Preset_Welfare" xml:space="preserve">
+    <value>Benessere</value>
+  </data>
+  <data name="Market_Preset_Complete" xml:space="preserve">
+    <value>Completo</value>
+  </data>
+  <data name="Market_Preset_Custom" xml:space="preserve">
+    <value>Personalizzato</value>
+  </data>
+  <data name="Market_Customize_Toggles" xml:space="preserve">
+    <value>Personalizza curve</value>
+  </data>
   <data name="Market_FirmCompetitive" xml:space="preserve">
     <value>Impresa competitiva</value>
   </data>
