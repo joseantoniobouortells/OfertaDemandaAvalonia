@@ -51,6 +51,21 @@
   <data name="Tab_Firm" xml:space="preserve">
     <value>Impresa</value>
   </data>
+  <data name="Tab_Compare" xml:space="preserve">
+    <value>Confronto</value>
+  </data>
+  <data name="Nav_Icon_PerfectCompetition" xml:space="preserve">
+    <value>📈</value>
+  </data>
+  <data name="Nav_Icon_Monopoly" xml:space="preserve">
+    <value>👑</value>
+  </data>
+  <data name="Nav_Icon_Settings" xml:space="preserve">
+    <value>⚙️</value>
+  </data>
+  <data name="Nav_Icon_About" xml:space="preserve">
+    <value>💡</value>
+  </data>
   <data name="Tab_Monopoly" xml:space="preserve">
     <value>Monopolio</value>
   </data>
@@ -227,6 +242,42 @@
   </data>
   <data name="Market_Results" xml:space="preserve">
     <value>Risultati</value>
+  </data>
+  <data name="Market_SubTab_Equilibrium" xml:space="preserve">
+    <value>Equilibrio</value>
+  </data>
+  <data name="Market_SubTab_Welfare" xml:space="preserve">
+    <value>Benessere</value>
+  </data>
+  <data name="Market_EquilibriumResults" xml:space="preserve">
+    <value>Risultati di equilibrio</value>
+  </data>
+  <data name="Market_WelfareResults" xml:space="preserve">
+    <value>Risultati di benessere</value>
+  </data>
+  <data name="Market_Preset_Label" xml:space="preserve">
+    <value>Vista</value>
+  </data>
+  <data name="Market_AdvancedToggle" xml:space="preserve">
+    <value>Mostra opzioni avanzate</value>
+  </data>
+  <data name="Market_Preset_Basic" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="Market_Preset_Tax" xml:space="preserve">
+    <value>Imposte</value>
+  </data>
+  <data name="Market_Preset_Welfare" xml:space="preserve">
+    <value>Benessere</value>
+  </data>
+  <data name="Market_Preset_Complete" xml:space="preserve">
+    <value>Completo</value>
+  </data>
+  <data name="Market_Preset_Custom" xml:space="preserve">
+    <value>Personalizzato</value>
+  </data>
+  <data name="Market_Customize_Toggles" xml:space="preserve">
+    <value>Personalizza curve</value>
   </data>
   <data name="Market_FirmCompetitive" xml:space="preserve">
     <value>Impresa competitiva</value>
@@ -531,6 +582,15 @@
   <data name="Elasticity_Demand_Label" xml:space="preserve">
     <value>Domanda Pd(q)</value>
   </data>
+  <data name="Elasticity_Supply_Label" xml:space="preserve">
+    <value>Offerta Ps(q)</value>
+  </data>
+  <data name="Elasticity_Mode_Quantity" xml:space="preserve">
+    <value>Curve P(Q)</value>
+  </data>
+  <data name="Elasticity_Mode_Price" xml:space="preserve">
+    <value>Curve vs prezzo</value>
+  </data>
   <data name="Elasticity_Price_Label" xml:space="preserve">
     <value>Prezzo per elasticità</value>
   </data>
@@ -543,14 +603,116 @@
   <data name="Elasticity_Label_Value" xml:space="preserve">
     <value>Elasticità</value>
   </data>
+  <data name="Compare_Title" xml:space="preserve">
+    <value>Confronto impresa vs mercato</value>
+  </data>
+  <data name="Compare_Section_Market" xml:space="preserve">
+    <value>Mercato</value>
+  </data>
+  <data name="Compare_Section_Firm" xml:space="preserve">
+    <value>Impresa</value>
+  </data>
+  <data name="Compare_Toggle_MarketDemand" xml:space="preserve">
+    <value>Domanda Pd</value>
+  </data>
+  <data name="Compare_Toggle_MarketSupply" xml:space="preserve">
+    <value>Offerta Ps</value>
+  </data>
+  <data name="Compare_Toggle_FirmMarginalCost" xml:space="preserve">
+    <value>CMg</value>
+  </data>
+  <data name="Compare_Toggle_FirmAverageCost" xml:space="preserve">
+    <value>CMe</value>
+  </data>
+  <data name="Compare_Toggle_FirmAverageVariableCost" xml:space="preserve">
+    <value>CMeV</value>
+  </data>
+  <data name="Compare_Series_MarketDemand" xml:space="preserve">
+    <value>Pd</value>
+  </data>
+  <data name="Compare_Series_MarketSupply" xml:space="preserve">
+    <value>Ps</value>
+  </data>
+  <data name="Compare_Series_FirmMarginalCost" xml:space="preserve">
+    <value>CMg</value>
+  </data>
+  <data name="Compare_Series_FirmAverageCost" xml:space="preserve">
+    <value>CMe</value>
+  </data>
+  <data name="Compare_Series_FirmAverageVariableCost" xml:space="preserve">
+    <value>CMeV</value>
+  </data>
+  <data name="Compare_Axis_PriceCosts" xml:space="preserve">
+    <value>P / Costi</value>
+  </data>
+  <data name="Compare_Parse_MarketDemand" xml:space="preserve">
+    <value>Domanda inversa (mercato)</value>
+  </data>
+  <data name="Compare_Parse_MarketSupply" xml:space="preserve">
+    <value>Offerta inversa (mercato)</value>
+  </data>
+  <data name="Compare_Parse_FirmCost" xml:space="preserve">
+    <value>Costo totale (impresa)</value>
+  </data>
+  <data name="Elasticity_Label_MarginalRevenue" xml:space="preserve">
+    <value>Ricavo marginale</value>
+  </data>
+  <data name="Elasticity_Label_Interpretation" xml:space="preserve">
+    <value>Interpretazione</value>
+  </data>
+  <data name="Elasticity_Formula_Elasticity" xml:space="preserve">
+    <value>ε = |dQ/dP| · (P/Q)</value>
+  </data>
+  <data name="Elasticity_Formula_MarginalRevenue" xml:space="preserve">
+    <value>RM = P · (1 - 1/ε)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Elastic" xml:space="preserve">
+    <value>Domanda elastica (RM &gt; 0)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Inelastic" xml:space="preserve">
+    <value>Domanda anelastica (RM &lt; 0)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Unitary" xml:space="preserve">
+    <value>Elasticità unitaria (RM = 0)</value>
+  </data>
   <data name="Elasticity_Parse_MarketDemand" xml:space="preserve">
     <value>Domanda inversa (mercato)</value>
+  </data>
+  <data name="Elasticity_Parse_SupplyInverse" xml:space="preserve">
+    <value>Offerta inversa (elasticità)</value>
   </data>
   <data name="Elasticity_Series_Demand" xml:space="preserve">
     <value>Pd</value>
   </data>
+  <data name="Elasticity_Series_Supply" xml:space="preserve">
+    <value>Ps</value>
+  </data>
   <data name="Elasticity_Series_Price" xml:space="preserve">
     <value>Prezzo</value>
+  </data>
+  <data name="Elasticity_Series_ElasticityCurve" xml:space="preserve">
+    <value>ε(P)</value>
+  </data>
+  <data name="Elasticity_Series_ElasticityPoint" xml:space="preserve">
+    <value>ε attuale</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenueCurve" xml:space="preserve">
+    <value>RM(P)</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenuePoint" xml:space="preserve">
+    <value>RM attuale</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenue" xml:space="preserve">
+    <value>RM</value>
+  </data>
+  <data name="Elasticity_Subtitle_ElasticityCurve" xml:space="preserve">
+    <value>Elasticità vs prezzo</value>
+  </data>
+  <data name="Elasticity_Axis_Elasticity" xml:space="preserve">
+    <value>ε</value>
+  </data>
+  <data name="Elasticity_Error_NoElasticityCurve" xml:space="preserve">
+    <value>Impossibile costruire la curva di elasticità per l'intervallo di prezzi.</value>
   </data>
   <data name="Monopoly_DemandInverse_Label" xml:space="preserve">
     <value>Domanda inversa Pd(q)</value>

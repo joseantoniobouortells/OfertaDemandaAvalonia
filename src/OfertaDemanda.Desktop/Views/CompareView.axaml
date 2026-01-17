@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             x:CompileBindings="False"
+             mc:Ignorable="d"
+             x:Class="OfertaDemanda.Desktop.Views.CompareView">
+  <Grid ColumnDefinitions="340,*"
+        ColumnSpacing="16">
+    <ScrollViewer Grid.Column="0"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="12">
+        <TextBlock Text="{Binding Localization[Compare_Title]}"
+                   FontSize="16"
+                   FontWeight="SemiBold" />
+
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="8">
+            <TextBlock Text="{Binding Localization[Compare_Section_Market]}"
+                       FontWeight="SemiBold" />
+            <CheckBox Content="{Binding Localization[Compare_Toggle_MarketDemand]}"
+                      IsChecked="{Binding ShowMarketDemand}" />
+            <CheckBox Content="{Binding Localization[Compare_Toggle_MarketSupply]}"
+                      IsChecked="{Binding ShowMarketSupply}" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="glass-panel">
+          <StackPanel Spacing="8">
+            <TextBlock Text="{Binding Localization[Compare_Section_Firm]}"
+                       FontWeight="SemiBold" />
+            <CheckBox Content="{Binding Localization[Compare_Toggle_FirmMarginalCost]}"
+                      IsChecked="{Binding ShowFirmMarginalCost}" />
+            <CheckBox Content="{Binding Localization[Compare_Toggle_FirmAverageCost]}"
+                      IsChecked="{Binding ShowFirmAverageCost}" />
+            <CheckBox Content="{Binding Localization[Compare_Toggle_FirmAverageVariableCost]}"
+                      IsChecked="{Binding ShowFirmAverageVariableCost}" />
+          </StackPanel>
+        </Border>
+
+        <Border Classes="glass-panel"
+                IsVisible="{Binding HasErrors}">
+          <StackPanel>
+            <TextBlock Text="{Binding Localization[Common_Errors]}"
+                       FontWeight="Bold" />
+            <ItemsControl ItemsSource="{Binding Errors}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="• {Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <lvc:CartesianChart Grid.Column="1"
+                        Series="{Binding Series}"
+                        XAxes="{Binding XAxes}"
+                        YAxes="{Binding YAxes}"
+                        LegendPosition="Right"
+                        AnimationsSpeed="0:0:0" />
+  </Grid>
+</UserControl>

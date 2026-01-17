@@ -170,7 +170,8 @@
                               Series="{Binding MarketSeries}"
                               XAxes="{Binding MarketXAxes}"
                               YAxes="{Binding MarketYAxes}"
-                              LegendPosition="Right" />
+                              LegendPosition="Right"
+                              AnimationsSpeed="0:0:0" />
         </Grid>
       </TabItem>
 
@@ -184,7 +185,8 @@
                               Series="{Binding FirmSeries}"
                               XAxes="{Binding FirmXAxes}"
                               YAxes="{Binding FirmYAxes}"
-                              LegendPosition="Right" />
+                              LegendPosition="Right"
+                              AnimationsSpeed="0:0:0" />
         </Grid>
       </TabItem>
     </TabControl>

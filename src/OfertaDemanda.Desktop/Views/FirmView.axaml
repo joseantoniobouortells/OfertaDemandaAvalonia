@@ -82,6 +82,7 @@
                           XAxes="{Binding XAxes}"
                           YAxes="{Binding YAxes}"
                           LegendPosition="Right"
+                          AnimationsSpeed="0:0:0"
                           IsVisible="{Binding DataContext.ShowFirmChart, RelativeSource={RelativeSource AncestorType=Window}}" />
       <views:IsoBenefitView DataContext="{Binding DataContext.IsoBenefit, RelativeSource={RelativeSource AncestorType=Window}}"
                             IsVisible="{Binding DataContext.ShowIsoBenefitPanel, RelativeSource={RelativeSource AncestorType=Window}}" />

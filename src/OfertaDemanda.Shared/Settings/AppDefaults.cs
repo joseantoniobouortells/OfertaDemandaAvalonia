@@ -34,5 +34,6 @@ public static class AppDefaults
     public static class Elasticity
     {
         public const double Price = 50;
+        public const string SupplyExpression = "20 + 0.5q";
     }
 }

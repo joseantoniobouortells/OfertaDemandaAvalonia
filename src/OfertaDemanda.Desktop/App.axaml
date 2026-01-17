@@ -4,7 +4,101 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{DynamicResource ThemeControlLowColor}" />
+            <SolidColorBrush x:Key="SidebarSelectedBackgroundBrush" Color="{DynamicResource ThemeControlMidColor}" />
+            <SolidColorBrush x:Key="SidebarSelectedIndicatorBrush" Color="{DynamicResource ThemeAccentColor}" />
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="SidebarTextBrush" Color="#EDEDED" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="SidebarTextBrush" Color="#1A1A1A" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
+        <Style Selector="Border.glass-panel">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="8,6" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="8,6" />
+        </Style>
+        <Style Selector="CheckBox">
+            <Setter Property="Padding" Value="4,2" />
+        </Style>
+        <Style Selector="ListBox.nav">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="ListBox.nav > ListBoxItem">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="Margin" Value="0,2" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource SidebarTextBrush}" />
+        </Style>
+        <Style Selector="ListBox.nav > ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource SidebarSelectedBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Foreground" Value="{DynamicResource SidebarTextBrush}" />
+        </Style>
+        <Style Selector="ListBox.nav Border.nav-underline">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBox.nav > ListBoxItem:selected Border.nav-underline">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+        </Style>
+        <Style Selector="ListBox.nav Border.nav-indicator">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBox.nav > ListBoxItem:selected Border.nav-indicator">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
+        </Style>
+        <Style Selector="Button.nav-toggle">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style Selector="ListBox.chip-list">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="ListBox.chip-list > ListBoxItem">
+            <Setter Property="CornerRadius" Value="999" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="ListBox.chip-list > ListBoxItem:selected">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlLowBrush}" />
+        </Style>
     </Application.Styles>
 </Application>

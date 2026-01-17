@@ -2,8 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:views="using:OfertaDemanda.Desktop.Views"
+        xmlns:vm="using:OfertaDemanda.Desktop.ViewModels"
+        xmlns:converters="using:OfertaDemanda.Desktop.Converters"
         mc:Ignorable="d"
         x:Class="OfertaDemanda.Desktop.MainWindow"
         Width="1200"
@@ -11,6 +12,29 @@
         Title="{Binding AppTitle}"
         Icon="avares://OfertaDemanda.Desktop/Assets/icon_1024.png"
         x:CompileBindings="False">
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:PerfectCompetitionNavigationItem">
+            <views:PerfectCompetitionView DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </DataTemplate>
+        <DataTemplate DataType="vm:MonopolyNavigationItem">
+            <views:MonopolyView DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </DataTemplate>
+        <DataTemplate DataType="vm:SettingsNavigationItem">
+            <views:SettingsView DataContext="{Binding DataContext.Settings, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </DataTemplate>
+        <DataTemplate DataType="vm:AboutNavigationItem">
+            <views:AboutView DataContext="{Binding DataContext.About, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Window.Resources>
+        <converters:SidebarWidthConverter x:Key="SidebarWidthConverter" />
+        <converters:SidebarToggleIconConverter x:Key="SidebarToggleIconConverter" />
+        <converters:BoolInvertConverter x:Key="BoolInvertConverter" />
+        <converters:SidebarPaddingConverter x:Key="SidebarPaddingConverter" />
+        <converters:SidebarInnerMarginConverter x:Key="SidebarInnerMarginConverter" />
+    </Window.Resources>
+
     <Grid RowDefinitions="Auto,*" Margin="16">
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Stretch"
@@ -23,24 +47,76 @@
                     Margin="16,0,0,0" />
         </StackPanel>
 
-        <TabControl x:Name="MainTabs"
-                    Grid.Row="1"
-                    TabStripPlacement="Top">
-            <TabItem Header="{Binding Localization[Tab_PerfectCompetition]}">
-                <views:PerfectCompetitionView DataContext="{Binding}" />
-            </TabItem>
+        <Grid Grid.Row="1"
+              ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarWidthConverter}}" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-            <TabItem Header="{Binding Localization[Tab_Monopoly]}">
-                <views:MonopolyView DataContext="{Binding}" />
-            </TabItem>
+            <Border Classes="glass-panel"
+                    MaxWidth="260"
+                    Width="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarWidthConverter}}"
+                    Padding="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarPaddingConverter}}">
+                <Grid RowDefinitions="Auto,*"
+                      Margin="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarInnerMarginConverter}}">
+                    <Button Grid.Row="0"
+                            Classes="nav-toggle"
+                            Content="{Binding IsSidebarCollapsed, Converter={StaticResource SidebarToggleIconConverter}}"
+                            Command="{Binding ToggleSidebarCommand}"
+                            HorizontalAlignment="Left" />
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding NavigationItems}"
+                             SelectedItem="{Binding SelectedNavigationItem}"
+                             Classes="nav">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid RowDefinitions="Auto,Auto">
+                                    <Grid RowDefinitions="Auto"
+                                          ColumnDefinitions="Auto,Auto">
+                                        <TextBlock Text="{Binding Icon}"
+                                                   FontSize="20"
+                                                   MinWidth="28"
+                                                   Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Title}"
+                                                   Margin="10,0,0,0"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"
+                                                   IsVisible="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolInvertConverter}}"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
 
-            <TabItem Header="{Binding Localization[Tab_Settings]}">
-                <views:SettingsView DataContext="{Binding Settings}" />
-            </TabItem>
+                                    <Border Grid.Row="1"
+                                            Classes="nav-underline"
+                                            Height="2"
+                                            Margin="8,6,8,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Bottom" />
 
-            <TabItem Header="{Binding Localization[Tab_About]}">
-                <views:AboutView DataContext="{Binding About}" />
-            </TabItem>
-        </TabControl>
+                                    <Border Grid.RowSpan="2"
+                                            Classes="nav-indicator"
+                                            Width="3"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Stretch"
+                                            Margin="-10,0,0,0"
+                                            IsVisible="{Binding DataContext.IsSidebarCollapsed, RelativeSource={RelativeSource AncestorType=Window}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerTheme>
+                            <ControlTheme TargetType="ListBoxItem">
+                                <Setter Property="ToolTip.Tip" Value="{Binding Title}" />
+                            </ControlTheme>
+                        </ListBox.ItemContainerTheme>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Column="1"
+                            Content="{Binding SelectedNavigationItem}" />
+        </Grid>
     </Grid>
 </Window>

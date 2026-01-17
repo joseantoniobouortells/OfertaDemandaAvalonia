@@ -10,7 +10,13 @@ namespace OfertaDemanda.Desktop.ViewModels;
 
 internal static class ChartSeriesBuilder
 {
-    public static ISeries Line(string name, IReadOnlyList<ChartPoint> data, SKColor color, bool dashed = false)
+    public static ISeries Line(
+        string name,
+        IReadOnlyList<ChartPoint> data,
+        SKColor color,
+        bool dashed = false,
+        int scalesYAt = 0,
+        int scalesXAt = 0)
     {
         var line = new LineSeries<ObservablePoint>
         {
@@ -20,7 +26,9 @@ internal static class ChartSeriesBuilder
             GeometryStroke = null,
             Fill = null,
             Values = ToObservablePoints(data),
-            Stroke = CreateStroke(color, dashed)
+            Stroke = CreateStroke(color, dashed),
+            ScalesYAt = scalesYAt,
+            ScalesXAt = scalesXAt
         };
 
         return line;
@@ -48,7 +56,7 @@ internal static class ChartSeriesBuilder
         return Line(name, points, color, dashed);
     }
 
-    public static ISeries Scatter(string name, ChartPoint point, SKColor color, double size = 14)
+    public static ISeries Scatter(string name, ChartPoint point, SKColor color, double size = 14, int scalesYAt = 0, int scalesXAt = 0)
     {
         return new ScatterSeries<ObservablePoint>
         {
@@ -56,7 +64,9 @@ internal static class ChartSeriesBuilder
             GeometrySize = size,
             Values = new[] { new ObservablePoint(point.X, point.Y) },
             Fill = new SolidColorPaint(color),
-            Stroke = null
+            Stroke = null,
+            ScalesYAt = scalesYAt,
+            ScalesXAt = scalesXAt
         };
     }
 
