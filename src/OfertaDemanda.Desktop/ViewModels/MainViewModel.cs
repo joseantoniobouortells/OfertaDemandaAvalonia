@@ -19,6 +19,7 @@ public sealed partial class MainViewModel : ObservableObject
     public MarketViewModel Market { get; }
     public FirmViewModel Firm { get; }
     public MonopolyViewModel Monopoly { get; }
+    public CompareViewModel Compare { get; }
     public ElasticityViewModel Elasticity { get; }
     public SettingsViewModel Settings { get; }
     public IsoBenefitViewModel IsoBenefit { get; }
@@ -33,6 +34,7 @@ public sealed partial class MainViewModel : ObservableObject
         Market = new MarketViewModel(localizationService);
         Firm = new FirmViewModel(localizationService);
         Monopoly = new MonopolyViewModel(localizationService);
+        Compare = new CompareViewModel(Market, Firm, localizationService);
         Elasticity = new ElasticityViewModel(Market, localizationService);
         IsoBenefit = new IsoBenefitViewModel(userSettingsService, localizationService);
         Settings = new SettingsViewModel(themeService, localizationService);

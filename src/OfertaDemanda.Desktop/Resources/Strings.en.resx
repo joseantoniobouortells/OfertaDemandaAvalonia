@@ -51,6 +51,9 @@
   <data name="Tab_Firm" xml:space="preserve">
     <value>Firm</value>
   </data>
+  <data name="Tab_Compare" xml:space="preserve">
+    <value>Comparison</value>
+  </data>
   <data name="Tab_Monopoly" xml:space="preserve">
     <value>Monopoly</value>
   </data>
@@ -584,6 +587,57 @@
   </data>
   <data name="Elasticity_Label_Value" xml:space="preserve">
     <value>Elasticity</value>
+  </data>
+  <data name="Compare_Title" xml:space="preserve">
+    <value>Firm vs market comparison</value>
+  </data>
+  <data name="Compare_Section_Market" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="Compare_Section_Firm" xml:space="preserve">
+    <value>Firm</value>
+  </data>
+  <data name="Compare_Toggle_MarketDemand" xml:space="preserve">
+    <value>Demand Pd</value>
+  </data>
+  <data name="Compare_Toggle_MarketSupply" xml:space="preserve">
+    <value>Supply Ps</value>
+  </data>
+  <data name="Compare_Toggle_FirmMarginalCost" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Compare_Toggle_FirmAverageCost" xml:space="preserve">
+    <value>AC</value>
+  </data>
+  <data name="Compare_Toggle_FirmAverageVariableCost" xml:space="preserve">
+    <value>AVC</value>
+  </data>
+  <data name="Compare_Series_MarketDemand" xml:space="preserve">
+    <value>Pd</value>
+  </data>
+  <data name="Compare_Series_MarketSupply" xml:space="preserve">
+    <value>Ps</value>
+  </data>
+  <data name="Compare_Series_FirmMarginalCost" xml:space="preserve">
+    <value>MC</value>
+  </data>
+  <data name="Compare_Series_FirmAverageCost" xml:space="preserve">
+    <value>AC</value>
+  </data>
+  <data name="Compare_Series_FirmAverageVariableCost" xml:space="preserve">
+    <value>AVC</value>
+  </data>
+  <data name="Compare_Axis_PriceCosts" xml:space="preserve">
+    <value>P / Costs</value>
+  </data>
+  <data name="Compare_Parse_MarketDemand" xml:space="preserve">
+    <value>Inverse demand (market)</value>
+  </data>
+  <data name="Compare_Parse_MarketSupply" xml:space="preserve">
+    <value>Inverse supply (market)</value>
+  </data>
+  <data name="Compare_Parse_FirmCost" xml:space="preserve">
+    <value>Total cost (firm)</value>
   </data>
   <data name="Elasticity_Label_MarginalRevenue" xml:space="preserve">
     <value>Marginal revenue</value>

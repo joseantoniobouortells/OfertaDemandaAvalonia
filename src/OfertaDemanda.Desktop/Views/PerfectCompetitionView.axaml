@@ -13,6 +13,9 @@
     <TabItem Header="{Binding Localization[Tab_Firm]}">
       <views:FirmView DataContext="{Binding Firm}" />
     </TabItem>
+    <TabItem Header="{Binding Localization[Tab_Compare]}">
+      <views:CompareView DataContext="{Binding Compare}" />
+    </TabItem>
     <TabItem Header="{Binding Localization[Tab_Elasticity]}">
       <views:ElasticityView DataContext="{Binding Elasticity}" />
     </TabItem>
