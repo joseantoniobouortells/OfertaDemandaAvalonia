@@ -564,6 +564,15 @@
   <data name="Elasticity_Demand_Label" xml:space="preserve">
     <value>Demand Pd(q)</value>
   </data>
+  <data name="Elasticity_Supply_Label" xml:space="preserve">
+    <value>Supply Ps(q)</value>
+  </data>
+  <data name="Elasticity_Mode_Quantity" xml:space="preserve">
+    <value>P(Q) curves</value>
+  </data>
+  <data name="Elasticity_Mode_Price" xml:space="preserve">
+    <value>Curves vs price</value>
+  </data>
   <data name="Elasticity_Price_Label" xml:space="preserve">
     <value>Price for elasticity</value>
   </data>
@@ -576,14 +585,65 @@
   <data name="Elasticity_Label_Value" xml:space="preserve">
     <value>Elasticity</value>
   </data>
+  <data name="Elasticity_Label_MarginalRevenue" xml:space="preserve">
+    <value>Marginal revenue</value>
+  </data>
+  <data name="Elasticity_Label_Interpretation" xml:space="preserve">
+    <value>Interpretation</value>
+  </data>
+  <data name="Elasticity_Formula_Elasticity" xml:space="preserve">
+    <value>ε = |dQ/dP| · (P/Q)</value>
+  </data>
+  <data name="Elasticity_Formula_MarginalRevenue" xml:space="preserve">
+    <value>MR = P · (1 - 1/ε)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Elastic" xml:space="preserve">
+    <value>Elastic demand (MR &gt; 0)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Inelastic" xml:space="preserve">
+    <value>Inelastic demand (MR &lt; 0)</value>
+  </data>
+  <data name="Elasticity_Interpretation_Unitary" xml:space="preserve">
+    <value>Unitary elasticity (MR = 0)</value>
+  </data>
   <data name="Elasticity_Parse_MarketDemand" xml:space="preserve">
     <value>Inverse demand (market)</value>
+  </data>
+  <data name="Elasticity_Parse_SupplyInverse" xml:space="preserve">
+    <value>Inverse supply (elasticity)</value>
   </data>
   <data name="Elasticity_Series_Demand" xml:space="preserve">
     <value>Pd</value>
   </data>
+  <data name="Elasticity_Series_Supply" xml:space="preserve">
+    <value>Ps</value>
+  </data>
   <data name="Elasticity_Series_Price" xml:space="preserve">
     <value>Price</value>
+  </data>
+  <data name="Elasticity_Series_ElasticityCurve" xml:space="preserve">
+    <value>ε(P)</value>
+  </data>
+  <data name="Elasticity_Series_ElasticityPoint" xml:space="preserve">
+    <value>Current ε</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenueCurve" xml:space="preserve">
+    <value>MR(P)</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenuePoint" xml:space="preserve">
+    <value>Current MR</value>
+  </data>
+  <data name="Elasticity_Series_MarginalRevenue" xml:space="preserve">
+    <value>MR</value>
+  </data>
+  <data name="Elasticity_Subtitle_ElasticityCurve" xml:space="preserve">
+    <value>Elasticity vs price</value>
+  </data>
+  <data name="Elasticity_Axis_Elasticity" xml:space="preserve">
+    <value>ε</value>
+  </data>
+  <data name="Elasticity_Error_NoElasticityCurve" xml:space="preserve">
+    <value>Could not build the elasticity curve for the selected price range.</value>
   </data>
   <data name="Monopoly_DemandInverse_Label" xml:space="preserve">
     <value>Inverse demand Pd(q)</value>
